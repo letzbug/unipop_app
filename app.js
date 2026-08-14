@@ -75,7 +75,7 @@ function locationData(c){
 
 async function loadAll(){
   try{
-    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=10",{cache:"no-store"})]);
+    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=11",{cache:"no-store"})]);
     if(!r1.ok)throw new Error("trainings.json");
     trainings=await r1.json();locations=await r2.json();
     $("#dataStatus").textContent=`${trainings.length} cours chargés`;
@@ -201,7 +201,22 @@ function downloadICS(){
 }
 
 function openCalendar(){
-  selectedDate=new Date();calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderCalendar();showScreen("calendarScreen");
+  const now=new Date();
+  const horizon=new Date(now);
+  horizon.setFullYear(horizon.getFullYear()+2);
+
+  const upcoming=trainerOccurrences(now,horizon);
+
+  if(upcoming.length){
+    selectedDate=new Date(upcoming[0].date);
+    calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);
+  }else{
+    selectedDate=new Date();
+    calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);
+  }
+
+  renderCalendar();
+  showScreen("calendarScreen");
 }
 $("#calendarButton").onclick=openCalendar;$("#calendarTopButton").onclick=openCalendar;
 $("#prevMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar();};
@@ -212,18 +227,79 @@ function renderMiniCourse(o){
 }
 function renderCalendar(){
   $("#monthTitle").textContent=`${MONTHS[calendarCursor.getMonth()]} ${calendarCursor.getFullYear()}`;
-  const monthStart=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1),gridStart=new Date(monthStart);gridStart.setDate(gridStart.getDate()-((gridStart.getDay()+6)%7));
-  const gridEnd=new Date(gridStart);gridEnd.setDate(gridEnd.getDate()+41);
-  const occ=trainerOccurrences(gridStart,gridEnd),has=new Set(occ.map(o=>formatDMY(o.date)));let html="";
-  for(let i=0;i<42;i++){const d=new Date(gridStart);d.setDate(gridStart.getDate()+i);html+=`<button class="${d.getMonth()!==calendarCursor.getMonth()?"other ":""}${sameDay(d,selectedDate)?"selected ":""}${has.has(formatDMY(d))?"has-course":""}" data-date="${formatDMY(d)}">${d.getDate()}</button>`;}
+
+  const monthStart=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
+  const gridStart=new Date(monthStart);
+  gridStart.setDate(gridStart.getDate()-((gridStart.getDay()+6)%7));
+
+  const gridEnd=new Date(gridStart);
+  gridEnd.setDate(gridEnd.getDate()+41);
+
+  // Get every course occurrence visible in the six-week calendar grid.
+  const occ=trainerOccurrences(gridStart,gridEnd);
+
+  // Group them by day so one glance reveals every teaching date.
+  const byDate=new Map();
+  occ.forEach(o=>{
+    const key=formatDMY(o.date);
+    if(!byDate.has(key)) byDate.set(key,[]);
+    byDate.get(key).push(o);
+  });
+
+  let html="";
+  for(let i=0;i<42;i++){
+    const d=new Date(gridStart);
+    d.setDate(gridStart.getDate()+i);
+
+    const key=formatDMY(d);
+    const courses=byDate.get(key)||[];
+    const hasCourse=courses.length>0;
+    const isSelected=sameDay(d,selectedDate);
+
+    const timeHint=hasCourse
+      ? courses.map(x=>x.time||"Cours").join(", ")
+      : "";
+
+    html+=`<button
+      class="${d.getMonth()!==calendarCursor.getMonth()?"other ":""}${isSelected?"selected ":""}${hasCourse?"has-course ":""}"
+      data-date="${key}"
+      aria-label="${d.getDate()} ${MONTHS[d.getMonth()]}${hasCourse?`, cours ${timeHint}`:""}"
+      title="${hasCourse?`Cours: ${timeHint}`:""}"
+    >
+      <span class="day-number">${d.getDate()}</span>
+      ${hasCourse?`<span class="course-marker">${courses.length>1?courses.length:""}</span>`:""}
+    </button>`;
+  }
+
   $("#calendarGrid").innerHTML=html;
-  $$("#calendarGrid button").forEach(b=>b.onclick=()=>{selectedDate=parseDate(b.dataset.date);calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderCalendar();});
-  const day=trainerOccurrences(new Date(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate()),new Date(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate(),23,59,59));
+
+  $$("#calendarGrid button").forEach(b=>b.onclick=()=>{
+    selectedDate=parseDate(b.dataset.date);
+    calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);
+    renderCalendar();
+  });
+
+  const selectedKey=formatDMY(selectedDate);
+  const day=byDate.get(selectedKey) || trainerOccurrences(
+    new Date(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate()),
+    new Date(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate(),23,59,59)
+  );
+
   $("#selectedDayTitle").textContent=`Cours du ${selectedDate.getDate()} ${MONTHS[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
-  $("#selectedDayCourses").innerHTML=day.length?day.map(renderMiniCourse).join(""):`<div class="empty-card">Aucun cours ce jour-là.</div>`;
-  const futureEnd=new Date(selectedDate);futureEnd.setDate(futureEnd.getDate()+60);
-  const other=trainerOccurrences(new Date(selectedDate.getTime()+86400000),futureEnd).slice(0,4);
-  $("#calendarOtherCourses").innerHTML=other.length?other.map(renderMiniCourse).join(""):`<div class="empty-card">Aucun autre cours trouvé.</div>`;
+  $("#selectedDayCourses").innerHTML=day.length
+    ? day.map(renderMiniCourse).join("")
+    : `<div class="empty-card">Aucun cours ce jour-là.</div>`;
+
+  // Always show the next courses, not only the next 60 days.
+  const futureStart=new Date(selectedDate.getTime()+86400000);
+  const futureEnd=new Date(selectedDate);
+  futureEnd.setFullYear(futureEnd.getFullYear()+2);
+
+  const other=trainerOccurrences(futureStart,futureEnd).slice(0,6);
+  $("#calendarOtherCourses").innerHTML=other.length
+    ? other.map(renderMiniCourse).join("")
+    : `<div class="empty-card">Aucun autre cours trouvé.</div>`;
+
   bindOccurrences();
 }
 function renderPlaces(){
