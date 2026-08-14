@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#062d55"/><circle cx="256" cy="224" r="112" fill="#0871d3"/><path d="M121 207l135-70 135 70-135 70-135-70zm55 50v72c56 45 104 45 160 0v-72l-80 42-80-42z" fill="white"/><text x="256" y="410" text-anchor="middle" font-family="Arial,sans-serif" font-size="66" font-weight="700" fill="white">UniPop</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="112" fill="#062a4c"/>
+<circle cx="256" cy="220" r="105" fill="#0870cf"/>
+<path d="M127 205 256 138l129 67-129 67-129-67Zm51 49v76c47 40 109 40 156 0v-76l-78 41-78-41Z" fill="none" stroke="#fff" stroke-width="18" stroke-linejoin="round"/>
+<text x="256" y="420" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="66" fill="#fff">UniPop</text>
+</svg>

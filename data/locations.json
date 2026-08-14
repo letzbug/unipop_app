@@ -2,14 +2,14 @@
   "_default": {
     "room": "Salle à confirmer",
     "phone": "+352 8002 9001",
-    "access": "Entrée principale. Les photos, le chemin vers la salle et les informations pratiques peuvent être complétés dans data/locations.json.",
+    "access": "Entrée principale. Les informations détaillées pour le bâtiment, l'étage et le chemin vers la salle peuvent être ajoutées ici.",
     "equipment": [
       "Ordinateur (Windows)",
+      "Tableau blanc",
       "Projecteur",
       "HDMI / USB-C",
-      "Wi‑Fi",
       "Haut-parleurs",
-      "Tableau blanc"
+      "Wi-Fi"
     ],
     "photos": [
       {
@@ -24,19 +24,19 @@
     ],
     "tech": [
       {
-        "title": "1. Allumer l’ordinateur",
+        "title": "1. Allumer l'ordinateur",
         "icon": "⏻",
-        "text": "Appuyez sur le bouton d’alimentation du PC."
+        "text": "Appuyez sur le bouton d'alimentation du PC."
       },
       {
         "title": "2. Démarrer le projecteur",
-        "icon": "▣",
-        "text": "Utilisez la commande murale ou la télécommande."
+        "icon": "◉",
+        "text": "Utilisez la télécommande ou le panneau mural."
       },
       {
         "title": "3. Sélectionner la source (HDMI)",
         "icon": "HDMI 1",
-        "text": "Choisissez la source correspondant au câble utilisé."
+        "text": "Choisissez l'entrée HDMI correspondant à votre appareil."
       },
       {
         "title": "4. Régler le son",
@@ -45,28 +45,10 @@
       }
     ]
   },
-  "centredeformation128routedetrevesniederanven": {
-    "room": "Salle à confirmer",
-    "phone": "+352 8002 9001",
-    "access": "Exemple : utilisez l’entrée principale. Ajoutez ici le parking, l’étage et le chemin exact vers la salle.",
-    "equipment": [
-      "Ordinateur (Windows)",
-      "Projecteur",
-      "HDMI / USB-C",
-      "Wi‑Fi",
-      "Haut-parleurs",
-      "Tableau blanc"
-    ],
-    "photos": [
-      {
-        "label": "Bâtiment"
-      },
-      {
-        "label": "Entrée"
-      },
-      {
-        "label": "Salle"
-      }
-    ]
+  "places": {},
+  "courses": {
+    "arbd8": {
+      "room": "Salle à confirmer"
+    }
   }
 }

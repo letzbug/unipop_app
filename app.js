@@ -1,43 +1,374 @@
 const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
-let trainings=[],locations={},trainer=null,trainerCourses=[],selectedCourse=null,historyStack=[],calendarCursor=new Date(),selectedDate=new Date();
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const DAY_FR=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
-const MON_FR=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
-function normalize(s=""){return s.toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"")}
-function lev(a,b){a=normalize(a);b=normalize(b);const m=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let prev=m[0];m[0]=i;for(let j=1;j<=b.length;j++){let cur=m[j];m[j]=Math.min(m[j]+1,m[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=cur}}return m[b.length]}
-function parseDate(s){if(!s)return null;const[d,m,y]=s.split("/").map(Number);return new Date(y,m-1,d,12)}
-function fmtDate(d){return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`}
-function sameDay(a,b){return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate()}
-function durationMinutes(s=""){let h=0,m=0,x=s.match(/(\d+)\s*h/);if(x)h=+x[1];x=s.match(/h\s*(\d+)/);if(x)m=+x[1];if(!h){x=s.match(/(\d+)\s*min/);if(x)m=+x[1]}return h*60+m}
-function addMinutes(hhmm,mins){let[h,m]=hhmm.split(":").map(Number),t=h*60+m+mins;return `${String(Math.floor(t/60)%24).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`}
-function trainerName(e){return `${e.prenom||""} ${e.nom||""}`.trim()}
-function venueKey(c){const a=c.adresseCours||{};return normalize(`${a.nom||""}${a.rueNumero||""}${a.localite||""}`)}
-function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-async function loadData(){try{const[r,l]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json")]);trainings=await r.json();locations=await l.json();$("#loadStatus").textContent=`${trainings.length} cours chargés`;setupSearch();const saved=localStorage.getItem("unipopTrainer");if(saved)$("#trainerInput").value=saved}catch(e){$("#loadStatus").textContent="Impossible de charger les données. Vérifiez la connexion.";console.error(e)}}
-function uniqueTrainers(){const map=new Map();trainings.forEach(c=>(c.enseignants||[]).forEach(e=>{const n=trainerName(e);if(n)map.set(normalize(n),n)}));return[...map.values()].sort((a,b)=>a.localeCompare(b,"fr"))}
-function scoreName(query,name){const q=normalize(query),n=normalize(name);if(!q)return 999;if(n===q)return 0;if(n.includes(q)||q.includes(n))return 1;const parts=name.split(/\s+/);let best=lev(q,n);parts.forEach(p=>best=Math.min(best,lev(q,p)));return best+2}
-function matchesFor(q){return uniqueTrainers().map(n=>[n,scoreName(q,n)]).filter(x=>x[1]<=Math.max(4,Math.floor(normalize(q).length*.35)+2)).sort((a,b)=>a[1]-b[1]).slice(0,6).map(x=>x[0])}
-function setupSearch(){$("#trainerInput").addEventListener("input",()=>renderSuggestions(matchesFor($("#trainerInput").value)))}
-function renderSuggestions(arr){const box=$("#suggestions");box.innerHTML="";arr.forEach(n=>{const b=document.createElement("button");b.textContent=n;b.onclick=()=>{$("#trainerInput").value=n;box.innerHTML=""};box.appendChild(b)})}
-$("#clearName").onclick=()=>{$("#trainerInput").value="";$("#suggestions").innerHTML="";$("#trainerInput").focus()};
-$("#loginBtn").onclick=()=>{const q=$("#trainerInput").value.trim();if(!q)return;const best=matchesFor(q)[0];if(!best){alert("Formateur introuvable dans les données.");return}trainer=best;localStorage.setItem("unipopTrainer",best);trainerCourses=trainings.filter(c=>(c.enseignants||[]).some(e=>normalize(trainerName(e))===normalize(best)));$("#profileName").textContent=best;showHome()};
-function occurrences(c,from,to){const start=parseDate(c.dateDebut),end=parseDate(c.dateFin);if(!start||!end)return[];const lo=new Date(Math.max(start.getTime(),from.getTime())),hi=new Date(Math.min(end.getTime(),to.getTime()));if(lo>hi)return[];let hrs=c.horaires||[];if(!hrs.length&&c.horairePrevu){hrs=[...c.horairePrevu.matchAll(/(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi|Dimanche)\s+à\s+(\d{1,2}:\d{2})\s+\(durée\s+([^)]+)\)/g)].map(m=>({jour:m[1],heure:m[2],duree:m[3]}))}const out=[];for(let d=new Date(lo);d<=hi;d.setDate(d.getDate()+1)){const day=DAY_FR[d.getDay()];hrs.filter(h=>normalize(h.jour)===normalize(day)).forEach(h=>out.push({course:c,date:new Date(d),time:h.heure||"",duration:h.duree||c.duree||""}))}if(!hrs.length&&sameDay(start,end)&&start>=from&&start<=to)out.push({course:c,date:start,time:"",duration:c.duree||""});return out}
-function allOccurrences(from,to){return trainerCourses.flatMap(c=>occurrences(c,from,to)).sort((a,b)=>a.date-b.date||a.time.localeCompare(b.time))}
-function locFor(c){return locations[venueKey(c)]||locations["_default"]}
-function navigate(view,push=true){const cur=$(".view.active")?.id;if(push&&cur&&cur!==view)historyStack.push(cur);$$(".view").forEach(v=>v.classList.remove("active"));$("#"+view).classList.add("active");window.scrollTo(0,0)}
-$$(".backBtn").forEach(b=>b.onclick=()=>navigate(historyStack.pop()||"homeView",false));
-function showHome(){$("#hello").textContent=`Bonjour ${trainer.split(" ")[0]} 👋`;const now=new Date(),end=new Date(now);end.setDate(end.getDate()+180);const startToday=new Date(now.getFullYear(),now.getMonth(),now.getDate()),endToday=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59);const today=allOccurrences(startToday,endToday),next=allOccurrences(now,end).slice(0,8);$("#todayBlock").innerHTML=today.length?today.map((o,i)=>courseCard(o,i===0)).join(""):`<div class="empty">Aucun cours prévu aujourd’hui.</div>`;$("#upcomingList").innerHTML=next.length?next.map(o=>courseCard(o,false,true)).join(""):`<div class="empty">Aucun prochain cours trouvé.</div>`;bindCourseCards();navigate("homeView",false)}
-function courseCard(o,hero=false,withDate=false){const c=o.course,a=c.adresseCours||{},end=o.time?addMinutes(o.time,durationMinutes(o.duration)):"";const left=withDate?`<div class="datebox"><small>${DAY_FR[o.date.getDay()].slice(0,3).toUpperCase()}</small><b>${o.date.getDate()}</b><small>${MON_FR[o.date.getMonth()].slice(0,4).toUpperCase()}</small></div>`:`<div class="time">${o.time||"—"}${end?`<span>${end}</span>`:""}</div>`;return `<div class="course-card" data-id="${c.id}" data-date="${fmtDate(o.date)}" data-time="${o.time}">${left}<div class="courseinfo"><h4>${escapeHtml(c.intitule||"Cours")}</h4><p>${escapeHtml(a.nom||a.localite||"Lieu à confirmer")}</p><p>${escapeHtml(locFor(c).room||"Salle à confirmer")}</p>${hero?`<span class="badge">Aujourd’hui</span>`:""}</div><div class="arrow">›</div></div>`}
-function bindCourseCards(){$$(".course-card").forEach(el=>el.onclick=()=>{const c=trainerCourses.find(x=>String(x.id)===el.dataset.id);selectedCourse={course:c,date:parseDate(el.dataset.date),time:el.dataset.time};renderDetail();navigate("detailView")})}
-function renderDetail(){const{course:c,date,time}=selectedCourse,a=c.adresseCours||{},loc=locFor(c);const dur=(c.horaires||[]).find(h=>h.heure===time)?.duree||c.duree||"";$("#detailHero").innerHTML=`<div class="bigtime">${time||""}${time&&durationMinutes(dur)?` – ${addMinutes(time,durationMinutes(dur))}`:""}</div><p>${DAY_FR[date.getDay()]} ${date.getDate()} ${MON_FR[date.getMonth()]} ${date.getFullYear()}</p><h1>${escapeHtml(c.intitule||"Cours")}</h1><p>⌖ ${escapeHtml(a.nom||a.localite||"Lieu")} ${loc.room?`– ${escapeHtml(loc.room)}`:""}</p>`;$("#addressText").innerHTML=[a.rueNumero,a.codePostal&&a.localite?`${a.codePostal} ${a.localite}`:a.localite].filter(Boolean).map(escapeHtml).join("<br>");$("#accessText").textContent=loc.access||"Les informations d’accès détaillées seront ajoutées ici.";$("#equipmentList").innerHTML=(loc.equipment||["Ordinateur","Projecteur","Wi‑Fi"]).map(x=>`<div>${escapeHtml(x)}</div>`).join("");const photos=loc.photos||[];$("#photoStrip").innerHTML=(photos.length?photos:[{label:"Bâtiment"},{label:"Entrée"},{label:loc.room||"Salle"}]).map(p=>`<div class="photo" ${p.file?`style="background-image:url('${p.file}')"`:""}>${escapeHtml(p.label||"Photo")}</div>`).join("");const addr=[a.rueNumero,a.codePostal,a.localite,a.paysNom].filter(Boolean).join(", ");$("#routeBtn").onclick=()=>window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`,"_blank");$("#callBtn").onclick=()=>location.href=`tel:${loc.phone||"+35280029001"}`;$("#techBtn").onclick=()=>{renderTech(loc);navigate("techView")};$("#icsBtn").onclick=downloadICS}
-function renderTech(loc){$("#techTitle").textContent=`Guide technique${loc.room?` – ${loc.room}`:""}`;const steps=loc.tech||[{title:"1. Allumer l’ordinateur",icon:"⏻"},{title:"2. Démarrer le projecteur",icon:"▣"},{title:"3. Sélectionner la source (HDMI)",icon:"HDMI 1"},{title:"4. Régler le son",icon:"🔊"}];$("#techSteps").innerHTML=steps.map(s=>`<section class="tech-step"><h3>${escapeHtml(s.title)}</h3><div class="tech-image">${escapeHtml(s.icon||"")}</div>${s.text?`<p>${escapeHtml(s.text)}</p>`:""}</section>`).join("")}
-function downloadICS(){const{course:c,date,time}=selectedCourse,a=c.adresseCours||{};const dur=(c.horaires||[]).find(h=>h.heure===time)?.duree||c.duree||"";let[h,m]=(time||"09:00").split(":").map(Number),mins=durationMinutes(dur)||60;const st=new Date(date.getFullYear(),date.getMonth(),date.getDate(),h,m),en=new Date(st.getTime()+mins*60000),z=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}T${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}00`;const txt=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:${z(st)}\r\nDTEND:${z(en)}\r\nSUMMARY:${c.intitule||"Cours UniPop"}\r\nLOCATION:${[a.nom,a.rueNumero,a.localite].filter(Boolean).join(", ")}\r\nEND:VEVENT\r\nEND:VCALENDAR`;const blob=new Blob([txt],{type:"text/calendar"}),u=URL.createObjectURL(blob),ae=document.createElement("a");ae.href=u;ae.download="cours-unipop.ics";ae.click();URL.revokeObjectURL(u)}
-function openCalendar(){selectedDate=new Date();calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderCalendar();navigate("calendarView")}
-$("#openCalendar").onclick=openCalendar;$("#openCalendarTop").onclick=openCalendar;
-$("#prevMonth").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};$("#nextMonth").onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};
-function renderCalendar(){$("#monthLabel").textContent=`${MON_FR[calendarCursor.getMonth()]} ${calendarCursor.getFullYear()}`;const first=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1),start=new Date(first);start.setDate(start.getDate()-((start.getDay()+6)%7));const end=new Date(start);end.setDate(end.getDate()+41);const occ=allOccurrences(start,end),keys=new Set(occ.map(o=>fmtDate(o.date)));let html="";for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);html+=`<button data-date="${fmtDate(d)}" class="${d.getMonth()!==calendarCursor.getMonth()?"muted ":""}${sameDay(d,selectedDate)?"selected ":""}${keys.has(fmtDate(d))?"has-course":""}">${d.getDate()}</button>`}$("#calendarGrid").innerHTML=html;$$$("#calendarGrid button");$$("#calendarGrid button").forEach(b=>b.onclick=()=>{selectedDate=parseDate(b.dataset.date);calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderCalendar()});const dayOcc=occ.filter(o=>sameDay(o.date,selectedDate));$("#selectedDateTitle").textContent=`Cours du ${selectedDate.getDate()} ${MON_FR[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;$("#dateCourses").innerHTML=dayOcc.length?dayOcc.map(o=>courseCard(o,false,false)).join(""):`<div class="empty">Aucun cours ce jour-là.</div>`;bindCourseCards()}
-function renderPlaces(){const seen=new Map();trainerCourses.forEach(c=>{const a=c.adresseCours||{};if(a.nom||a.localite)seen.set(venueKey(c),c)});$("#placesList").innerHTML=[...seen.values()].map(c=>{const a=c.adresseCours||{},l=locFor(c);return `<section class="place-card"><h3>${escapeHtml(a.nom||a.localite||"Lieu")}</h3><p>${escapeHtml([a.rueNumero,a.codePostal,a.localite].filter(Boolean).join(", "))}</p><p class="mutedtext">${escapeHtml(l.access||"Informations détaillées à compléter.")}</p></section>`}).join("")||`<div class="empty">Aucun lieu trouvé.</div>`;navigate("placesView")}
-$$(".bottomnav button").forEach(b=>b.onclick=()=>{if(b.dataset.tab==="home")showHome();if(b.dataset.tab==="calendar")openCalendar();if(b.dataset.tab==="places")renderPlaces();if(b.dataset.tab==="profile")navigate("profileView")});
-$("#logoutBtn").onclick=()=>{localStorage.removeItem("unipopTrainer");trainer=null;trainerCourses=[];historyStack=[];navigate("loginView",false)};
-if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
-loadData();
+
+let trainings=[], locations={}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null;
+let backStack=[], selectedDate=new Date(), calendarCursor=new Date();
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const DAYS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
+const MONTHS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const MONTHS_SHORT=["JANV.","FÉVR.","MARS","AVR.","MAI","JUIN","JUIL.","AOÛT","SEPT.","OCT.","NOV.","DÉC."];
+
+function normalizeText(s=""){
+  return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+function escapeHtml(s=""){
+  return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function parseDate(s){
+  if(!s) return null;
+  const parts=String(s).split("/");
+  if(parts.length!==3) return null;
+  const [d,m,y]=parts.map(Number);
+  return new Date(y,m-1,d,12);
+}
+function sameDay(a,b){
+  return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+}
+function formatDMY(d){
+  return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`;
+}
+function minutesFromDuration(s=""){
+  const t=String(s).toLowerCase();
+  let h=0,m=0;
+  let mh=t.match(/(\d+)\s*h/); if(mh) h=+mh[1];
+  let mm=t.match(/h\s*(\d+)/); if(mm) m=+mm[1];
+  if(!h){ let only=t.match(/(\d+)\s*min/); if(only) m=+only[1]; }
+  return h*60+m;
+}
+function addMinutes(hhmm,mins){
+  if(!hhmm) return "";
+  const [h,m]=hhmm.split(":").map(Number);
+  const t=h*60+m+mins;
+  return `${String(Math.floor(t/60)%24).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`;
+}
+function teacherName(e){ return `${e.prenom||""} ${e.nom||""}`.trim(); }
+
+function editDistance(a,b){
+  a=normalizeText(a); b=normalizeText(b);
+  const row=Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){
+    let prev=row[0]; row[0]=i;
+    for(let j=1;j<=b.length;j++){
+      const cur=row[j];
+      row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));
+      prev=cur;
+    }
+  }
+  return row[b.length];
+}
+function allTeacherNames(){
+  const map=new Map();
+  trainings.forEach(c=>(c.enseignants||[]).forEach(e=>{
+    const n=teacherName(e); if(n) map.set(normalizeText(n),n);
+  }));
+  return [...map.values()].sort((a,b)=>a.localeCompare(b,"fr"));
+}
+function nameScore(q,n){
+  const nq=normalizeText(q), nn=normalizeText(n);
+  if(!nq) return 999;
+  if(nq===nn) return 0;
+  if(nn.includes(nq)||nq.includes(nn)) return 1;
+  const bits=n.split(/\s+/);
+  return Math.min(editDistance(nq,nn),...bits.map(x=>editDistance(nq,x)))+2;
+}
+function teacherMatches(q){
+  return allTeacherNames().map(n=>[n,nameScore(q,n)])
+    .filter(x=>x[1] <= Math.max(4,Math.ceil(normalizeText(q).length*.38)+1))
+    .sort((a,b)=>a[1]-b[1]).slice(0,6).map(x=>x[0]);
+}
+
+function locationKey(c){
+  const a=c.adresseCours||{};
+  return normalizeText(`${a.nom||""}${a.rueNumero||""}${a.localite||""}`);
+}
+function locationData(c){
+  const key=locationKey(c);
+  const byCourse = locations.courses?.[normalizeText(c.code||c.reference||c.id||"")];
+  if(byCourse) return {...locations._default,...byCourse};
+  return {...locations._default,...(locations.places?.[key]||{})};
+}
+
+async function loadAll(){
+  try{
+    const [r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json",{cache:"no-store"})]);
+    if(!r1.ok) throw new Error("trainings.json");
+    trainings=await r1.json();
+    locations=await r2.json();
+    $("#dataStatus").textContent=`${trainings.length} cours chargés`;
+    const saved=localStorage.getItem("unipopTrainer");
+    if(saved) $("#trainerInput").value=saved;
+  }catch(err){
+    console.error(err);
+    $("#dataStatus").textContent="Catalogue indisponible — vérifiez la connexion.";
+  }
+}
+
+function showScreen(id,push=true){
+  const active=$(".screen.active");
+  if(push && active && active.id!==id) backStack.push(active.id);
+  $$(".screen").forEach(s=>s.classList.remove("active"));
+  $("#"+id).classList.add("active");
+  window.scrollTo(0,0);
+}
+$$("[data-back]").forEach(b=>b.addEventListener("click",()=>showScreen(backStack.pop()||"homeScreen",false)));
+
+$("#trainerInput").addEventListener("input",()=>{
+  const box=$("#suggestions"); box.innerHTML="";
+  teacherMatches($("#trainerInput").value).forEach(n=>{
+    const b=document.createElement("button"); b.type="button"; b.textContent=n;
+    b.onclick=()=>{$("#trainerInput").value=n;box.innerHTML="";};
+    box.appendChild(b);
+  });
+});
+$("#clearTrainer").onclick=()=>{$("#trainerInput").value="";$("#suggestions").innerHTML="";$("#trainerInput").focus();};
+
+$("#loginButton").onclick=()=>{
+  const query=$("#trainerInput").value.trim();
+  if(!query) return;
+  const match=teacherMatches(query)[0];
+  if(!match){ alert("Formateur introuvable dans le catalogue."); return; }
+  currentTrainer=match;
+  trainerCourses=trainings.filter(c=>(c.enseignants||[]).some(e=>normalizeText(teacherName(e))===normalizeText(match)));
+  localStorage.setItem("unipopTrainer",match);
+  $("#profileName").textContent=match;
+  renderHome();
+};
+
+function scheduleRows(c){
+  if(Array.isArray(c.horaires) && c.horaires.length) return c.horaires;
+  const txt=c.horairePrevu||"";
+  const rows=[];
+  const rx=/(Lundi|Mardi|Mercredi|Jeudi|Vendredi|Samedi|Dimanche)\s+à\s+(\d{1,2}:\d{2})(?:\s+\(durée\s+([^)]+)\))?/g;
+  let m;
+  while((m=rx.exec(txt))) rows.push({jour:m[1],heure:m[2],duree:m[3]||c.duree||""});
+  return rows;
+}
+function occurrencesForCourse(c,from,to){
+  const start=parseDate(c.dateDebut), end=parseDate(c.dateFin);
+  if(!start||!end) return [];
+  const lo=new Date(Math.max(start.getTime(),from.getTime()));
+  const hi=new Date(Math.min(end.getTime(),to.getTime()));
+  if(lo>hi) return [];
+  const rows=scheduleRows(c);
+  const out=[];
+  if(rows.length){
+    for(let d=new Date(lo); d<=hi; d.setDate(d.getDate()+1)){
+      const day=DAYS[d.getDay()];
+      rows.filter(r=>normalizeText(r.jour)===normalizeText(day)).forEach(r=>{
+        out.push({course:c,date:new Date(d),time:r.heure||"",duration:r.duree||c.duree||""});
+      });
+    }
+  }else if(sameDay(start,end) && start>=from && start<=to){
+    out.push({course:c,date:start,time:"",duration:c.duree||""});
+  }
+  return out;
+}
+function trainerOccurrences(from,to){
+  return trainerCourses.flatMap(c=>occurrencesForCourse(c,from,to))
+    .sort((a,b)=>a.date-b.date || a.time.localeCompare(b.time));
+}
+
+function venueLabel(c){
+  const a=c.adresseCours||{};
+  return a.nom||a.localite||"Lieu à confirmer";
+}
+function roomLabel(c){
+  return locationData(c).room||"Salle à confirmer";
+}
+function occurrenceCard(o,type="next"){
+  const c=o.course;
+  const end=o.time?addMinutes(o.time,minutesFromDuration(o.duration)):"";
+  if(type==="today"){
+    return `<article class="course-card today occurrence" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
+      <div class="course-left time"><strong>${escapeHtml(o.time||"—")}</strong><span>${escapeHtml(end||"")}</span></div>
+      <div class="course-info">
+        <h4>${escapeHtml(c.intitule||"Cours")}</h4>
+        <p>${escapeHtml(venueLabel(c))}</p>
+        <p>${escapeHtml(roomLabel(c))}</p>
+        <span class="green-pill">Aujourd'hui</span>
+      </div>
+    </article>`;
+  }
+  return `<article class="course-card occurrence" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
+    <div class="course-left date"><small>${DAYS[o.date.getDay()].slice(0,3).toUpperCase()}</small><b>${o.date.getDate()}</b><small>${MONTHS_SHORT[o.date.getMonth()]}</small></div>
+    <div class="course-info">
+      <div class="line1">${escapeHtml(o.time||"—")}${end?` – ${escapeHtml(end)}`:""}</div>
+      <h4>${escapeHtml(c.intitule||"Cours")}</h4>
+      <p>${escapeHtml(venueLabel(c))} – ${escapeHtml(roomLabel(c))}</p>
+    </div>
+    <div class="chev">›</div>
+  </article>`;
+}
+function bindOccurrences(){
+  $$(".occurrence").forEach(el=>el.onclick=()=>{
+    const course=trainerCourses.find(c=>String(c.id)===String(el.dataset.id));
+    selectedOccurrence={course,date:parseDate(el.dataset.date),time:el.dataset.time};
+    renderDetail();
+    showScreen("detailScreen");
+  });
+}
+function renderHome(){
+  const first=currentTrainer.split(/\s+/)[0];
+  $("#helloName").textContent=`Bonjour ${first} 👋`;
+  const now=new Date();
+  const todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59);
+  const futureEnd=new Date(now); futureEnd.setDate(futureEnd.getDate()+240);
+
+  const today=trainerOccurrences(todayStart,todayEnd);
+  const next=trainerOccurrences(now,futureEnd).slice(0,8);
+
+  $("#todayCourse").innerHTML=today.length
+    ? today.map(o=>occurrenceCard(o,"today")).join("")
+    : `<div class="empty-card">Aucun cours prévu aujourd'hui.</div>`;
+
+  $("#nextCourses").innerHTML=next.length
+    ? next.map(o=>occurrenceCard(o)).join("")
+    : `<div class="empty-card">Aucun prochain cours trouvé.</div>`;
+
+  bindOccurrences();
+  showScreen("homeScreen",false);
+}
+
+function renderDetail(){
+  const {course:c,date,time}=selectedOccurrence;
+  const loc=locationData(c), a=c.adresseCours||{};
+  const row=scheduleRows(c).find(x=>x.heure===time);
+  const dur=row?.duree||c.duree||"";
+  const end=time?addMinutes(time,minutesFromDuration(dur)):"";
+
+  $("#detailIntro").innerHTML=`
+    <div class="when">${escapeHtml(time||"")}${end?` – ${escapeHtml(end)}`:""}</div>
+    <div class="date">${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}</div>
+    <h1>${escapeHtml(c.intitule||"Cours")}</h1>
+    <p>⌖ ${escapeHtml(venueLabel(c))} – ${escapeHtml(roomLabel(c))}</p>`;
+
+  $("#addressText").innerHTML=[a.rueNumero,[a.codePostal,a.localite].filter(Boolean).join(" ")].filter(Boolean).map(escapeHtml).join("<br>");
+  $("#accessText").textContent=loc.access||"Informations d'accès à compléter.";
+
+  const photos=loc.photos||[];
+  const defaults=[{label:"Bâtiment"},{label:"Entrée"},{label:roomLabel(c)}];
+  $("#photoGrid").innerHTML=(photos.length?photos:defaults).slice(0,3).map(p=>
+    `<div class="photo-tile" ${p.file?`style="background-image:url('${escapeHtml(p.file)}')"`:""}><span>${escapeHtml(p.label||"Photo")}</span></div>`
+  ).join("");
+
+  $("#equipmentGrid").innerHTML=(loc.equipment||[]).map(x=>`<div>${escapeHtml(x)}</div>`).join("");
+
+  const addr=[a.rueNumero,a.codePostal,a.localite,a.paysNom].filter(Boolean).join(", ");
+  $("#routeButton").onclick=()=>window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`,"_blank");
+  $("#phoneButton").onclick=()=>location.href=`tel:${loc.phone||"+35280029001"}`;
+  $("#icsButton").onclick=downloadICS;
+  $("#techButton").onclick=()=>{renderTech(loc,c);showScreen("techScreen");};
+}
+function renderTech(loc,c){
+  $("#techTitle").textContent=`Guide technique – ${roomLabel(c)}`;
+  const steps=loc.tech||[];
+  $("#techSteps").innerHTML=(steps.length?steps:[
+    {title:"1. Allumer l'ordinateur",icon:"⏻"},
+    {title:"2. Démarrer le projecteur",icon:"◉"},
+    {title:"3. Sélectionner la source (HDMI)",icon:"HDMI 1"},
+    {title:"4. Régler le son",icon:"🔊"}
+  ]).map(s=>`<section class="tech-step">
+      <h3>${escapeHtml(s.title)}</h3>
+      <div class="tech-image" ${s.image?`style="background-image:url('${escapeHtml(s.image)}')"`:""}>${s.image?"":escapeHtml(s.icon||"")}</div>
+      ${s.text?`<p>${escapeHtml(s.text)}</p>`:""}
+    </section>`).join("");
+}
+function downloadICS(){
+  const {course:c,date,time}=selectedOccurrence, a=c.adresseCours||{};
+  const row=scheduleRows(c).find(x=>x.heure===time);
+  const mins=minutesFromDuration(row?.duree||c.duree||"")||60;
+  const [h,m]=(time||"09:00").split(":").map(Number);
+  const start=new Date(date.getFullYear(),date.getMonth(),date.getDate(),h,m);
+  const end=new Date(start.getTime()+mins*60000);
+  const z=d=>`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}T${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}00`;
+  const body=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:${z(start)}\r\nDTEND:${z(end)}\r\nSUMMARY:${c.intitule||"Cours UniPop"}\r\nLOCATION:${[a.nom,a.rueNumero,a.localite].filter(Boolean).join(", ")}\r\nEND:VEVENT\r\nEND:VCALENDAR`;
+  const blob=new Blob([body],{type:"text/calendar"});
+  const u=URL.createObjectURL(blob), link=document.createElement("a");
+  link.href=u; link.download="cours-unipop.ics"; link.click(); URL.revokeObjectURL(u);
+}
+
+function openCalendar(){
+  selectedDate=new Date();
+  calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);
+  renderCalendar();
+  showScreen("calendarScreen");
+}
+$("#calendarButton").onclick=openCalendar;
+$("#calendarTopButton").onclick=openCalendar;
+$("#prevMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar();};
+$("#nextMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar();};
+
+function renderMiniCourse(o){
+  const c=o.course;
+  return `<div class="mini-course occurrence" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
+    <div class="time">${escapeHtml(o.time||"—")}${o.time?` – ${escapeHtml(addMinutes(o.time,minutesFromDuration(o.duration)))}`:""}</div>
+    <h4>${escapeHtml(c.intitule||"Cours")}</h4>
+    <p>${escapeHtml(venueLabel(c))} – ${escapeHtml(roomLabel(c))}</p>
+  </div>`;
+}
+function renderCalendar(){
+  $("#monthTitle").textContent=`${MONTHS[calendarCursor.getMonth()]} ${calendarCursor.getFullYear()}`;
+
+  const monthStart=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
+  const gridStart=new Date(monthStart);
+  gridStart.setDate(gridStart.getDate()-((gridStart.getDay()+6)%7));
+  const gridEnd=new Date(gridStart); gridEnd.setDate(gridEnd.getDate()+41);
+  const occ=trainerOccurrences(gridStart,gridEnd);
+  const has=new Set(occ.map(o=>formatDMY(o.date)));
+
+  let html="";
+  for(let i=0;i<42;i++){
+    const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
+    html+=`<button class="${d.getMonth()!==calendarCursor.getMonth()?"other ":""}${sameDay(d,selectedDate)?"selected ":""}${has.has(formatDMY(d))?"has-course":""}" data-date="${formatDMY(d)}">${d.getDate()}</button>`;
+  }
+  $("#calendarGrid").innerHTML=html;
+
+  $$("#calendarGrid button").forEach(b=>b.onclick=()=>{
+    selectedDate=parseDate(b.dataset.date);
+    calendarCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);
+    renderCalendar();
+  });
+
+  const day=trainerOccurrences(new Date(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate()),new Date(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate(),23,59,59));
+  $("#selectedDayTitle").textContent=`Cours du ${selectedDate.getDate()} ${MONTHS[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`;
+  $("#selectedDayCourses").innerHTML=day.length?day.map(renderMiniCourse).join(""):`<div class="empty-card">Aucun cours ce jour-là.</div>`;
+
+  const futureEnd=new Date(selectedDate); futureEnd.setDate(futureEnd.getDate()+60);
+  const other=trainerOccurrences(new Date(selectedDate.getTime()+86400000),futureEnd).slice(0,4);
+  $("#calendarOtherCourses").innerHTML=other.length?other.map(renderMiniCourse).join(""):`<div class="empty-card">Aucun autre cours trouvé.</div>`;
+  bindOccurrences();
+}
+
+function renderPlaces(){
+  const seen=new Map();
+  trainerCourses.forEach(c=>seen.set(locationKey(c),c));
+  $("#placesList").innerHTML=[...seen.values()].map(c=>{
+    const a=c.adresseCours||{}, loc=locationData(c);
+    return `<section class="place-card">
+      <h3>${escapeHtml(venueLabel(c))}</h3>
+      <p>${escapeHtml([a.rueNumero,a.codePostal,a.localite].filter(Boolean).join(", "))}</p>
+      <p><strong>${escapeHtml(roomLabel(c))}</strong></p>
+      <p>${escapeHtml(loc.access||"Informations d'accès à compléter.")}</p>
+    </section>`;
+  }).join("") || `<div class="empty-card">Aucun lieu trouvé.</div>`;
+}
+$$(".tab").forEach(btn=>btn.onclick=()=>{
+  const id=btn.dataset.go;
+  if(id==="homeScreen") renderHome();
+  else if(id==="calendarScreen") openCalendar();
+  else if(id==="placesScreen"){renderPlaces();showScreen("placesScreen");}
+  else showScreen(id);
+});
+
+$("#logoutButton").onclick=()=>{
+  localStorage.removeItem("unipopTrainer");
+  currentTrainer=null; trainerCourses=[]; backStack=[];
+  $("#trainerInput").value="";
+  showScreen("loginScreen",false);
+};
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+loadAll();

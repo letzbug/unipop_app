@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#062d55">
+  <meta name="theme-color" content="#062a4c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>UniPop · Espace Formateur</title>
@@ -11,102 +11,191 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div id="app">
-  <section id="loginView" class="view active login">
-    <div class="login-inner">
-      <div class="brand">UniPop<span>Luxembourg</span></div>
-      <div class="round-icon">⌂</div>
+<div id="phoneApp">
+  <!-- LOGIN -->
+  <section class="screen active" id="loginScreen">
+    <div class="login-shell">
+      <div class="fake-status">
+        <span>09:41</span><span>●●● ᯤ ▰</span>
+      </div>
+
+      <div class="brand-block">
+        <div class="brand-main">UniPop</div>
+        <div class="brand-sub">Luxembourg</div>
+      </div>
+
+      <div class="cap-circle" aria-hidden="true">
+        <svg viewBox="0 0 64 64">
+          <path d="M7 27 32 14l25 13-25 13L7 27Z" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M17 34v12c10 7 20 7 30 0V34" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg>
+      </div>
+
       <h1>Espace Formateur</h1>
-      <p>Entrez votre nom pour voir<br>vos cours et informations.</p>
-      <div class="searchbox">
-        <span>⌕</span>
-        <input id="trainerInput" autocomplete="name" placeholder="Votre nom">
-        <button id="clearName" aria-label="Effacer">×</button>
+      <p class="login-copy">Entrez votre nom pour voir<br>vos cours et informations.</p>
+
+      <div class="name-field">
+        <div class="search-icon">⌕</div>
+        <label>
+          <span>Votre nom</span>
+          <input id="trainerInput" type="text" autocomplete="name" placeholder="Marie Muller">
+        </label>
+        <button id="clearTrainer" type="button">×</button>
       </div>
       <div id="suggestions" class="suggestions"></div>
-      <button id="loginBtn" class="primary">Voir mes cours</button>
-      <p class="hint">✨ Tolérant aux accents et petites variations<br>(Müller, Muller, Muëller…)</p>
-      <div class="skyline">⌁ Luxembourg ⌁</div>
-      <div id="loadStatus" class="status">Chargement des données…</div>
+
+      <button class="blue-btn" id="loginButton">Voir mes cours</button>
+
+      <div class="accent-note">
+        <span>✨</span>
+        <p>Tolérant aux accents et petites<br>variations (Müller, Muller, Müeller...)</p>
+      </div>
+
+      <div class="skyline" aria-hidden="true">
+        <svg viewBox="0 0 420 155" preserveAspectRatio="none">
+          <path d="M6 137h408M18 137V99h28v38M29 99V82l7-14 7 14v17M54 137v-24h30v24M67 113v-30l5-11 5 11v30M97 137v-52h30v52M106 85V67h12v18M141 137v-28h34v28M150 109V91h16v18M188 137V98h36v39M196 98V75h8v23M208 98V65h8v33M240 137v-48h30v48M252 89V70h8v19M286 137v-36h30v36M298 101V82l5-12 5 12v19M330 137v-59h34v59M337 78V55l6-13 6 13v23M352 78V50l5-14 5 14v28M379 137V108h26v29M12 121l19-10 16 10M89 121l24-12 17 12M171 119l24-11 28 11M268 118l20-10 28 10M361 119l20-9 23 9"
+          fill="none" stroke="currentColor" stroke-width="2" opacity=".72"/>
+        </svg>
+      </div>
+      <div id="dataStatus" class="data-status">Chargement du catalogue...</div>
     </div>
   </section>
 
-  <section id="homeView" class="view">
-    <header class="topbar">
-      <div>
-        <h2 id="hello">Bonjour 👋</h2>
-        <p>Voici vos cours pour aujourd’hui.</p>
+  <!-- HOME -->
+  <section class="screen" id="homeScreen">
+    <header class="blue-head home-head">
+      <div class="fake-status compact"><span>09:41</span><span>●●● ᯤ ▰</span></div>
+      <div class="home-title-row">
+        <div>
+          <h2 id="helloName">Bonjour 👋</h2>
+          <p>Voici vos cours pour aujourd'hui.</p>
+        </div>
+        <button class="head-icon" id="calendarTopButton" title="Calendrier">▣</button>
       </div>
-      <button id="openCalendarTop" class="iconbtn">▣</button>
     </header>
-    <main class="content">
-      <div id="todayBlock"></div>
-      <h3>Vos prochains cours</h3>
-      <div id="upcomingList"></div>
-      <button id="openCalendar" class="primary">Voir mon calendrier</button>
+
+    <main class="main-panel">
+      <div id="todayCourse"></div>
+      <h3 class="section-title">Vos prochains cours</h3>
+      <div id="nextCourses"></div>
+      <button class="blue-btn calendar-wide" id="calendarButton">Voir mon calendrier</button>
     </main>
-    <nav class="bottomnav">
-      <button data-tab="home" class="active">▣<span>Aujourd’hui</span></button>
-      <button data-tab="calendar">□<span>Calendrier</span></button>
-      <button data-tab="places">⌖<span>Lieux</span></button>
-      <button data-tab="profile">♙<span>Profil</span></button>
+
+    <nav class="bottom-tabs">
+      <button class="tab active" data-go="homeScreen"><span>▣</span><small>Aujourd'hui</small></button>
+      <button class="tab" data-go="calendarScreen"><span>▤</span><small>Calendrier</small></button>
+      <button class="tab" data-go="placesScreen"><span>⌖</span><small>Lieux</small></button>
+      <button class="tab" data-go="profileScreen"><span>♙</span><small>Profil</small></button>
     </nav>
   </section>
 
-  <section id="calendarView" class="view">
-    <header class="simplebar"><button class="backBtn">‹</button><h2>Calendrier</h2><span></span></header>
-    <main class="content">
-      <div class="calendar-card">
-        <div class="cal-head"><button id="prevMonth">‹</button><strong id="monthLabel"></strong><button id="nextMonth">›</button></div>
-        <div class="weekdays"><span>LUN</span><span>MAR</span><span>MER</span><span>JEU</span><span>VEN</span><span>SAM</span><span>DIM</span></div>
-        <div id="calendarGrid" class="calendar-grid"></div>
+  <!-- DETAIL -->
+  <section class="screen" id="detailScreen">
+    <header class="blue-head detail-head">
+      <div class="fake-status compact"><span>09:41</span><span>●●● ᯤ ▰</span></div>
+      <div class="detail-nav">
+        <button class="back-btn" data-back>‹</button>
+        <strong>Détails du cours</strong>
+        <button class="dots">•••</button>
       </div>
-      <h3 id="selectedDateTitle">Cours</h3>
-      <div id="dateCourses"></div>
-    </main>
-  </section>
+      <div id="detailIntro" class="detail-intro"></div>
+    </header>
 
-  <section id="detailView" class="view">
-    <header class="simplebar"><button class="backBtn">‹</button><h2>Détails du cours</h2><span>•••</span></header>
-    <div id="detailHero" class="detail-hero"></div>
-    <main class="content details">
-      <div class="actionrow">
-        <button id="routeBtn"><b>⌖</b><span>Itinéraire</span></button>
-        <button id="callBtn"><b>☎</b><span>Appeler</span></button>
-        <button id="icsBtn"><b>▣</b><span>Calendrier</span></button>
+    <main class="detail-panel">
+      <div class="quick-actions">
+        <button id="routeButton"><span class="action-circle">⌖</span><small>Itinéraire</small></button>
+        <button id="phoneButton"><span class="action-circle">☎</span><small>Appeler</small></button>
+        <button id="icsButton"><span class="action-circle">▣</span><small>Ajouter au<br>calendrier</small></button>
       </div>
-      <section class="whitecard">
-        <h3>Adresse</h3><p id="addressText"></p>
-        <div class="mapmock"><span>⌖</span></div>
-        <h3>Photos du lieu</h3><div id="photoStrip" class="photos"></div>
-        <h3>Accès</h3><p id="accessText"></p>
-        <h3>Équipement dans la salle</h3><div id="equipmentList" class="equipment"></div>
-        <button id="techBtn" class="primary">Voir le guide technique</button>
+
+      <section class="detail-card">
+        <h4>Adresse</h4>
+        <p id="addressText"></p>
+        <div class="map-art">
+          <div class="road r1"></div><div class="road r2"></div><div class="road r3"></div>
+          <div class="map-pin">●</div>
+        </div>
+
+        <h4>Photos du lieu</h4>
+        <div class="photo-grid" id="photoGrid"></div>
+
+        <h4>Accès</h4>
+        <p id="accessText"></p>
+
+        <h4>Équipement dans la salle</h4>
+        <div class="equipment-grid" id="equipmentGrid"></div>
+
+        <button class="blue-btn" id="techButton">Voir le guide technique</button>
       </section>
     </main>
   </section>
 
-  <section id="techView" class="view">
-    <header class="simplebar"><button class="backBtn">‹</button><h2 id="techTitle">Guide technique</h2><span></span></header>
-    <main class="content"><div id="techSteps"></div></main>
+  <!-- CALENDAR -->
+  <section class="screen" id="calendarScreen">
+    <header class="white-top">
+      <button class="back-btn dark" data-back>‹</button>
+      <strong>Calendrier</strong>
+      <span></span>
+    </header>
+    <main class="light-page">
+      <section class="calendar-box">
+        <div class="calendar-head">
+          <button id="prevMonth">‹</button>
+          <strong id="monthTitle"></strong>
+          <button id="nextMonth">›</button>
+        </div>
+        <div class="week-row">
+          <span>LUN</span><span>MAR</span><span>MER</span><span>JEU</span><span>VEN</span><span>SAM</span><span>DIM</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </section>
+      <h3 id="selectedDayTitle" class="date-heading"></h3>
+      <div id="selectedDayCourses"></div>
+      <h3 class="date-heading">Autres cours</h3>
+      <div id="calendarOtherCourses"></div>
+    </main>
   </section>
 
-  <section id="placesView" class="view">
-    <header class="simplebar"><button class="backBtn">‹</button><h2>Lieux</h2><span></span></header>
-    <main class="content"><div id="placesList"></div></main>
+  <!-- TECH -->
+  <section class="screen" id="techScreen">
+    <header class="white-top">
+      <button class="back-btn dark" data-back>‹</button>
+      <strong id="techTitle">Guide technique</strong>
+      <span></span>
+    </header>
+    <main class="light-page">
+      <div id="techSteps"></div>
+    </main>
   </section>
 
-  <section id="profileView" class="view">
-    <header class="simplebar"><button class="backBtn">‹</button><h2>Profil</h2><span></span></header>
-    <main class="content">
-      <section class="whitecard">
+  <!-- PLACES -->
+  <section class="screen" id="placesScreen">
+    <header class="blue-head small-head">
+      <div class="detail-nav">
+        <button class="back-btn" data-back>‹</button><strong>Lieux</strong><span></span>
+      </div>
+    </header>
+    <main class="main-panel" id="placesList"></main>
+  </section>
+
+  <!-- PROFILE -->
+  <section class="screen" id="profileScreen">
+    <header class="blue-head small-head">
+      <div class="detail-nav">
+        <button class="back-btn" data-back>‹</button><strong>Profil</strong><span></span>
+      </div>
+    </header>
+    <main class="main-panel">
+      <section class="profile-card">
+        <div class="profile-avatar">♙</div>
         <h3 id="profileName"></h3>
-        <p>Vos cours sont chargés depuis le catalogue UniPop.</p>
-        <button id="logoutBtn" class="primary">Changer de formateur</button>
+        <p>Vos cours sont chargés automatiquement depuis le catalogue UniPop.</p>
+        <button class="blue-btn" id="logoutButton">Changer de formateur</button>
       </section>
     </main>
   </section>
 </div>
+
 <script src="app.js"></script>
 </body>
 </html>
