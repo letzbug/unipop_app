@@ -2091,3 +2091,69 @@ html.device-tablet .global-tabs .nav-icon,
 html.device-desktop .global-tabs .nav-icon{
   font-size:31px !important;
 }
+
+
+/* =========================================================
+   V14 — iOS CALENDAR BUTTON RESET
+   Native Safari button appearance was drawing rectangles.
+   ========================================================= */
+
+.calendar-grid button,
+.calendar-grid button:focus,
+.calendar-grid button:active,
+.calendar-grid button:hover,
+.calendar-grid button.has-course,
+.calendar-grid button.selected,
+.calendar-grid button.selected.has-course,
+.calendar-grid button.selected:not(.has-course){
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  -webkit-tap-highlight-color:transparent !important;
+  box-sizing:border-box !important;
+  border:none !important;
+  outline:none !important;
+  outline-offset:0 !important;
+  background:none !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  text-decoration:none !important;
+}
+
+/* Safari focus ring must not be drawn around the whole date cell */
+.calendar-grid button:focus,
+.calendar-grid button:focus-visible{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
+/* Visual selection exists ONLY on the circular number span */
+.calendar-grid button.has-course .day-number{
+  border:none !important;
+  outline:none !important;
+  background:#dbeeff !important;
+  color:#07559c !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+  border-radius:999px !important;
+}
+
+.calendar-grid button.selected.has-course .day-number{
+  border:none !important;
+  outline:none !important;
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:0 3px 10px rgba(8,115,213,.25) !important;
+  border-radius:999px !important;
+}
+
+.calendar-grid button.selected:not(.has-course) .day-number{
+  border:none !important;
+  outline:none !important;
+  background:#5b7390 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  border-radius:999px !important;
+}
