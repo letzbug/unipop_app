@@ -1,7 +1,7 @@
 {
   "name": "UniPop · Espace Formateur",
   "short_name": "UniPop Formateur",
-  "start_url": "./?v=6",
+  "start_url": "./?v=7",
   "display": "standalone",
   "background_color": "#062a4c",
   "theme_color": "#062a4c",
@@ -13,5 +13,5 @@
       "purpose": "any maskable"
     }
   ],
-  "id": "./?v=6"
+  "id": "./?v=7"
 }

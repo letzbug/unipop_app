@@ -1,847 +1,770 @@
+
 :root{
-  --navy:#062a4c;
-  --navy2:#073a67;
-  --blue:#0571d3;
-  --blue2:#0867c0;
-  --ink:#0d223c;
-  --muted:#60758a;
+  --navy:#07345b;
+  --navy-2:#0a4c82;
+  --blue:#0875d9;
+  --blue-2:#0564bd;
+  --ink:#10243a;
+  --muted:#687b8e;
   --line:#dfe6ec;
-  --bg:#f5f7f9;
-  --green:#23a95f;
+  --panel:#f5f7fa;
+  --white:#fff;
+  --nav-h:68px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
 }
+
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;color:var(--ink);background:#dfe6eb}
-button,input{font:inherit}
-button{cursor:pointer}
-#phoneApp{min-height:100dvh}
-.screen{display:none;min-height:100dvh;position:relative}
-.screen.active{display:block}
-.fake-status{height:28px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:650;letter-spacing:.15px}
-.fake-status.compact{height:24px;color:#fff}
-.login-shell{
-  min-height:100dvh;
-  color:#fff;
-  background:
-    radial-gradient(circle at 72% 20%,rgba(9,104,188,.32),transparent 30%),
-    linear-gradient(160deg,#062d52 0%,#05294a 54%,#06365f 100%);
-  padding:10px 22px 16px;
-  display:flex;flex-direction:column;align-items:center;
-}
-.brand-block{text-align:center;margin-top:38px}
-.brand-main{font-size:45px;font-weight:760;letter-spacing:-2.8px;line-height:.9}
-.brand-sub{font-size:13px;margin-top:3px}
-.cap-circle{width:62px;height:62px;border-radius:50%;background:#0970cf;display:grid;place-items:center;color:#fff;margin-top:28px;box-shadow:0 8px 24px #001a3155}
-.cap-circle svg{width:42px;height:42px}
-.login-shell h1{font-size:19px;margin:16px 0 6px}
-.login-copy{margin:0 0 28px;text-align:center;font-size:13px;line-height:1.45}
-.name-field{
-  width:100%;max-width:360px;height:62px;background:#fff;border-radius:11px;
-  color:#8b98a6;display:grid;grid-template-columns:30px 1fr 27px;align-items:center;
-  padding:0 10px;box-shadow:0 8px 24px #00182f52
-}
-.search-icon{font-size:20px;color:#7f8e9d}
-.name-field label{display:flex;flex-direction:column;text-align:left}
-.name-field label span{font-size:10px;color:#8997a4;margin-bottom:2px}
-.name-field input{border:0;outline:0;color:#0d223c;font-size:14px;padding:0;background:transparent}
-.name-field button{border:0;width:20px;height:20px;border-radius:50%;background:#cfd6dc;color:white;line-height:18px}
-.suggestions{width:100%;max-width:360px;position:relative;z-index:10}
-.suggestions:not(:empty){background:white;color:var(--ink);border-radius:0 0 10px 10px;margin-top:-5px;padding-top:5px;overflow:hidden;box-shadow:0 10px 22px #00182f4d}
-.suggestions button{display:block;width:100%;border:0;background:white;text-align:left;padding:11px 13px;border-top:1px solid #edf1f4;font-size:13px}
-.blue-btn{
-  width:100%;border:0;border-radius:8px;color:#fff;background:linear-gradient(90deg,#0974db,#0567c5);
-  font-weight:650;font-size:13px;padding:13px 15px;box-shadow:0 6px 14px #00386c4a
-}
-#loginButton{max-width:360px;margin-top:14px}
-.accent-note{display:flex;gap:9px;width:100%;max-width:360px;margin-top:23px;align-items:flex-start}
-.accent-note p{font-size:11px;line-height:1.38;margin:0}
-.skyline{margin-top:auto;width:calc(100% + 10px);max-width:410px;padding-top:20px;margin-bottom:-3px}
-.skyline svg{display:none}
-.data-status{font-size:10px;color:#a8c2d8;opacity:.9;margin-top:0}
-
-.blue-head{background:linear-gradient(150deg,#072d50,#004e8e);color:white;padding:7px 16px 22px}
-.home-head{min-height:124px}
-.home-title-row{display:flex;align-items:flex-start;justify-content:space-between;padding-top:10px}
-.home-title-row h2{margin:0;font-size:22px}
-.home-title-row p{font-size:12px;margin:3px 0 0}
-.head-icon{width:37px;height:37px;border-radius:11px;border:0;background:#ffffff18;color:white;font-size:20px}
-.main-panel{
-  margin-top:-14px;background:var(--bg);min-height:calc(100dvh - 105px);
-  border-radius:17px 17px 0 0;padding:16px 13px 88px
-}
-.section-title{font-size:16px;margin:20px 1px 11px}
-.course-card{
-  width:100%;background:white;border:1px solid #dce4eb;border-radius:10px;overflow:hidden;
-  display:grid;grid-template-columns:76px 1fr 26px;margin-bottom:9px;box-shadow:0 2px 7px #14304a14
-}
-.course-card.today{grid-template-columns:88px 1fr}
-.course-left{
-  background:#f3f8fc;border-right:1px solid #e3eaf0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px
-}
-.course-left.time strong{font-size:18px;color:#0767c6;line-height:1.2}
-.course-left.time span{font-size:18px;color:#0767c6;font-weight:750;line-height:1.2}
-.course-left.date small{font-size:10px;font-weight:700}
-.course-left.date b{font-size:21px;line-height:1.0;margin:2px 0}
-.course-info{padding:10px 8px;min-width:0}
-.course-info .line1{font-size:11px;color:#475c71;margin-bottom:5px}
-.course-info h4{margin:0 0 6px;font-size:13px;line-height:1.15}
-.course-info p{margin:2px 0;font-size:11px;color:#334a62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.green-pill{display:inline-block;background:#dff7e7;color:#208447;border-radius:5px;padding:3px 7px;font-size:10px;margin-top:6px}
-.chev{display:grid;place-items:center;color:#7e8c9a;font-size:23px}
-.calendar-wide{margin-top:14px}
-.bottom-tabs{
-  position:fixed;left:0;right:0;bottom:0;z-index:50;height:68px;background:#052d50;color:#fff;
-  display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom)
-}
-.tab{border:0;background:transparent;color:#bed0df;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
-.tab span{font-size:18px}.tab small{font-size:9px}.tab.active{color:white}
-
-.detail-head{padding-bottom:20px}
-.detail-nav{display:grid;grid-template-columns:42px 1fr 42px;align-items:center;text-align:center;margin-top:4px}
-.detail-nav strong{font-size:13px}
-.back-btn,.dots{border:0;background:transparent;color:white;font-size:30px;line-height:1}
-.dots{font-size:18px}
-.detail-intro{padding:13px 0 0}
-.detail-intro .when{font-size:14px;font-weight:750}
-.detail-intro .date{font-size:10px;margin-top:2px}
-.detail-intro h1{font-size:18px;line-height:1.18;margin:14px 0 6px}
-.detail-intro p{font-size:11px;margin:0}
-.detail-panel{background:#fff;padding:0 12px 18px;min-height:70vh}
-.quick-actions{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
-  padding:14px 0 11px
-}
-.quick-actions button{border:0;background:transparent;color:#1d3550;display:flex;flex-direction:column;align-items:center;gap:4px}
-.action-circle{width:39px;height:39px;border-radius:50%;background:white;border:1px solid #dce5ec;display:grid;place-items:center;color:#0870d1;font-size:20px;box-shadow:0 3px 9px #0c31521e}
-.quick-actions small{font-size:9px;line-height:1.08}
-.detail-card{border:1px solid #dde4e9;border-radius:8px;padding:9px;background:white}
-.detail-card h4{font-size:11px;margin:4px 0 5px}
-.detail-card p{font-size:10px;line-height:1.35;margin:0}
-.map-art{height:92px;border-radius:6px;margin:8px 0 9px;position:relative;overflow:hidden;background:linear-gradient(140deg,#e1ebdf,#d8e6e8 48%,#e9e9d8)}
-.road{position:absolute;background:white;opacity:.95}
-.r1{width:145%;height:6px;left:-20%;top:38%;transform:rotate(-12deg)}
-.r2{width:120%;height:5px;left:-10%;top:64%;transform:rotate(19deg)}
-.r3{width:6px;height:160%;left:64%;top:-30%;transform:rotate(18deg)}
-.map-pin{position:absolute;left:55%;top:42%;width:17px;height:17px;border-radius:50%;background:#0873d5;border:4px solid white;color:transparent;box-shadow:0 2px 8px #17466d55}
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.photo-tile{aspect-ratio:1.2/1;border-radius:5px;background:linear-gradient(135deg,#93a6b8,#d9e1e6);background-size:cover;background-position:center;position:relative;overflow:hidden}
-.photo-tile span{position:absolute;left:0;right:0;bottom:0;background:#ffffffde;font-size:8px;font-weight:700;text-align:center;padding:4px 2px}
-.equipment-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-bottom:8px}
-.equipment-grid div{font-size:9px;color:#263e57}
-.equipment-grid div:before{content:"✓";font-weight:800;color:#7890a3;margin-right:5px}
-
-.white-top{height:53px;background:white;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;text-align:center;border-bottom:1px solid #e2e7eb}
-.white-top strong{font-size:12px}
-.back-btn.dark{color:#18334d}
-.light-page{background:#f7f8fa;min-height:calc(100dvh - 53px);padding:12px 12px 30px}
-.calendar-box{background:white;border:1px solid #dfe5ea;border-radius:12px;padding:10px}
-.calendar-head{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;text-align:center;margin-bottom:10px}
-.calendar-head button{border:0;background:transparent;font-size:22px}.calendar-head strong{font-size:11px}
-.week-row,.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);text-align:center}
-.week-row span{font-size:8px;color:#778697;padding:4px 0}
-.calendar-grid button{height:31px;border:0;border-radius:50%;background:transparent;font-size:10px;position:relative}
-.calendar-grid button.other{color:#bcc5cd}
-.calendar-grid button.selected{background:#0a6fd0;color:white;font-weight:800}
-.calendar-grid button.has-course:not(.selected)::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#26a866}
-.date-heading{font-size:11px;margin:13px 2px 7px}
-.mini-course{background:white;border:1px solid #e1e6ea;border-radius:6px;padding:8px 9px;margin-bottom:7px}
-.mini-course .time{font-size:10px;margin-bottom:3px}
-.mini-course h4{font-size:10px;margin:0 0 3px}
-.mini-course p{font-size:9px;margin:0;color:#4f6478}
-.empty-card{background:white;border:1px solid #e1e6ea;border-radius:8px;padding:15px;text-align:center;color:#718395;font-size:11px}
-
-.tech-step{background:white;border:1px solid #dfe4e8;border-radius:9px;padding:8px;margin-bottom:8px}
-.tech-step h3{font-size:10px;margin:0 0 6px}
-.tech-image{height:110px;border-radius:5px;background:linear-gradient(145deg,#43484e,#111315);display:grid;place-items:center;color:white;font-size:33px;font-weight:700;background-size:cover;background-position:center}
-.tech-step p{font-size:9px;line-height:1.35;margin:7px 0 0;color:#3c5165}
-
-.small-head{padding:14px 12px}
-.place-card,.profile-card{background:white;border:1px solid #dde4e9;border-radius:10px;padding:13px;margin-bottom:10px}
-.place-card h3,.profile-card h3{font-size:14px;margin:0 0 6px}
-.place-card p,.profile-card p{font-size:11px;line-height:1.4;margin:3px 0;color:#4d6275}
-.profile-card{text-align:center;padding:24px 16px}
-.profile-avatar{width:64px;height:64px;border-radius:50%;background:#e8f2fb;color:#0870d1;display:grid;place-items:center;margin:0 auto 10px;font-size:29px}
-
-@media(min-width:640px){
-  body{padding:24px}
-  #phoneApp{max-width:430px;margin:0 auto;border-radius:36px;overflow:hidden;box-shadow:0 20px 55px #122b3b45;min-height:calc(100dvh - 48px)}
-  .screen{min-height:calc(100dvh - 48px)}
-  .login-shell{min-height:calc(100dvh - 48px)}
-  .bottom-tabs{max-width:430px;left:50%;transform:translateX(-50%);bottom:24px;border-radius:0 0 36px 36px}
-}
-
-.skyline img{
-  width:100%;
-  height:auto;
-  display:block;
-  object-fit:contain;
-  object-position:center bottom;
-}
-
-/* V3 — detail page aligned to the supplied render */
-.detail-head{
-  padding:7px 11px 8px;
-  background:linear-gradient(180deg,#052b4e 0%,#064f91 100%);
-  border-radius:0 0 0 0;
-}
-.detail-nav{margin-top:2px}
-.detail-nav strong{font-size:13px;font-weight:650}
-.detail-intro{padding:11px 2px 0}
-.detail-intro .when{font-size:14px;font-weight:800}
-.detail-intro .date{font-size:10px;margin-top:2px}
-.detail-intro h1{font-size:18px;line-height:1.16;margin:10px 0 6px}
-.detail-intro p{font-size:10px;margin:0}
-
-.detail-actions{
-  margin-top:10px;
-  padding:0 4px 5px;
-}
-.detail-actions button{color:white}
-.detail-actions .action-circle{
-  width:38px;height:38px;
-  background:white;
-  border:0;
-  color:#0871d3;
-  box-shadow:none;
-  font-size:20px;
-}
-.detail-actions small{
-  color:white;
-  font-size:8.5px;
-  line-height:1.08;
-}
-
-.detail-panel{
-  background:#f2f4f6;
-  padding:0 7px 8px;
-  min-height:0;
-}
-.detail-card{
-  margin-top:0;
-  border:1px solid #d8dfe5;
-  border-radius:8px;
-  padding:8px 9px 7px;
-  background:#fff;
-  box-shadow:0 1px 3px rgba(18,46,69,.08);
-}
-.detail-card h4{
-  font-size:10px;
-  line-height:1.1;
-  margin:2px 0 4px;
-  font-weight:750;
-}
-.detail-card p{
-  font-size:9px;
-  line-height:1.32;
-  margin:0;
-}
-.map-art{
-  height:55px;
-  border-radius:4px;
-  margin:7px 0 8px;
-  overflow:hidden;
-  background-size:cover;
-  background-position:center;
-}
-.demo-map{
-  background-image:url("assets/demo-map.jpg");
-}
-.map-art .road{display:none}
-.map-pin{
-  width:13px;height:13px;
-  border:3px solid white;
-  left:47%;top:42%;
-  box-shadow:none;
-}
-.photo-grid{gap:4px}
-.photo-tile{
-  aspect-ratio:1.08/1;
-  border-radius:4px;
-}
-.photo-tile span{
-  font-size:7px;
-  padding:3px 1px;
-  background:#fff;
-}
-.equipment-grid{
-  gap:3px 8px;
-  margin:3px 0 7px;
-}
-.equipment-grid div{font-size:8px}
-.detail-card .blue-btn{
-  padding:9px 12px;
-  margin-top:5px;
-  border-radius:7px;
-  font-size:10px;
-}
-
-@media(min-width:640px){
-  .detail-head{padding-left:16px;padding-right:16px}
-  .detail-panel{padding-left:10px;padding-right:10px}
-}
-
-
-/* =========================================================
-   V4 — TRUE MOBILE RESPONSIVE
-   ========================================================= */
-
-/* Full bleed by default on phones/tablets */
-html,body{
+html{
   width:100%;
   min-width:0;
   min-height:100%;
-  margin:0!important;
-  padding:0!important;
-  overflow-x:hidden;
-  background:#062a4c;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
 }
 body{
-  min-height:100dvh;
-}
-#phoneApp{
   width:100%;
-  max-width:none!important;
+  min-width:0;
   min-height:100dvh;
-  margin:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-  overflow-x:hidden;
-}
-.screen{
-  width:100%;
-  min-height:100dvh!important;
   margin:0;
-  border-radius:0;
-}
-.login-shell{
-  width:100%;
-  min-height:100dvh!important;
-  padding-left:max(18px,env(safe-area-inset-left));
-  padding-right:max(18px,env(safe-area-inset-right));
-  padding-top:max(8px,env(safe-area-inset-top));
-  padding-bottom:max(10px,env(safe-area-inset-bottom));
-}
-.blue-head{
-  padding-left:max(12px,env(safe-area-inset-left));
-  padding-right:max(12px,env(safe-area-inset-right));
-  padding-top:max(7px,env(safe-area-inset-top));
-}
-.bottom-tabs{
-  left:0!important;
-  right:0!important;
-  bottom:0!important;
-  width:100%!important;
-  max-width:none!important;
-  transform:none!important;
-  border-radius:0!important;
-}
-
-/* Home screen should use the viewport efficiently */
-.home-head{
-  min-height:auto;
-  padding-bottom:18px;
-}
-.main-panel{
-  min-height:calc(100dvh - 106px);
-  padding-bottom:calc(76px + env(safe-area-inset-bottom));
-}
-.course-card{
-  grid-template-columns:70px 1fr 22px;
-}
-.course-card.today{
-  grid-template-columns:82px 1fr;
-}
-.course-left.date b{font-size:19px}
-.course-left.time strong,
-.course-left.time span{font-size:16px}
-.course-info h4{font-size:12px}
-.course-info p{font-size:10px}
-
-/* Detail screen: denser on phones, like the render */
-.detail-head{
-  padding-left:max(9px,env(safe-area-inset-left));
-  padding-right:max(9px,env(safe-area-inset-right));
-  padding-bottom:6px;
-}
-.detail-nav{
-  grid-template-columns:34px 1fr 34px;
-}
-.detail-intro{
-  padding-top:7px;
-}
-.detail-intro .when{font-size:13px}
-.detail-intro .date{font-size:9px}
-.detail-intro h1{
+  overflow-x:hidden;
+  background:#eef3f7;
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   font-size:16px;
-  margin:8px 0 4px;
 }
-.detail-intro p{font-size:9px}
-.detail-actions{
-  margin-top:7px;
-  padding-bottom:2px;
-}
-.detail-actions .action-circle{
-  width:34px;
-  height:34px;
-  font-size:18px;
-}
-.detail-actions small{
-  font-size:7.5px;
-}
-.detail-panel{
-  padding:0 5px max(6px,env(safe-area-inset-bottom));
-  min-height:auto;
-}
-.detail-card{
-  padding:6px 7px;
-}
-.detail-card h4{
-  font-size:9px;
-  margin:2px 0 3px;
-}
-.detail-card p{
-  font-size:8px;
-  line-height:1.25;
-}
-.map-art{
-  height:48px;
-  margin:5px 0 6px;
-}
-.photo-grid{
-  gap:3px;
-}
-.photo-tile{
-  aspect-ratio:1.3/1;
-}
-.photo-tile span{
-  font-size:6.5px;
-  padding:2px 1px;
-}
-.equipment-grid{
-  gap:2px 6px;
-  margin:2px 0 5px;
-}
-.equipment-grid div{
-  font-size:7.2px;
-}
-.detail-card .blue-btn{
-  padding:8px 10px;
-  margin-top:4px;
-  font-size:9px;
-}
-
-/* Calendar + tech also full width */
-.white-top{
-  padding-top:env(safe-area-inset-top);
-  height:calc(50px + env(safe-area-inset-top));
-}
-.light-page{
-  min-height:calc(100dvh - 50px - env(safe-area-inset-top));
-  padding:10px max(8px,env(safe-area-inset-left)) max(18px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right));
-}
-
-/* Very short displays: shave more vertical space */
-@media (max-height:700px){
-  .brand-block{margin-top:20px}
-  .cap-circle{margin-top:18px;width:54px;height:54px}
-  .cap-circle svg{width:36px;height:36px}
-  .login-shell h1{margin-top:12px}
-  .login-copy{margin-bottom:18px}
-  .accent-note{margin-top:15px}
-  .skyline{padding-top:10px}
-  .skyline img{max-height:105px;object-fit:contain}
-  .detail-intro h1{font-size:15px;margin:6px 0 3px}
-  .detail-actions{margin-top:5px}
-  .map-art{height:42px}
-  .photo-tile{aspect-ratio:1.45/1}
-  .detail-card .blue-btn{padding:7px}
-}
-
-/* Narrow phones */
-@media (max-width:360px){
-  .home-title-row h2{font-size:19px}
-  .section-title{font-size:14px}
-  .course-card{grid-template-columns:62px 1fr 20px}
-  .course-card.today{grid-template-columns:72px 1fr}
-  .course-info{padding:8px 6px}
-  .course-info h4{font-size:11px}
-  .course-info p{font-size:9px}
-  .detail-intro h1{font-size:15px}
-  .detail-card p{font-size:7.5px}
-  .equipment-grid div{font-size:6.8px}
-}
-
-/* Only desktop gets the centered phone presentation */
-@media (min-width:900px){
-  body{
-    background:#dfe6eb;
-    padding:24px!important;
-  }
-  #phoneApp{
-    max-width:430px!important;
-    min-height:calc(100dvh - 48px)!important;
-    margin:0 auto!important;
-    border-radius:36px!important;
-    box-shadow:0 20px 55px #122b3b45!important;
-    overflow:hidden!important;
-  }
-  .screen{
-    min-height:calc(100dvh - 48px)!important;
-  }
-  .login-shell{
-    min-height:calc(100dvh - 48px)!important;
-  }
-  .bottom-tabs{
-    width:430px!important;
-    max-width:430px!important;
-    left:50%!important;
-    right:auto!important;
-    bottom:24px!important;
-    transform:translateX(-50%)!important;
-    border-radius:0 0 36px 36px!important;
-  }
-}
-
-
-/* =========================================================
-   V5 — ADAPTIVE PHONE / TABLET / DESKTOP + GLOBAL NAV
-   ========================================================= */
-
-:root{
-  --nav-h:68px;
-}
-
-/* Every screen reserves space for the persistent bottom bar */
+button,input{font:inherit}
+button{-webkit-tap-highlight-color:transparent;cursor:pointer}
+#phoneApp{width:100%;min-height:100dvh}
 .screen{
-  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  display:none;
+  width:100%;
+  min-height:100dvh;
+  padding-bottom:calc(var(--nav-h) + var(--safe-bottom));
 }
-#loginScreen{
-  padding-bottom:0;
-}
-#loginScreen .login-shell{
-  padding-bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom));
-}
+.screen.active{display:block}
 
-/* Same bottom navigation on EVERY view */
+/* ---------- global bottom navigation ---------- */
 .global-tabs{
   position:fixed;
-  z-index:999;
+  z-index:1000;
   left:0;
   right:0;
   bottom:0;
-  width:100%;
-  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
-  background:#062f54;
-  border-radius:0;
+  height:calc(var(--nav-h) + var(--safe-bottom));
+  padding:0 4px var(--safe-bottom);
+  background:#063258;
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  padding:0 6px env(safe-area-inset-bottom);
-  box-shadow:0 -1px 0 rgba(255,255,255,.03);
+  grid-template-columns:repeat(4,1fr);
+  box-shadow:0 -1px 0 rgba(255,255,255,.05);
 }
 .global-tabs .tab{
+  border:0;
+  background:transparent;
+  color:#bed0df;
   min-width:0;
-  padding:7px 2px 5px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:8px 2px 6px;
 }
-.global-tabs .tab span{
-  display:block;
-  font-size:17px;
+.global-tabs .nav-icon{
+  font-size:21px;
   line-height:1;
 }
-.global-tabs .tab small{
-  display:block;
-  margin-top:6px;
-  font-size:9px;
+.global-tabs small{
+  font-size:11px;
   line-height:1;
   white-space:nowrap;
 }
 .global-tabs .tab.active{
   color:#fff;
-  font-weight:650;
+  font-weight:700;
 }
 
-/* Keep content above nav everywhere */
+/* ---------- LOGIN ---------- */
+#loginScreen{
+  background:
+    radial-gradient(circle at 72% 24%,rgba(21,111,186,.25),transparent 29%),
+    linear-gradient(160deg,#07345b 0%,#073258 55%,#083963 100%);
+  color:#fff;
+}
+.login-shell{
+  width:100%;
+  max-width:560px;
+  min-height:calc(100dvh - var(--nav-h) - var(--safe-bottom));
+  margin:0 auto;
+  padding:
+    max(28px,var(--safe-top))
+    24px
+    12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.brand-block{
+  text-align:center;
+  margin-top:2vh;
+}
+.brand-main{
+  font-size:clamp(42px,11vw,56px);
+  line-height:.9;
+  font-weight:800;
+  letter-spacing:-2.5px;
+}
+.brand-sub{
+  margin-top:4px;
+  font-size:14px;
+}
+.cap-circle{
+  width:72px;
+  height:72px;
+  margin-top:28px;
+  border-radius:50%;
+  background:#0a73d3;
+  display:grid;
+  place-items:center;
+  box-shadow:0 9px 22px rgba(0,0,0,.18);
+}
+.cap-circle svg{width:48px;height:48px}
+.login-shell h1{
+  margin:18px 0 7px;
+  font-size:24px;
+  line-height:1.15;
+}
+.login-copy{
+  max-width:360px;
+  margin:0 0 26px;
+  color:#f2f6fa;
+  text-align:center;
+  font-size:15px;
+  line-height:1.45;
+}
+.name-field{
+  width:min(100%,420px);
+  min-height:68px;
+  padding:7px 12px;
+  background:#fff;
+  color:var(--ink);
+  border-radius:14px;
+  display:grid;
+  grid-template-columns:32px minmax(0,1fr) 28px;
+  align-items:center;
+  box-shadow:0 10px 28px rgba(0,0,0,.18);
+}
+.search-icon{font-size:21px;color:#8996a3}
+.name-field label{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+.name-field label span{
+  font-size:11px;
+  color:#8795a3;
+  margin-bottom:2px;
+}
+.name-field input{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  padding:0;
+  background:transparent;
+  color:var(--ink);
+  font-size:17px;
+}
+.name-field button{
+  border:0;
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  background:#d1d8de;
+  color:white;
+}
+.suggestions{
+  width:min(100%,420px);
+  position:relative;
+  z-index:20;
+}
+.suggestions:not(:empty){
+  margin-top:-6px;
+  padding-top:8px;
+  overflow:hidden;
+  border-radius:0 0 12px 12px;
+  background:white;
+  box-shadow:0 12px 25px rgba(0,0,0,.16);
+}
+.suggestions button{
+  display:block;
+  width:100%;
+  padding:12px 14px;
+  border:0;
+  border-top:1px solid #edf1f4;
+  background:white;
+  color:var(--ink);
+  text-align:left;
+  font-size:15px;
+}
+.blue-btn{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  padding:15px 18px;
+  color:white;
+  background:linear-gradient(90deg,var(--blue),var(--blue-2));
+  font-weight:700;
+  font-size:15px;
+  box-shadow:0 6px 14px rgba(0,66,128,.22);
+}
+#loginButton{
+  width:min(100%,420px);
+  margin-top:16px;
+}
+.skyline{
+  width:min(100%,470px);
+  margin-top:auto;
+  padding-top:24px;
+}
+.skyline img{
+  display:block;
+  width:100%;
+  max-height:190px;
+  object-fit:contain;
+  object-position:center bottom;
+}
+.data-status{
+  margin-top:4px;
+  color:#9fb8cb;
+  font-size:10px;
+  opacity:.8;
+}
+
+/* ---------- headers ---------- */
+.blue-head{
+  width:100%;
+  padding:
+    max(18px,var(--safe-top))
+    18px
+    24px;
+  color:white;
+  background:linear-gradient(150deg,var(--navy),var(--navy-2));
+}
+.home-head{padding-bottom:28px}
+.home-title-row{
+  width:min(100%,1180px);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.home-title-row h2{
+  margin:0;
+  font-size:28px;
+  line-height:1.1;
+}
+.home-title-row p{
+  margin:5px 0 0;
+  font-size:14px;
+}
+.head-icon{
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:12px;
+  background:rgba(255,255,255,.13);
+  color:white;
+  font-size:21px;
+}
+
+/* ---------- main content ---------- */
 .main-panel,
 .light-page,
 .detail-panel{
-  padding-bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom));
+  width:min(100%,1180px);
+  margin:0 auto;
+  padding-bottom:calc(var(--nav-h) + 18px + var(--safe-bottom));
+}
+.main-panel{
+  margin-top:-16px;
+  min-height:calc(100dvh - 105px);
+  padding:18px 14px calc(var(--nav-h) + 20px + var(--safe-bottom));
+  border-radius:20px 20px 0 0;
+  background:var(--panel);
+}
+.section-title{
+  margin:22px 2px 12px;
+  font-size:19px;
+}
+
+/* ---------- course cards ---------- */
+.course-card{
+  width:100%;
+  min-height:100px;
+  margin-bottom:12px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:white;
+  display:grid;
+  grid-template-columns:82px minmax(0,1fr) 26px;
+  box-shadow:0 3px 10px rgba(18,48,73,.08);
+}
+.course-card.today{grid-template-columns:92px minmax(0,1fr)}
+.course-left{
+  border-right:1px solid #e4ebf0;
+  background:#f2f8fc;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:10px 5px;
+}
+.course-left.time strong,
+.course-left.time span{
+  color:#0868c6;
+  font-size:20px;
+  line-height:1.18;
+  font-weight:800;
+}
+.course-left.date small{
+  font-size:11px;
+  font-weight:700;
+}
+.course-left.date b{
+  margin:2px 0;
+  font-size:24px;
+  line-height:1;
+}
+.course-info{
+  min-width:0;
+  padding:13px 11px;
+}
+.course-info .line1{
+  margin-bottom:5px;
+  color:#42586d;
+  font-size:13px;
+}
+.course-info h4{
+  margin:0 0 7px;
+  font-size:16px;
+  line-height:1.22;
+}
+.course-info p{
+  margin:3px 0;
+  overflow:hidden;
+  color:#364d63;
+  font-size:13px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.green-pill{
+  display:inline-block;
+  margin-top:7px;
+  padding:4px 8px;
+  border-radius:6px;
+  background:#ddf6e6;
+  color:#237f49;
+  font-size:11px;
+}
+.chev{
+  display:grid;
+  place-items:center;
+  color:#83909d;
+  font-size:27px;
+}
+.calendar-wide{margin-top:17px}
+.empty-card{
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:white;
+  color:#738496;
+  text-align:center;
+  font-size:14px;
+}
+
+/* ---------- detail ---------- */
+.detail-head{
+  padding:
+    max(14px,var(--safe-top))
+    14px
+    10px;
+  background:linear-gradient(180deg,#062f54,#075493);
+}
+.detail-nav{
+  width:min(100%,980px);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:40px 1fr 40px;
+  align-items:center;
+  text-align:center;
+}
+.detail-nav strong{font-size:15px}
+.back-btn,.dots{
+  border:0;
+  background:transparent;
+  color:white;
+  font-size:31px;
+  line-height:1;
+}
+.dots{font-size:18px}
+.detail-intro{
+  width:min(100%,980px);
+  margin:12px auto 0;
+}
+.detail-intro .when{
+  font-size:16px;
+  font-weight:800;
+}
+.detail-intro .date{
+  margin-top:3px;
+  font-size:12px;
+}
+.detail-intro h1{
+  margin:12px 0 6px;
+  font-size:23px;
+  line-height:1.18;
+}
+.detail-intro p{
+  margin:0;
+  font-size:13px;
+}
+.detail-actions{
+  width:min(100%,560px);
+  margin:14px auto 2px;
+  padding:0;
+}
+.quick-actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+.quick-actions button{
+  border:0;
+  background:transparent;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+.action-circle{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:white;
+  color:#0871d3;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+}
+.quick-actions small{
+  color:white;
+  font-size:11px;
+  line-height:1.12;
 }
 .detail-panel{
-  min-height:calc(100dvh - 210px);
+  max-width:none;
+  padding:0 10px calc(var(--nav-h) + 14px + var(--safe-bottom));
+  background:#eef2f5;
+}
+.detail-card{
+  width:min(100%,900px);
+  margin:0 auto;
+  padding:12px;
+  border:1px solid #d8e0e6;
+  border-radius:10px;
+  background:white;
+}
+.detail-card h4{
+  margin:7px 0 5px;
+  font-size:13px;
+}
+.detail-card p{
+  margin:0;
+  font-size:12px;
+  line-height:1.4;
+}
+.map-art{
+  height:110px;
+  margin:9px 0 11px;
+  border-radius:7px;
+  background-size:cover;
+  background-position:center;
+  overflow:hidden;
+  position:relative;
+}
+.demo-map{background-image:url("assets/demo-map.jpg")}
+.map-pin{
+  position:absolute;
+  left:50%;
+  top:45%;
+  width:15px;
+  height:15px;
+  border:3px solid white;
+  border-radius:50%;
+  background:#0873d5;
+}
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+.photo-tile{
+  position:relative;
+  overflow:hidden;
+  min-height:92px;
+  border-radius:7px;
+  background:linear-gradient(135deg,#94a6b7,#dde4e8);
+  background-size:cover;
+  background-position:center;
+}
+.photo-tile span{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  padding:5px 3px;
+  background:rgba(255,255,255,.93);
+  font-size:10px;
+  font-weight:700;
+  text-align:center;
+}
+.equipment-grid{
+  margin:4px 0 9px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px 12px;
+}
+.equipment-grid div{
+  font-size:11px;
+}
+.equipment-grid div:before{
+  content:"✓";
+  margin-right:6px;
+  color:#73889a;
+  font-weight:800;
+}
+.detail-card .blue-btn{
+  margin-top:8px;
+  padding:12px;
+  font-size:13px;
 }
 
-/* PHONE — mirror the render */
+/* ---------- white pages ---------- */
+.white-top{
+  height:calc(58px + var(--safe-top));
+  padding-top:var(--safe-top);
+  border-bottom:1px solid #e1e7ec;
+  background:white;
+  display:grid;
+  grid-template-columns:46px 1fr 46px;
+  align-items:center;
+  text-align:center;
+}
+.white-top strong{font-size:15px}
+.back-btn.dark{color:#18364f}
+.light-page{
+  min-height:calc(100dvh - 58px);
+  padding:15px 12px calc(var(--nav-h) + 18px + var(--safe-bottom));
+  background:#f7f8fa;
+}
+.calendar-box{
+  width:min(100%,720px);
+  margin:0 auto;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:white;
+}
+.calendar-head{
+  margin-bottom:12px;
+  display:grid;
+  grid-template-columns:40px 1fr 40px;
+  align-items:center;
+  text-align:center;
+}
+.calendar-head button{
+  border:0;
+  background:transparent;
+  font-size:25px;
+}
+.calendar-head strong{font-size:14px}
+.week-row,.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  text-align:center;
+}
+.week-row span{
+  padding:5px 0;
+  color:#7d8d9b;
+  font-size:10px;
+}
+.calendar-grid button{
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  font-size:13px;
+  position:relative;
+}
+.calendar-grid button.other{color:#b9c2ca}
+.calendar-grid button.selected{
+  background:#0a6fd0;
+  color:white;
+  font-weight:800;
+}
+.calendar-grid button.has-course:not(.selected)::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:5px;
+  width:5px;
+  height:5px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#25a866;
+}
+.date-heading{
+  width:min(100%,720px);
+  margin:16px auto 8px;
+  font-size:14px;
+}
+.mini-course{
+  width:min(100%,720px);
+  margin:0 auto 8px;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:white;
+}
+.mini-course .time{font-size:12px;margin-bottom:4px}
+.mini-course h4{font-size:13px;margin:0 0 4px}
+.mini-course p{font-size:11px;margin:0;color:#516779}
+
+/* ---------- tech / places ---------- */
+.tech-step{
+  width:min(100%,780px);
+  margin:0 auto 12px;
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:white;
+}
+.tech-step h3{margin:0 0 8px;font-size:14px}
+.tech-image{
+  min-height:160px;
+  border-radius:8px;
+  background:linear-gradient(145deg,#42474d,#111315);
+  background-size:cover;
+  background-position:center;
+  color:white;
+  display:grid;
+  place-items:center;
+  font-size:38px;
+  font-weight:700;
+}
+.tech-step p{font-size:12px;line-height:1.4}
+.small-head{padding:18px 14px}
+.place-card{
+  margin-bottom:12px;
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:white;
+}
+.place-card h3{margin:0 0 7px;font-size:17px}
+.place-card p{margin:4px 0;font-size:13px;line-height:1.4;color:#4e6274}
+
+/* ---------- PHONE ---------- */
 @media (max-width:599px){
   :root{--nav-h:66px}
-  body{background:#062a4c}
-  #phoneApp{width:100%;max-width:none}
-  .screen{width:100%}
-  .main-panel{padding-left:10px;padding-right:10px}
-  .home-title-row h2{font-size:21px}
-  .course-card{border-radius:10px}
-  .detail-card{border-radius:7px}
-  .global-tabs{
-    border-radius:0;
+  .login-shell{
+    min-height:calc(100dvh - var(--nav-h) - var(--safe-bottom));
+    padding-left:18px;
+    padding-right:18px;
   }
+  .brand-main{font-size:46px}
+  .cap-circle{width:66px;height:66px;margin-top:24px}
+  .cap-circle svg{width:44px;height:44px}
+  .login-shell h1{font-size:22px}
+  .login-copy{font-size:14px}
+  .skyline{width:min(100%,390px)}
+  .skyline img{max-height:160px}
+  .home-title-row h2{font-size:24px}
+  .course-card{grid-template-columns:76px minmax(0,1fr) 24px}
+  .course-card.today{grid-template-columns:86px minmax(0,1fr)}
+  .course-left.time strong,.course-left.time span{font-size:18px}
+  .course-info h4{font-size:15px}
+  .course-info p{font-size:12px}
+  .detail-intro h1{font-size:20px}
+  .map-art{height:95px}
+  .photo-tile{min-height:80px}
+  .global-tabs small{font-size:10px}
 }
 
-/* TABLET / iPAD — use more room instead of stretching a phone */
+/* ---------- TABLET / IPAD ---------- */
 @media (min-width:600px) and (max-width:1099px){
   :root{--nav-h:72px}
-  body{
-    background:#edf2f6;
-  }
-  #phoneApp{
-    width:100%;
-    max-width:100%;
-    margin:0;
-    border-radius:0;
-    box-shadow:none;
-  }
-  .screen{
-    min-height:100dvh;
-  }
-  .blue-head,
-  .white-top{
-    padding-left:max(28px,env(safe-area-inset-left));
-    padding-right:max(28px,env(safe-area-inset-right));
-  }
-  .main-panel,
-  .light-page,
-  .detail-panel{
-    max-width:900px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .home-head{
-    padding-bottom:26px;
-  }
-  .home-title-row{
-    max-width:900px;
-    margin:auto;
-  }
-  #todayCourse,
-  #nextCourses{
+  .login-shell{max-width:700px}
+  .brand-main{font-size:58px}
+  .name-field,#loginButton,.suggestions{width:min(100%,500px)}
+  .skyline{width:min(100%,560px)}
+  .main-panel{padding:24px 24px calc(var(--nav-h) + 26px)}
+  #todayCourse,#nextCourses{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
   }
-  #todayCourse .empty-card,
-  #nextCourses .empty-card{
-    grid-column:1/-1;
-  }
-  .course-card{
-    margin-bottom:0;
-  }
-  .detail-panel{
-    display:block;
-    background:#eef2f5;
-    padding-top:14px;
-  }
-  .detail-card{
-    max-width:820px;
-    margin:auto;
-    padding:18px;
-  }
-  .quick-actions{
-    max-width:520px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .map-art{
-    height:150px;
-  }
-  .photo-tile{
-    aspect-ratio:1.45/1;
-  }
-  .equipment-grid div{
-    font-size:11px;
-  }
-  .detail-card h4{
-    font-size:12px;
-    margin-top:13px;
-  }
-  .detail-card p{
-    font-size:11px;
-  }
-  .calendar-box{
-    max-width:660px;
-    margin:auto;
-  }
-  #selectedDayCourses,
-  #calendarOtherCourses{
-    max-width:660px;
-    margin:auto;
-  }
-  .date-heading{
-    max-width:660px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .global-tabs{
-    width:100%;
-    left:0;
-    right:0;
-  }
+  .course-card{margin-bottom:0}
+  .detail-card{padding:20px}
+  .map-art{height:180px}
+  .photo-tile{min-height:150px}
+  .detail-card h4{font-size:15px}
+  .detail-card p{font-size:14px}
+  .equipment-grid div{font-size:13px}
+  .calendar-grid button{height:48px;font-size:14px}
 }
 
-/* DESKTOP — proper desktop layout, not a giant phone */
+/* ---------- DESKTOP ---------- */
 @media (min-width:1100px){
   :root{--nav-h:74px}
-  body{
-    background:#e8eef3;
-    padding:0!important;
-  }
-  #phoneApp{
-    width:100%!important;
-    max-width:none!important;
-    min-height:100dvh!important;
-    margin:0!important;
-    border-radius:0!important;
-    box-shadow:none!important;
-    overflow:visible!important;
-  }
-  .screen{
-    min-height:100dvh!important;
-  }
-  .login-shell{
-    min-height:100dvh!important;
-  }
-  .brand-block{margin-top:55px}
-  .name-field,
-  #loginButton,
-  .accent-note{
-    max-width:420px;
-  }
-  .skyline{
-    max-width:520px;
-  }
-
-  .blue-head{
-    padding-left:40px;
-    padding-right:40px;
-  }
-  .home-title-row{
-    max-width:1180px;
-    margin:auto;
-  }
-  .main-panel{
-    max-width:1180px;
-    margin:-14px auto 0;
-    padding:26px 28px calc(var(--nav-h) + 28px);
-  }
+  .login-shell{max-width:850px}
+  .brand-main{font-size:64px}
+  .name-field,#loginButton,.suggestions{width:500px}
+  .skyline{width:620px}
+  .main-panel{padding:30px 30px calc(var(--nav-h) + 30px)}
   #todayCourse{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:16px;
+    gap:18px;
   }
   #nextCourses{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:16px;
+    gap:18px;
   }
-  .course-card{
-    margin:0;
-    min-height:112px;
-  }
-  .calendar-wide{
-    max-width:360px;
-    display:block;
-    margin:24px auto 0;
-  }
-
-  .detail-head{
-    padding-left:40px;
-    padding-right:40px;
-  }
-  .detail-nav,
-  .detail-intro,
-  .detail-actions{
-    max-width:980px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .detail-panel{
-    max-width:1180px;
-    margin:auto;
-    background:#edf2f5;
-    padding:24px 28px calc(var(--nav-h) + 26px);
-  }
-  .detail-card{
-    max-width:980px;
-    margin:auto;
-    padding:22px;
-  }
-  .map-art{
-    height:210px;
-  }
-  .photo-grid{
-    gap:12px;
-  }
-  .photo-tile{
-    aspect-ratio:1.7/1;
-  }
-  .detail-card h4{
-    font-size:14px;
-    margin-top:18px;
-  }
-  .detail-card p{
-    font-size:13px;
-  }
-  .equipment-grid{
-    grid-template-columns:repeat(3,1fr);
-    gap:9px 18px;
-  }
-  .equipment-grid div{
-    font-size:12px;
-  }
-
-  .light-page{
-    max-width:1000px;
-    margin:auto;
-    padding:28px 30px calc(var(--nav-h) + 30px);
-  }
-  .calendar-box{
-    max-width:720px;
-    margin:auto;
-  }
-  #selectedDayCourses,
-  #calendarOtherCourses,
-  .date-heading{
-    max-width:720px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .tech-step{
-    max-width:780px;
-    margin-left:auto;
-    margin-right:auto;
-  }
-  .tech-image{
-    height:220px;
-  }
-
+  .course-card{margin-bottom:0;min-height:118px}
+  .calendar-wide{width:360px;margin:24px auto 0;display:block}
+  .detail-card{padding:24px}
+  .map-art{height:230px}
+  .photo-tile{min-height:190px}
+  .equipment-grid{grid-template-columns:repeat(3,1fr)}
+  .equipment-grid div{font-size:14px}
   .global-tabs{
-    width:100%!important;
-    max-width:none!important;
-    left:0!important;
-    right:0!important;
-    bottom:0!important;
-    transform:none!important;
-    border-radius:0!important;
-    padding-left:max(20px,calc((100vw - 780px)/2));
-    padding-right:max(20px,calc((100vw - 780px)/2));
-  }
-  .global-tabs .tab small{
-    font-size:10px;
+    padding-left:max(20px,calc((100vw - 760px)/2));
+    padding-right:max(20px,calc((100vw - 760px)/2));
   }
 }
 
-/* Wide landscape tablet refinement */
-@media (min-width:900px) and (max-width:1099px) and (orientation:landscape){
-  #nextCourses{
-    grid-template-columns:repeat(3,1fr);
-  }
-  .main-panel{
-    max-width:1000px;
-  }
+/* Short phones */
+@media (max-height:720px) and (max-width:599px){
+  .brand-block{margin-top:0}
+  .cap-circle{margin-top:16px;width:58px;height:58px}
+  .cap-circle svg{width:38px;height:38px}
+  .login-shell h1{margin-top:12px}
+  .login-copy{margin-bottom:16px}
+  .skyline{padding-top:10px}
+  .skyline img{max-height:110px}
 }
