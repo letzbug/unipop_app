@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#062d55">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>UniPop · Espace Formateur</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <section id="loginView" class="view active login">
+    <div class="login-inner">
+      <div class="brand">UniPop<span>Luxembourg</span></div>
+      <div class="round-icon">⌂</div>
+      <h1>Espace Formateur</h1>
+      <p>Entrez votre nom pour voir<br>vos cours et informations.</p>
+      <div class="searchbox">
+        <span>⌕</span>
+        <input id="trainerInput" autocomplete="name" placeholder="Votre nom">
+        <button id="clearName" aria-label="Effacer">×</button>
+      </div>
+      <div id="suggestions" class="suggestions"></div>
+      <button id="loginBtn" class="primary">Voir mes cours</button>
+      <p class="hint">✨ Tolérant aux accents et petites variations<br>(Müller, Muller, Muëller…)</p>
+      <div class="skyline">⌁ Luxembourg ⌁</div>
+      <div id="loadStatus" class="status">Chargement des données…</div>
+    </div>
+  </section>
+
+  <section id="homeView" class="view">
+    <header class="topbar">
+      <div>
+        <h2 id="hello">Bonjour 👋</h2>
+        <p>Voici vos cours pour aujourd’hui.</p>
+      </div>
+      <button id="openCalendarTop" class="iconbtn">▣</button>
+    </header>
+    <main class="content">
+      <div id="todayBlock"></div>
+      <h3>Vos prochains cours</h3>
+      <div id="upcomingList"></div>
+      <button id="openCalendar" class="primary">Voir mon calendrier</button>
+    </main>
+    <nav class="bottomnav">
+      <button data-tab="home" class="active">▣<span>Aujourd’hui</span></button>
+      <button data-tab="calendar">□<span>Calendrier</span></button>
+      <button data-tab="places">⌖<span>Lieux</span></button>
+      <button data-tab="profile">♙<span>Profil</span></button>
+    </nav>
+  </section>
+
+  <section id="calendarView" class="view">
+    <header class="simplebar"><button class="backBtn">‹</button><h2>Calendrier</h2><span></span></header>
+    <main class="content">
+      <div class="calendar-card">
+        <div class="cal-head"><button id="prevMonth">‹</button><strong id="monthLabel"></strong><button id="nextMonth">›</button></div>
+        <div class="weekdays"><span>LUN</span><span>MAR</span><span>MER</span><span>JEU</span><span>VEN</span><span>SAM</span><span>DIM</span></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </div>
+      <h3 id="selectedDateTitle">Cours</h3>
+      <div id="dateCourses"></div>
+    </main>
+  </section>
+
+  <section id="detailView" class="view">
+    <header class="simplebar"><button class="backBtn">‹</button><h2>Détails du cours</h2><span>•••</span></header>
+    <div id="detailHero" class="detail-hero"></div>
+    <main class="content details">
+      <div class="actionrow">
+        <button id="routeBtn"><b>⌖</b><span>Itinéraire</span></button>
+        <button id="callBtn"><b>☎</b><span>Appeler</span></button>
+        <button id="icsBtn"><b>▣</b><span>Calendrier</span></button>
+      </div>
+      <section class="whitecard">
+        <h3>Adresse</h3><p id="addressText"></p>
+        <div class="mapmock"><span>⌖</span></div>
+        <h3>Photos du lieu</h3><div id="photoStrip" class="photos"></div>
+        <h3>Accès</h3><p id="accessText"></p>
+        <h3>Équipement dans la salle</h3><div id="equipmentList" class="equipment"></div>
+        <button id="techBtn" class="primary">Voir le guide technique</button>
+      </section>
+    </main>
+  </section>
+
+  <section id="techView" class="view">
+    <header class="simplebar"><button class="backBtn">‹</button><h2 id="techTitle">Guide technique</h2><span></span></header>
+    <main class="content"><div id="techSteps"></div></main>
+  </section>
+
+  <section id="placesView" class="view">
+    <header class="simplebar"><button class="backBtn">‹</button><h2>Lieux</h2><span></span></header>
+    <main class="content"><div id="placesList"></div></main>
+  </section>
+
+  <section id="profileView" class="view">
+    <header class="simplebar"><button class="backBtn">‹</button><h2>Profil</h2><span></span></header>
+    <main class="content">
+      <section class="whitecard">
+        <h3 id="profileName"></h3>
+        <p>Vos cours sont chargés depuis le catalogue UniPop.</p>
+        <button id="logoutBtn" class="primary">Changer de formateur</button>
+      </section>
+    </main>
+  </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

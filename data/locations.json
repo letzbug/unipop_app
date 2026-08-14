@@ -1,0 +1,72 @@
+{
+  "_default": {
+    "room": "Salle à confirmer",
+    "phone": "+352 8002 9001",
+    "access": "Entrée principale. Les photos, le chemin vers la salle et les informations pratiques peuvent être complétés dans data/locations.json.",
+    "equipment": [
+      "Ordinateur (Windows)",
+      "Projecteur",
+      "HDMI / USB-C",
+      "Wi‑Fi",
+      "Haut-parleurs",
+      "Tableau blanc"
+    ],
+    "photos": [
+      {
+        "label": "Bâtiment"
+      },
+      {
+        "label": "Entrée"
+      },
+      {
+        "label": "Salle"
+      }
+    ],
+    "tech": [
+      {
+        "title": "1. Allumer l’ordinateur",
+        "icon": "⏻",
+        "text": "Appuyez sur le bouton d’alimentation du PC."
+      },
+      {
+        "title": "2. Démarrer le projecteur",
+        "icon": "▣",
+        "text": "Utilisez la commande murale ou la télécommande."
+      },
+      {
+        "title": "3. Sélectionner la source (HDMI)",
+        "icon": "HDMI 1",
+        "text": "Choisissez la source correspondant au câble utilisé."
+      },
+      {
+        "title": "4. Régler le son",
+        "icon": "🔊",
+        "text": "Vérifiez le volume du PC et du système audio."
+      }
+    ]
+  },
+  "centredeformation128routedetrevesniederanven": {
+    "room": "Salle à confirmer",
+    "phone": "+352 8002 9001",
+    "access": "Exemple : utilisez l’entrée principale. Ajoutez ici le parking, l’étage et le chemin exact vers la salle.",
+    "equipment": [
+      "Ordinateur (Windows)",
+      "Projecteur",
+      "HDMI / USB-C",
+      "Wi‑Fi",
+      "Haut-parleurs",
+      "Tableau blanc"
+    ],
+    "photos": [
+      {
+        "label": "Bâtiment"
+      },
+      {
+        "label": "Entrée"
+      },
+      {
+        "label": "Salle"
+      }
+    ]
+  }
+}
