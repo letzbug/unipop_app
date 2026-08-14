@@ -1568,3 +1568,396 @@ html.device-phone .calendar-grid .course-marker{
   height:17px;
   font-size:10px;
 }
+
+
+/* =========================================================
+   V12 — CONTENT-FIRST RESPONSIVE / NO HORIZONTAL CLIPPING
+   ========================================================= */
+
+/* Absolute rule: nothing is allowed to widen the page */
+html,
+body,
+#phoneApp,
+.screen,
+.blue-head,
+.white-top,
+.main-panel,
+.light-page,
+.detail-panel,
+.detail-card,
+.calendar-box,
+.place-card,
+.course-card,
+.mini-course,
+.tech-step{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+}
+
+html,
+body{
+  overflow-x:hidden !important;
+}
+
+.screen,
+.main-panel,
+.light-page,
+.detail-panel,
+.detail-card,
+.place-card,
+.course-card,
+.course-info,
+.mini-course,
+.tech-step,
+.detail-intro,
+.home-title-row,
+.quick-actions,
+.equipment-grid,
+.photo-grid{
+  min-width:0 !important;
+}
+
+/* All human-readable content wraps instead of being clipped */
+h1,h2,h3,h4,p,span,strong,small,
+.course-info,
+.course-info h4,
+.course-info p,
+.course-info .line1,
+.place-card h3,
+.place-card p,
+.detail-intro h1,
+.detail-intro p,
+.detail-card p,
+.detail-card h4,
+.mini-course h4,
+.mini-course p,
+.tech-step p,
+.equipment-grid div{
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+
+/* Prevent flex/grid children from forcing width */
+.course-info,
+.detail-intro,
+.place-card,
+.mini-course,
+.tech-step{
+  min-width:0 !important;
+}
+
+/* HOME COURSE CARDS */
+html.device-phone .course-card{
+  grid-template-columns:92px minmax(0,1fr) 26px !important;
+  align-items:stretch !important;
+}
+
+html.device-phone .course-card.today{
+  grid-template-columns:98px minmax(0,1fr) !important;
+}
+
+.course-info{
+  width:auto !important;
+  max-width:100% !important;
+}
+
+.course-info h4{
+  max-width:100% !important;
+}
+
+.course-info p{
+  max-width:100% !important;
+}
+
+/* On very narrow screens, make course cards stack their info under the date/time */
+@media (max-width:380px){
+  html.device-phone .course-card,
+  html.device-phone .course-card.today{
+    grid-template-columns:82px minmax(0,1fr) !important;
+  }
+  html.device-phone .course-card .chev{
+    display:none !important;
+  }
+}
+
+/* LIEUX — always wrap long descriptions cleanly */
+#placesList{
+  width:100% !important;
+  max-width:100% !important;
+  padding-left:12px !important;
+  padding-right:12px !important;
+}
+
+.place-card{
+  box-sizing:border-box !important;
+}
+
+.place-card p{
+  line-height:1.5 !important;
+  margin-right:0 !important;
+}
+
+/* DETAIL — cards and text stay inside viewport */
+.detail-panel{
+  padding-left:8px !important;
+  padding-right:8px !important;
+}
+
+.detail-card{
+  box-sizing:border-box !important;
+  padding-left:14px !important;
+  padding-right:14px !important;
+}
+
+.detail-intro{
+  padding-left:2px !important;
+  padding-right:2px !important;
+}
+
+.detail-intro h1{
+  max-width:100% !important;
+}
+
+.detail-intro p{
+  max-width:100% !important;
+}
+
+/* Long address/access text gets its own line naturally */
+#addressText,
+#accessText{
+  display:block !important;
+  max-width:100% !important;
+  line-height:1.45 !important;
+}
+
+/* Quick actions: 3 columns normally, but collapse gracefully */
+.quick-actions{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  width:100% !important;
+}
+
+.quick-actions button{
+  min-width:0 !important;
+  width:100% !important;
+}
+
+.quick-actions small{
+  max-width:100% !important;
+  overflow-wrap:anywhere !important;
+}
+
+@media (max-width:360px){
+  .quick-actions{
+    gap:4px !important;
+  }
+  .quick-actions small{
+    font-size:12px !important;
+  }
+}
+
+/* Photos: never overflow; if the screen gets too narrow, go to one column */
+.photo-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+
+.photo-tile{
+  min-width:0 !important;
+  width:100% !important;
+}
+
+@media (max-width:340px){
+  .photo-grid{
+    grid-template-columns:1fr !important;
+  }
+  .photo-tile{
+    min-height:140px !important;
+  }
+}
+
+/* Equipment auto-wraps instead of clipping */
+.equipment-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+
+@media (max-width:390px){
+  .equipment-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* CALENDAR — clean compact circular chips, not wide ovals */
+.calendar-grid{
+  width:100% !important;
+  grid-template-columns:repeat(7,minmax(0,1fr)) !important;
+}
+
+.calendar-grid button{
+  width:100% !important;
+  min-width:0 !important;
+  height:54px !important;
+  padding:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  display:grid !important;
+  place-items:center !important;
+  position:relative !important;
+  overflow:visible !important;
+}
+
+/* Move visual state to the inner number */
+.calendar-grid .day-number{
+  width:42px !important;
+  height:42px !important;
+  display:grid !important;
+  place-items:center !important;
+  border-radius:50% !important;
+  position:relative !important;
+  z-index:2 !important;
+  background:transparent !important;
+  color:inherit !important;
+  font-weight:inherit !important;
+}
+
+/* Remove old button-level course styling */
+.calendar-grid button.has-course,
+.calendar-grid button.selected,
+.calendar-grid button.selected.has-course,
+.calendar-grid button.selected:not(.has-course){
+  background:transparent !important;
+  box-shadow:none !important;
+  color:inherit !important;
+}
+
+/* Course day */
+.calendar-grid button.has-course .day-number{
+  background:#dbeeff !important;
+  color:#07559c !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+  font-weight:900 !important;
+}
+
+/* Selected day without course */
+.calendar-grid button.selected:not(.has-course) .day-number{
+  background:#5b7390 !important;
+  color:white !important;
+  box-shadow:none !important;
+  font-weight:900 !important;
+}
+
+/* Selected day with course */
+.calendar-grid button.selected.has-course .day-number{
+  background:#0873d5 !important;
+  color:white !important;
+  box-shadow:0 3px 10px rgba(8,115,213,.25) !important;
+}
+
+/* Small marker sits on the circle, never outside the grid cell */
+.calendar-grid .course-marker{
+  right:calc(50% - 27px) !important;
+  bottom:5px !important;
+  min-width:15px !important;
+  height:15px !important;
+  padding:0 3px !important;
+  font-size:9px !important;
+  z-index:3 !important;
+}
+
+/* Mobile calendar text sizing */
+html.device-phone .calendar-grid button{
+  height:56px !important;
+  font-size:18px !important;
+}
+
+html.device-phone .calendar-grid .day-number{
+  width:44px !important;
+  height:44px !important;
+}
+
+/* Calendar headings and course cards wrap cleanly */
+.calendar-box,
+#selectedDayCourses,
+#calendarOtherCourses,
+.date-heading{
+  width:100% !important;
+  max-width:100% !important;
+}
+
+.mini-course{
+  box-sizing:border-box !important;
+}
+
+.mini-course h4,
+.mini-course p{
+  max-width:100% !important;
+}
+
+/* TABLET: keep 2 columns only when there is enough actual room */
+html.device-tablet #todayCourse,
+html.device-tablet #nextCourses{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+
+@media (max-width:760px){
+  html.device-tablet #todayCourse,
+  html.device-tablet #nextCourses{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* DESKTOP: use auto-fit so long content determines layout naturally */
+html.device-desktop #nextCourses{
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr)) !important;
+}
+
+html.device-desktop #todayCourse{
+  grid-template-columns:repeat(auto-fit,minmax(360px,1fr)) !important;
+}
+
+/* Footer always fits */
+.global-tabs{
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+}
+
+.global-tabs .tab{
+  min-width:0 !important;
+}
+
+.global-tabs small{
+  max-width:100% !important;
+  overflow-wrap:normal !important;
+  white-space:nowrap !important;
+}
+
+/* Browser zoom/text-size resilience */
+@supports (font-size:clamp(1rem,2vw,2rem)){
+  html.device-phone .course-info h4{
+    font-size:clamp(18px,4.8vw,21px) !important;
+  }
+  html.device-phone .course-info p{
+    font-size:clamp(15px,4vw,18px) !important;
+  }
+  html.device-phone .detail-intro h1{
+    font-size:clamp(23px,6vw,28px) !important;
+  }
+  html.device-phone .place-card h3{
+    font-size:clamp(19px,5vw,22px) !important;
+  }
+  html.device-phone .place-card p{
+    font-size:clamp(15px,4.1vw,18px) !important;
+  }
+}
+
+/* iOS Safari can sometimes preserve an old large layout width.
+   Force the root app to the visual viewport width when available. */
+@supports (width:100dvw){
+  html.device-phone #phoneApp,
+  html.device-phone .screen{
+    width:100dvw !important;
+    max-width:100dvw !important;
+  }
+}
