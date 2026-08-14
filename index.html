@@ -10,8 +10,45 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>UniPop · Espace Formateur</title>
-  <link rel="manifest" href="manifest.webmanifest?v=8">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="manifest" href="manifest.webmanifest?v=9">
+  
+<script>
+(function(){
+  const ua = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  const touch = navigator.maxTouchPoints || 0;
+
+  const isIPhone = /iPhone|iPod/i.test(ua);
+  const isIPad = /iPad/i.test(ua) || (platform === "MacIntel" && touch > 1);
+  const isAndroid = /Android/i.test(ua);
+  const isAndroidPhone = isAndroid && /Mobile/i.test(ua);
+  const isAndroidTablet = isAndroid && !/Mobile/i.test(ua);
+
+  const shortSide = Math.min(screen.width || innerWidth, screen.height || innerHeight);
+  const cssShortSide = Math.min(innerWidth || 9999, innerHeight || 9999);
+
+  let device = "desktop";
+
+  if (isIPhone || isAndroidPhone) {
+    device = "phone";
+  } else if (isIPad || isAndroidTablet) {
+    device = "tablet";
+  } else if (touch > 0 && shortSide <= 520) {
+    device = "phone";
+  } else if (touch > 0 && shortSide <= 1100) {
+    device = "tablet";
+  } else if (cssShortSide <= 520) {
+    device = "phone";
+  } else if (cssShortSide <= 1100) {
+    device = "tablet";
+  }
+
+  document.documentElement.classList.add("device-" + device);
+  document.documentElement.dataset.device = device;
+})();
+</script>
+
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <div id="phoneApp">
@@ -195,7 +232,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "8";
+  const APP_VERSION = "9";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -224,6 +261,6 @@
   }
 })();
 </script>
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

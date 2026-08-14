@@ -1,3 +1,32 @@
+
+function refreshDeviceClass(){
+  const root=document.documentElement;
+  const ua=navigator.userAgent||"";
+  const platform=navigator.platform||"";
+  const touch=navigator.maxTouchPoints||0;
+  const isIPhone=/iPhone|iPod/i.test(ua);
+  const isIPad=/iPad/i.test(ua)||(platform==="MacIntel"&&touch>1);
+  const isAndroid=/Android/i.test(ua);
+  const isAndroidPhone=isAndroid&&/Mobile/i.test(ua);
+  const isAndroidTablet=isAndroid&&!/Mobile/i.test(ua);
+  let mode="desktop";
+  if(isIPhone||isAndroidPhone) mode="phone";
+  else if(isIPad||isAndroidTablet) mode="tablet";
+  else {
+    const shortSide=Math.min(window.innerWidth,window.innerHeight);
+    if(touch>0&&shortSide<=520) mode="phone";
+    else if(touch>0&&shortSide<=1100) mode="tablet";
+    else if(shortSide<=520) mode="phone";
+    else if(shortSide<=1100) mode="tablet";
+  }
+  root.classList.remove("device-phone","device-tablet","device-desktop");
+  root.classList.add("device-"+mode);
+  root.dataset.device=mode;
+}
+window.addEventListener("resize",refreshDeviceClass,{passive:true});
+window.addEventListener("orientationchange",refreshDeviceClass,{passive:true});
+refreshDeviceClass();
+
 const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
 
 let trainings=[], locations={}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null;
@@ -46,7 +75,7 @@ function locationData(c){
 
 async function loadAll(){
   try{
-    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=8",{cache:"no-store"})]);
+    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=9",{cache:"no-store"})]);
     if(!r1.ok)throw new Error("trainings.json");
     trainings=await r1.json();locations=await r2.json();
     $("#dataStatus").textContent=`${trainings.length} cours chargés`;

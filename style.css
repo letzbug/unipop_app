@@ -1105,3 +1105,193 @@ body{
     animation:none !important;
   }
 }
+
+
+/* =========================================================
+   V9 — HARD DEVICE MODE
+   JavaScript adds device-phone / device-tablet / device-desktop
+   This wins over viewport quirks and Safari desktop-style widths.
+   ========================================================= */
+
+/* PHONE: force one column and large readable text, regardless reported viewport */
+html.device-phone body{
+  font-size:18px !important;
+}
+html.device-phone #phoneApp,
+html.device-phone .screen{
+  width:100% !important;
+  max-width:none !important;
+}
+html.device-phone #todayCourse,
+html.device-phone #nextCourses{
+  display:block !important;
+  grid-template-columns:none !important;
+}
+html.device-phone .course-card,
+html.device-phone .course-card.today{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 0 15px !important;
+}
+html.device-phone .course-card{
+  grid-template-columns:96px minmax(0,1fr) 30px !important;
+  min-height:132px !important;
+}
+html.device-phone .course-card.today{
+  grid-template-columns:104px minmax(0,1fr) !important;
+}
+html.device-phone .home-title-row h2{
+  font-size:36px !important;
+  line-height:1.05 !important;
+}
+html.device-phone .home-title-row p{
+  font-size:18px !important;
+  margin-top:7px !important;
+}
+html.device-phone .section-title{
+  font-size:24px !important;
+  margin-top:26px !important;
+}
+html.device-phone .course-info{
+  padding:17px 14px !important;
+}
+html.device-phone .course-info .line1{
+  font-size:17px !important;
+  margin-bottom:7px !important;
+}
+html.device-phone .course-info h4{
+  font-size:20px !important;
+  line-height:1.25 !important;
+  margin-bottom:8px !important;
+}
+html.device-phone .course-info p{
+  font-size:17px !important;
+  line-height:1.35 !important;
+}
+html.device-phone .course-left.date small{
+  font-size:14px !important;
+}
+html.device-phone .course-left.date b{
+  font-size:31px !important;
+}
+html.device-phone .course-left.time strong,
+html.device-phone .course-left.time span{
+  font-size:24px !important;
+}
+html.device-phone .green-pill{
+  font-size:14px !important;
+  padding:6px 10px !important;
+}
+html.device-phone .empty-card{
+  font-size:17px !important;
+  padding:20px !important;
+}
+html.device-phone .blue-btn{
+  font-size:18px !important;
+  min-height:56px !important;
+}
+html.device-phone .global-tabs{
+  height:calc(82px + var(--safe-bottom)) !important;
+}
+html.device-phone .global-tabs .nav-icon{
+  font-size:27px !important;
+}
+html.device-phone .global-tabs small{
+  font-size:14px !important;
+}
+html.device-phone .global-tabs .tab{
+  min-height:72px !important;
+}
+html.device-phone .main-panel{
+  padding-left:14px !important;
+  padding-right:14px !important;
+  padding-bottom:calc(96px + var(--safe-bottom)) !important;
+}
+html.device-phone .login-shell{
+  max-width:none !important;
+  padding-left:22px !important;
+  padding-right:22px !important;
+}
+html.device-phone .brand-main{
+  font-size:54px !important;
+}
+html.device-phone .brand-sub{
+  font-size:17px !important;
+}
+html.device-phone .cap-circle{
+  width:78px !important;
+  height:78px !important;
+}
+html.device-phone .login-shell h1{
+  font-size:30px !important;
+}
+html.device-phone .login-copy{
+  font-size:18px !important;
+}
+html.device-phone .name-field{
+  width:100% !important;
+  max-width:480px !important;
+  min-height:78px !important;
+}
+html.device-phone .name-field label span{
+  font-size:14px !important;
+}
+html.device-phone .name-field input{
+  font-size:20px !important;
+}
+html.device-phone #loginButton{
+  width:100% !important;
+  max-width:480px !important;
+}
+html.device-phone .skyline{
+  width:min(100%,520px) !important;
+}
+html.device-phone .skyline img{
+  max-height:220px !important;
+}
+html.device-phone .data-status{
+  font-size:11px !important;
+}
+
+/* Phone details also larger */
+html.device-phone .detail-nav strong{font-size:18px !important}
+html.device-phone .detail-intro .when{font-size:20px !important}
+html.device-phone .detail-intro .date{font-size:15px !important}
+html.device-phone .detail-intro h1{font-size:27px !important}
+html.device-phone .detail-intro p{font-size:16px !important}
+html.device-phone .quick-actions small{font-size:14px !important}
+html.device-phone .action-circle{width:54px !important;height:54px !important;font-size:25px !important}
+html.device-phone .detail-card h4{font-size:17px !important}
+html.device-phone .detail-card p{font-size:16px !important}
+html.device-phone .equipment-grid div{font-size:15px !important}
+html.device-phone .photo-tile span{font-size:12px !important}
+html.device-phone .map-art{height:125px !important}
+
+/* TABLET: exactly two columns */
+html.device-tablet #todayCourse,
+html.device-tablet #nextCourses{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:18px !important;
+}
+html.device-tablet .home-title-row h2{
+  font-size:38px !important;
+}
+html.device-tablet .course-info h4{
+  font-size:19px !important;
+}
+html.device-tablet .course-info p{
+  font-size:16px !important;
+}
+
+/* DESKTOP: use available space, up to 3 next-course columns */
+html.device-desktop #nextCourses{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:18px !important;
+}
+html.device-desktop #todayCourse{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:18px !important;
+}
