@@ -1295,3 +1295,204 @@ html.device-desktop #todayCourse{
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
   gap:18px !important;
 }
+
+
+/* =========================================================
+   V10 — HIGH CONTRAST CALENDAR
+   ========================================================= */
+
+.calendar-box{
+  padding:18px !important;
+}
+
+.calendar-head{
+  margin-bottom:16px !important;
+}
+
+.calendar-head strong{
+  font-size:20px !important;
+  font-weight:800 !important;
+  color:#132942 !important;
+}
+
+.calendar-head button{
+  font-size:30px !important;
+  color:#0a73d7 !important;
+  font-weight:700 !important;
+}
+
+.week-row{
+  margin-bottom:4px !important;
+}
+
+.week-row span{
+  font-size:14px !important;
+  font-weight:800 !important;
+  color:#5c7186 !important;
+  padding:7px 0 !important;
+}
+
+.calendar-grid{
+  gap:4px 0 !important;
+}
+
+.calendar-grid button{
+  height:48px !important;
+  font-size:18px !important;
+  color:#2f74d0 !important;
+  border-radius:50% !important;
+  font-weight:600 !important;
+}
+
+.calendar-grid button.other{
+  color:#bcc5cd !important;
+  font-weight:500 !important;
+}
+
+/* Course day: unmistakable */
+.calendar-grid button.has-course{
+  background:#e2f0ff !important;
+  color:#0058a8 !important;
+  font-weight:900 !important;
+  box-shadow:inset 0 0 0 2px #0a73d7 !important;
+}
+
+/* Remove the tiny old dot; the whole date is now highlighted */
+.calendar-grid button.has-course:not(.selected)::after{
+  display:none !important;
+}
+
+/* Selected day with course */
+.calendar-grid button.selected.has-course{
+  background:#0a73d7 !important;
+  color:#fff !important;
+  box-shadow:0 3px 10px rgba(10,115,215,.28) !important;
+}
+
+/* Selected day without course */
+.calendar-grid button.selected:not(.has-course){
+  background:#526d8a !important;
+  color:#fff !important;
+  font-weight:900 !important;
+  box-shadow:none !important;
+}
+
+.calendar-legend{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid #e2e8ee;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#43596e;
+  font-size:14px;
+  font-weight:700;
+}
+
+.legend-dot{
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  background:#e2f0ff;
+  box-shadow:inset 0 0 0 2px #0a73d7;
+  flex:0 0 auto;
+}
+
+.date-heading{
+  font-size:20px !important;
+  font-weight:800 !important;
+  color:#162b42 !important;
+  margin-top:20px !important;
+  margin-bottom:10px !important;
+}
+
+.mini-course{
+  padding:15px 16px !important;
+  border-radius:11px !important;
+}
+
+.mini-course .time{
+  font-size:17px !important;
+  font-weight:700 !important;
+  color:#445d74 !important;
+  margin-bottom:5px !important;
+}
+
+.mini-course h4{
+  font-size:19px !important;
+  line-height:1.3 !important;
+  font-weight:800 !important;
+  margin-bottom:6px !important;
+}
+
+.mini-course p{
+  font-size:16px !important;
+  line-height:1.35 !important;
+  color:#596e82 !important;
+}
+
+.calendar-box + .date-heading{
+  margin-top:18px !important;
+}
+
+/* Phone calendar: even larger */
+html.device-phone .calendar-box{
+  padding:16px 12px !important;
+}
+
+html.device-phone .calendar-head strong{
+  font-size:22px !important;
+}
+
+html.device-phone .week-row span{
+  font-size:14px !important;
+}
+
+html.device-phone .calendar-grid button{
+  height:52px !important;
+  font-size:19px !important;
+}
+
+html.device-phone .calendar-legend{
+  font-size:15px !important;
+}
+
+html.device-phone .date-heading{
+  font-size:21px !important;
+}
+
+html.device-phone .mini-course .time{
+  font-size:17px !important;
+}
+
+html.device-phone .mini-course h4{
+  font-size:20px !important;
+}
+
+html.device-phone .mini-course p{
+  font-size:17px !important;
+}
+
+/* Tablet gets a roomier calendar */
+html.device-tablet .calendar-box{
+  max-width:820px !important;
+}
+
+html.device-tablet .calendar-grid button{
+  height:56px !important;
+  font-size:19px !important;
+}
+
+html.device-tablet .week-row span{
+  font-size:15px !important;
+}
+
+/* Desktop */
+html.device-desktop .calendar-box{
+  max-width:860px !important;
+}
+
+html.device-desktop .calendar-grid button{
+  height:58px !important;
+  font-size:19px !important;
+}

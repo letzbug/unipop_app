@@ -10,7 +10,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>UniPop · Espace Formateur</title>
-  <link rel="manifest" href="manifest.webmanifest?v=9">
+  <link rel="manifest" href="manifest.webmanifest?v=10">
   
 <script>
 (function(){
@@ -48,7 +48,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <div id="phoneApp">
@@ -180,6 +180,10 @@
           <span>LUN</span><span>MAR</span><span>MER</span><span>JEU</span><span>VEN</span><span>SAM</span><span>DIM</span>
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="calendar-legend">
+          <span class="legend-dot"></span>
+          <span>Jour avec cours</span>
+        </div>
       </section>
       <h3 id="selectedDayTitle" class="date-heading"></h3>
       <div id="selectedDayCourses"></div>
@@ -232,7 +236,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "9";
+  const APP_VERSION = "10";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -261,6 +265,6 @@
   }
 })();
 </script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>
