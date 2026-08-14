@@ -108,6 +108,18 @@ function showScreen(id,push=true){
   if(push && active && active.id!==id) backStack.push(active.id);
   $$(".screen").forEach(s=>s.classList.remove("active"));
   $("#"+id).classList.add("active");
+
+  const tabTarget = (
+    id==="homeScreen" ? "homeScreen" :
+    id==="calendarScreen" ? "calendarScreen" :
+    id==="placesScreen" ? "placesScreen" :
+    id==="profileScreen" ? "profileScreen" : ""
+  );
+
+  $$(".global-tabs .tab").forEach(t=>{
+    t.classList.toggle("active", !!tabTarget && t.dataset.go===tabTarget);
+  });
+
   window.scrollTo(0,0);
 }
 $$("[data-back]").forEach(b=>b.addEventListener("click",()=>showScreen(backStack.pop()||"homeScreen",false)));
@@ -353,8 +365,12 @@ function renderPlaces(){
     </section>`;
   }).join("") || `<div class="empty-card">Aucun lieu trouvé.</div>`;
 }
-$$(".tab").forEach(btn=>btn.onclick=()=>{
+$$(".global-tabs .tab").forEach(btn=>btn.onclick=()=>{
   const id=btn.dataset.go;
+  if(!currentTrainer && id!=="profileScreen"){
+    showScreen("loginScreen",false);
+    return;
+  }
   if(id==="homeScreen") renderHome();
   else if(id==="calendarScreen") openCalendar();
   else if(id==="placesScreen"){renderPlaces();showScreen("placesScreen");}
