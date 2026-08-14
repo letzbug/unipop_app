@@ -1,5 +1,5 @@
-const CACHE="unipop-formateur-v2";
-const STATIC=["./","index.html","style.css","app.js","manifest.webmanifest","data/locations.json","assets/icon.svg"];
+const CACHE="unipop-formateur-v4";
+const STATIC=["./","index.html","style.css","app.js","manifest.webmanifest","data/locations.json","assets/icon.svg","assets/luxembourg-skyline.png","assets/demo-map.jpg","assets/demo-building.jpg","assets/demo-entry.jpg","assets/demo-room.jpg"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(STATIC))));
 self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch",e=>{

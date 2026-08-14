@@ -247,7 +247,7 @@ function renderDetail(){
   $("#accessText").textContent=loc.access||"Informations d'accès à compléter.";
 
   const photos=loc.photos||[];
-  const defaults=[{label:"Bâtiment"},{label:"Entrée"},{label:roomLabel(c)}];
+  const defaults=[{label:"Bâtiment",file:"assets/demo-building.jpg"},{label:"Entrée",file:"assets/demo-entry.jpg"},{label:roomLabel(c),file:"assets/demo-room.jpg"}];
   $("#photoGrid").innerHTML=(photos.length?photos:defaults).slice(0,3).map(p=>
     `<div class="photo-tile" ${p.file?`style="background-image:url('${escapeHtml(p.file)}')"`:""}><span>${escapeHtml(p.label||"Photo")}</span></div>`
   ).join("");

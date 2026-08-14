@@ -51,12 +51,7 @@
         <p>Tolérant aux accents et petites<br>variations (Müller, Muller, Müeller...)</p>
       </div>
 
-      <div class="skyline" aria-hidden="true">
-        <svg viewBox="0 0 420 155" preserveAspectRatio="none">
-          <path d="M6 137h408M18 137V99h28v38M29 99V82l7-14 7 14v17M54 137v-24h30v24M67 113v-30l5-11 5 11v30M97 137v-52h30v52M106 85V67h12v18M141 137v-28h34v28M150 109V91h16v18M188 137V98h36v39M196 98V75h8v23M208 98V65h8v33M240 137v-48h30v48M252 89V70h8v19M286 137v-36h30v36M298 101V82l5-12 5 12v19M330 137v-59h34v59M337 78V55l6-13 6 13v23M352 78V50l5-14 5 14v28M379 137V108h26v29M12 121l19-10 16 10M89 121l24-12 17 12M171 119l24-11 28 11M268 118l20-10 28 10M361 119l20-9 23 9"
-          fill="none" stroke="currentColor" stroke-width="2" opacity=".72"/>
-        </svg>
-      </div>
+      <div class="skyline" aria-hidden="true"><img src="assets/luxembourg-skyline.png" alt=""></div>
       <div id="dataStatus" class="data-status">Chargement du catalogue...</div>
     </div>
   </section>
@@ -99,20 +94,18 @@
         <button class="dots">•••</button>
       </div>
       <div id="detailIntro" class="detail-intro"></div>
-    </header>
-
-    <main class="detail-panel">
-      <div class="quick-actions">
+      <div class="quick-actions detail-actions">
         <button id="routeButton"><span class="action-circle">⌖</span><small>Itinéraire</small></button>
         <button id="phoneButton"><span class="action-circle">☎</span><small>Appeler</small></button>
         <button id="icsButton"><span class="action-circle">▣</span><small>Ajouter au<br>calendrier</small></button>
       </div>
+    </header>
 
+    <main class="detail-panel">
       <section class="detail-card">
         <h4>Adresse</h4>
         <p id="addressText"></p>
-        <div class="map-art">
-          <div class="road r1"></div><div class="road r2"></div><div class="road r3"></div>
+        <div class="map-art demo-map">
           <div class="map-pin">●</div>
         </div>
 
