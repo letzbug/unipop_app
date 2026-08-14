@@ -46,7 +46,7 @@ function locationData(c){
 
 async function loadAll(){
   try{
-    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=7",{cache:"no-store"})]);
+    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=8",{cache:"no-store"})]);
     if(!r1.ok)throw new Error("trainings.json");
     trainings=await r1.json();locations=await r2.json();
     $("#dataStatus").textContent=`${trainings.length} cours chargés`;

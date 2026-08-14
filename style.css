@@ -768,3 +768,340 @@ button{-webkit-tap-highlight-color:transparent;cursor:pointer}
   .skyline{padding-top:10px}
   .skyline img{max-height:110px}
 }
+
+
+/* =========================================================
+   V8 — ACCESSIBILITY / READABILITY
+   ========================================================= */
+
+:root{
+  --nav-h:74px;
+}
+
+/* Larger global typography */
+body{
+  font-size:17px;
+}
+.home-title-row h2{
+  font-size:32px;
+  line-height:1.08;
+}
+.home-title-row p{
+  font-size:16px;
+  line-height:1.35;
+}
+.section-title{
+  font-size:22px;
+}
+.course-info .line1{
+  font-size:16px;
+}
+.course-info h4{
+  font-size:18px;
+  line-height:1.28;
+}
+.course-info p{
+  font-size:16px;
+  line-height:1.35;
+}
+.course-left.date small{
+  font-size:13px;
+}
+.course-left.date b{
+  font-size:28px;
+}
+.course-left.time strong,
+.course-left.time span{
+  font-size:22px;
+}
+.green-pill{
+  font-size:13px;
+  padding:5px 9px;
+}
+.empty-card{
+  font-size:16px;
+}
+.blue-btn{
+  font-size:17px;
+  min-height:50px;
+}
+
+/* Footer larger and easier to read */
+.global-tabs{
+  height:calc(var(--nav-h) + var(--safe-bottom));
+}
+.global-tabs .nav-icon{
+  font-size:24px;
+}
+.global-tabs small{
+  font-size:13px;
+}
+.global-tabs .tab{
+  min-height:60px;
+  gap:6px;
+}
+
+/* Login readability */
+.login-shell h1{
+  font-size:28px;
+}
+.login-copy{
+  font-size:17px;
+  max-width:430px;
+}
+.name-field{
+  min-height:74px;
+}
+.name-field label span{
+  font-size:13px;
+}
+.name-field input{
+  font-size:19px;
+}
+#loginButton{
+  min-height:54px;
+}
+.brand-sub{
+  font-size:15px;
+}
+
+/* Detail readability */
+.detail-nav strong{
+  font-size:17px;
+}
+.detail-intro .when{
+  font-size:18px;
+}
+.detail-intro .date{
+  font-size:14px;
+}
+.detail-intro h1{
+  font-size:26px;
+}
+.detail-intro p{
+  font-size:15px;
+}
+.quick-actions small{
+  font-size:13px;
+}
+.action-circle{
+  width:50px;
+  height:50px;
+  font-size:24px;
+}
+.detail-card h4{
+  font-size:16px;
+}
+.detail-card p{
+  font-size:15px;
+}
+.equipment-grid div{
+  font-size:14px;
+}
+.detail-card .blue-btn{
+  font-size:15px;
+  min-height:48px;
+}
+
+/* Calendar readability */
+.white-top strong{
+  font-size:17px;
+}
+.calendar-head strong{
+  font-size:16px;
+}
+.week-row span{
+  font-size:12px;
+}
+.calendar-grid button{
+  font-size:15px;
+  height:46px;
+}
+.date-heading{
+  font-size:17px;
+}
+.mini-course .time{
+  font-size:14px;
+}
+.mini-course h4{
+  font-size:16px;
+}
+.mini-course p{
+  font-size:14px;
+}
+.place-card h3{
+  font-size:19px;
+}
+.place-card p{
+  font-size:15px;
+}
+
+/* PHONE: always one course per row */
+@media (max-width:699px){
+  :root{--nav-h:74px}
+
+  #todayCourse,
+  #nextCourses{
+    display:block !important;
+  }
+
+  .course-card{
+    display:grid !important;
+    grid-template-columns:88px minmax(0,1fr) 28px !important;
+    min-height:118px;
+    margin-bottom:14px;
+  }
+
+  .course-card.today{
+    grid-template-columns:98px minmax(0,1fr) !important;
+  }
+
+  .course-info{
+    padding:15px 12px;
+  }
+
+  .home-title-row h2{
+    font-size:31px;
+  }
+
+  .home-title-row p{
+    font-size:16px;
+  }
+
+  .section-title{
+    font-size:21px;
+  }
+
+  .course-info .line1{
+    font-size:15px;
+  }
+
+  .course-info h4{
+    font-size:18px;
+  }
+
+  .course-info p{
+    font-size:15px;
+  }
+
+  .course-left.date b{
+    font-size:27px;
+  }
+
+  .course-left.time strong,
+  .course-left.time span{
+    font-size:21px;
+  }
+
+  .global-tabs small{
+    font-size:12px;
+  }
+
+  .global-tabs .nav-icon{
+    font-size:23px;
+  }
+
+  .skyline{
+    width:min(100%,460px);
+  }
+
+  .skyline img{
+    max-height:190px;
+  }
+}
+
+/* TABLET / iPad: exactly two columns */
+@media (min-width:700px) and (max-width:1199px){
+  :root{--nav-h:78px}
+
+  #todayCourse,
+  #nextCourses{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:16px;
+  }
+
+  .course-card{
+    margin-bottom:0;
+    min-height:126px;
+  }
+
+  .course-info h4{
+    font-size:18px;
+  }
+
+  .course-info p{
+    font-size:15px;
+  }
+
+  .home-title-row h2{
+    font-size:36px;
+  }
+
+  .home-title-row p{
+    font-size:17px;
+  }
+
+  .main-panel{
+    padding-left:24px;
+    padding-right:24px;
+  }
+
+  .global-tabs small{
+    font-size:13px;
+  }
+}
+
+/* Desktop: 3 columns when there is enough space */
+@media (min-width:1200px){
+  :root{--nav-h:80px}
+
+  #todayCourse{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:18px;
+  }
+
+  #nextCourses{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:18px;
+  }
+
+  .course-card{
+    min-height:132px;
+  }
+
+  .home-title-row h2{
+    font-size:40px;
+  }
+
+  .home-title-row p{
+    font-size:18px;
+  }
+
+  .course-info h4{
+    font-size:19px;
+  }
+
+  .course-info p{
+    font-size:16px;
+  }
+}
+
+/* Landscape phones: still one column for readability */
+@media (max-width:899px) and (orientation:landscape){
+  #todayCourse,
+  #nextCourses{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* Honor larger system text where possible */
+@media (prefers-reduced-motion: reduce){
+  *{
+    scroll-behavior:auto !important;
+    transition:none !important;
+    animation:none !important;
+  }
+}
