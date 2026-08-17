@@ -29,8 +29,9 @@ window.addEventListener("orientationchange",refreshDeviceClass,{passive:true});
 refreshDeviceClass();
 
 const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
+const SITES_URL="https://raw.githubusercontent.com/letzbug/unipop_go_sites/main/sites.json";
 
-let trainings=[], locations={}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null;
+let trainings=[], locations={}, sitesData={schemaVersion:2,locations:[]}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null, selectedSite=null;
 let backStack=[], selectedDate=new Date(), calendarCursor=new Date();
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -70,15 +71,25 @@ function locationKey(c){const a=c.adresseCours||{};return normalizeText(`${a.nom
 function locationData(c){
   const key=locationKey(c);
   const byCourse=locations.courses?.[normalizeText(c.code||c.reference||c.id||"")];
-  if(byCourse)return{...locations._default,...byCourse};
-  return{...locations._default,...(locations.places?.[key]||{})};
+  const legacy=byCourse?{...locations._default,...byCourse}:{...locations._default,...(locations.places?.[key]||{})};
+  const site=findSiteForCourse(c);
+  if(!site)return legacy;
+  const wantedRoom=normalizeText(legacy.room||"");
+  const room=(site.rooms||[]).find(r=>[r.name,...(r.aliases||[])].map(normalizeText).some(n=>n&&(n===wantedRoom||n.includes(wantedRoom)||wantedRoom.includes(n))));
+  return {...legacy,phone:site.phone||legacy.phone,access:room?.directions||site.accessInfo||legacy.access,photos:[...(site.gallery||[]).slice(0,2).map(g=>({label:g.name||"Photo",file:siteAssetUrl(g.path)})),...(room?.hero?[{label:room.name,file:siteAssetUrl(room.hero)}]:[])],equipment:room?.equipment||legacy.equipment,room:room?.name||legacy.room,site};
 }
 
 async function loadAll(){
   try{
-    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=15",{cache:"no-store"})]);
+    const [r1,r2,r3]=await Promise.all([
+      fetch(DATA_URL,{cache:"no-store"}),
+      fetch("data/locations.json?v=15",{cache:"no-store"}),
+      fetch(SITES_URL+"?t="+Date.now(),{cache:"no-store"}).catch(()=>null)
+    ]);
     if(!r1.ok)throw new Error("trainings.json");
-    trainings=await r1.json();locations=await r2.json();
+    trainings=await r1.json();
+    locations=await r2.json();
+    if(r3&&r3.ok){const remote=await r3.json();if(remote&&Array.isArray(remote.locations))sitesData=remote;}
     $("#dataStatus").textContent=`${trainings.length} cours chargés`;
     const saved=localStorage.getItem("unipopTrainer");
     if(saved)$("#trainerInput").value=saved;
@@ -331,9 +342,52 @@ function renderCalendar(){
 
   bindOccurrences();
 }
+function siteAssetUrl(path){
+  if(!path)return "";
+  try{return new URL(path,SITES_URL).href}catch{return path}
+}
+function siteAddressOneLine(site){return String(site.address||"").split(/\n+/).filter(Boolean).join(", ")}
+function findSiteForCourse(c){
+  if(!sitesData.locations?.length)return null;
+  const venue=normalizeText(venueLabel(c));
+  const a=c.adresseCours||{};
+  const addr=normalizeText([a.rueNumero,a.codePostal,a.localite].filter(Boolean).join(" "));
+  return sitesData.locations.find(site=>{
+    const names=[site.name,...(site.aliases||[])].map(normalizeText);
+    const siteAddr=normalizeText(site.address||"");
+    return names.some(n=>n&&(venue.includes(n)||n.includes(venue))) || (addr&&siteAddr&&(siteAddr.includes(addr)||addr.includes(siteAddr)));
+  })||null;
+}
 function renderPlaces(){
+  const remote=(sitesData.locations||[]).filter(x=>x.active!==false);
+  if(remote.length){
+    $("#placesList").innerHTML=remote.map(site=>`<section class="place-card dynamic-place" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml((site.rooms||[]).length?`${site.rooms.length} salle${site.rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`).join("");
+    $$(".dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
+    return;
+  }
   const seen=new Map();trainerCourses.forEach(c=>seen.set(locationKey(c),c));
   $("#placesList").innerHTML=[...seen.values()].map(c=>{const a=c.adresseCours||{},loc=locationData(c);return `<section class="place-card"><h3>${escapeHtml(venueLabel(c))}</h3><p>${escapeHtml([a.rueNumero,a.codePostal,a.localite].filter(Boolean).join(", "))}</p><p><strong>${escapeHtml(roomLabel(c))}</strong></p><p>${escapeHtml(loc.access||"Informations d'accès à compléter.")}</p></section>`;}).join("")||`<div class="empty-card">Aucun lieu trouvé.</div>`;
+}
+function openSite(id){
+  selectedSite=(sitesData.locations||[]).find(x=>String(x.id)===String(id));
+  if(!selectedSite)return;
+  renderSiteDetail();showScreen("placeDetailScreen");
+}
+function renderSiteDetail(){
+  const s=selectedSite;if(!s)return;
+  $("#placeDetailTopTitle").textContent=s.name||"Lieu";$("#placeName").textContent=s.name||"";
+  $("#placeAddress").innerHTML=escapeHtml(s.address||"").replace(/\n/g,"<br>");
+  const hero=siteAssetUrl(s.hero||s.heroThumb||"");$("#placeHero").src=hero;$("#placeHero").classList.toggle("hidden",!hero);
+  $("#placeDescription").textContent=s.description||"";
+  const query=(s.lat&&s.lng)?`${s.lat},${s.lng}`:siteAddressOneLine(s);
+  $("#placeGoogleMaps").onclick=()=>window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,"_blank");
+  $("#placeAppleMaps").onclick=()=>window.open(`https://maps.apple.com/?q=${encodeURIComponent(s.name||"")}${s.lat&&s.lng?`&ll=${s.lat},${s.lng}`:""}`,"_blank");
+  const access=[];if(s.parking)access.push({icon:"P",title:s.parking,text:s.parkingInfo||""});if(s.transport)access.push({icon:"▣",title:s.transport,text:s.transportInfo||""});if(s.accessInfo)access.push({icon:"→",title:"Entrée",text:s.accessInfo});if(s.pmr)access.push({icon:"♿",title:"Accès PMR",text:"Accessible"});
+  $("#placeAccessCards").innerHTML=access.map(a=>`<div class="place-access-card"><span>${escapeHtml(a.icon)}</span><div><b>${escapeHtml(a.title)}</b>${a.text?`<small>${escapeHtml(a.text)}</small>`:""}</div></div>`).join("")||`<div class="empty-card">Informations d'accès à compléter.</div>`;
+  const gallery=(s.gallery||[]).filter(x=>x.path);$("#placeGallery").innerHTML=gallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||"Photo")}">`).join("");$("#placeGallerySection").classList.toggle("hidden",gallery.length===0);
+  const rooms=s.rooms||[];$("#placeRooms").innerHTML=rooms.map(r=>`<article class="place-room-card">${r.hero?`<img src="${escapeHtml(siteAssetUrl(r.hero))}" alt="">`:""}<div><h4>${escapeHtml(r.name||"Salle")}</h4>${r.floor?`<p><b>Étage:</b> ${escapeHtml(r.floor)}</p>`:""}${r.directions?`<p>${escapeHtml(r.directions)}</p>`:""}${(r.equipment||[]).length?`<div class="equipment-pills">${r.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}</div></article>`).join("");$("#placeRoomsSection").classList.toggle("hidden",rooms.length===0);
+  const plans=s.plans||[];$("#placePlans").innerHTML=plans.map(p=>`<a href="${escapeHtml(siteAssetUrl(p.path))}" target="_blank" rel="noopener">▱ <span>${escapeHtml(p.name||"Plan")}</span><b>Ouvrir</b></a>`).join("");$("#placePlansSection").classList.toggle("hidden",plans.length===0);
+  const tutorials=s.tutorials||[];$("#placeTutorials").innerHTML=tutorials.map(t=>{const u=t.path?siteAssetUrl(t.path):t.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">▶ <span>${escapeHtml(t.title||t.name||"Tutoriel")}</span><b>Ouvrir</b></a>`}).join("");$("#placeTutorialsSection").classList.toggle("hidden",tutorials.length===0);
 }
 
 $$(".global-tabs .tab").forEach(btn=>btn.onclick=()=>{

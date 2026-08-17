@@ -10,7 +10,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>UniPop Go</title>
-  <link rel="manifest" href="manifest.webmanifest?v=23">
+  <link rel="manifest" href="manifest.webmanifest?v=24">
   
 <script>
 (function(){
@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=23">
+  <link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
 <div id="phoneApp">
@@ -237,11 +237,63 @@
 </nav>
   </section>
 
+
+  <section class="screen" id="placeDetailScreen">
+    <header class="blue-head place-detail-head">
+      <div class="detail-nav">
+        <button class="back-btn" data-back>‹</button>
+        <strong id="placeDetailTopTitle">Lieu</strong>
+        <span></span>
+      </div>
+    </header>
+    <main class="light-page place-detail-page">
+      <img id="placeHero" class="place-hero" alt="">
+      <section class="place-detail-card">
+        <h1 id="placeName"></h1>
+        <p id="placeAddress" class="place-address"></p>
+        <div class="place-map-actions">
+          <button id="placeGoogleMaps">⌖ Google Maps</button>
+          <button id="placeAppleMaps">⌖ Apple Plans</button>
+        </div>
+        <p id="placeDescription" class="place-description"></p>
+
+        <h3>Accès</h3>
+        <div id="placeAccessCards" class="place-access-grid"></div>
+
+        <section id="placeGallerySection" class="place-section">
+          <h3>Photos</h3>
+          <div id="placeGallery" class="place-gallery"></div>
+        </section>
+
+        <section id="placeRoomsSection" class="place-section">
+          <h3>Salles</h3>
+          <div id="placeRooms" class="place-rooms"></div>
+        </section>
+
+        <section id="placePlansSection" class="place-section">
+          <h3>Plans & documents</h3>
+          <div id="placePlans" class="place-files"></div>
+        </section>
+
+        <section id="placeTutorialsSection" class="place-section">
+          <h3>Tutoriels</h3>
+          <div id="placeTutorials" class="place-files"></div>
+        </section>
+      </section>
+    </main>
+    <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
+      <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+      <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+      <button class="tab active" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+      <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
+    </nav>
+  </section>
+
 </div>
 
 <script>
 (function() {
-  const APP_VERSION = "17";
+  const APP_VERSION = "24";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -270,6 +322,6 @@
   }
 })();
 </script>
-<script src="app.js?v=23"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>
