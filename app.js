@@ -75,7 +75,7 @@ function locationData(c){
 
 async function loadAll(){
   try{
-    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=16",{cache:"no-store"})]);
+    const[r1,r2]=await Promise.all([fetch(DATA_URL,{cache:"no-store"}),fetch("data/locations.json?v=15",{cache:"no-store"})]);
     if(!r1.ok)throw new Error("trainings.json");
     trainings=await r1.json();locations=await r2.json();
     $("#dataStatus").textContent=`${trainings.length} cours chargés`;
@@ -219,6 +219,12 @@ function openCalendar(){
   showScreen("calendarScreen");
 }
 $("#calendarButton").onclick=openCalendar;$("#calendarTopButton").onclick=openCalendar;
+const loginCalendarButton=$("#loginCalendarButton");
+if(loginCalendarButton) loginCalendarButton.onclick=()=>{
+  if(currentTrainer){ openCalendar(); return; }
+  const input=$("#trainerInput");
+  if(input) input.focus();
+};
 $("#prevMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar();};
 $("#nextMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar();};
 

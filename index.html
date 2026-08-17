@@ -55,44 +55,52 @@
 
   <section class="screen active" id="loginScreen">
     <div class="login-shell">
-      <div class="brand-block">
-        <div class="brand-main">UniPop</div>
-        <div class="brand-sub">Luxembourg</div>
+      <div class="login-content">
+        <h1>UniPop Formateur app<span aria-hidden="true"></span></h1>
+        <p class="login-copy">Connectez-vous pour voir vos cours d'aujourd'hui<br class="login-copy-break"> et vos prochains cours</p>
+
+        <div class="login-form-group">
+          <label class="field-label" for="trainerInput">Votre nom</label>
+          <div class="name-field">
+            <svg class="login-user-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <input id="trainerInput" type="text" autocomplete="name" placeholder="Entrez votre nom" aria-label="Votre nom">
+            <button id="clearTrainer" type="button" aria-label="Effacer">×</button>
+          </div>
+          <div id="suggestions" class="suggestions"></div>
+        </div>
+
+        <button class="blue-btn" id="loginButton">Voir mes cours</button>
+
+        <div class="login-divider" aria-hidden="true"><span></span><small>ou</small><span></span></div>
+
+        <button class="login-calendar-btn" id="loginCalendarButton" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Aller au calendrier</span>
+        </button>
+
+        <div class="privacy-note">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 10V8a4 4 0 0 1 8 0v2M6 10h12v10H6V10Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Vos données restent privées et sécurisées</span>
+        </div>
+        <div id="dataStatus" class="data-status" aria-live="polite">Chargement du catalogue...</div>
       </div>
-
-      <div class="cap-circle" aria-hidden="true">
-        <svg viewBox="0 0 64 64">
-          <path d="M7 27 32 14l25 13-25 13L7 27Z" fill="none" stroke="currentColor" stroke-width="3"/>
-          <path d="M17 34v12c10 7 20 7 30 0V34" fill="none" stroke="currentColor" stroke-width="3"/>
-        </svg>
-      </div>
-
-      <h1>Espace Formateur</h1>
-      <p class="login-copy">Entrez votre nom pour voir vos cours et informations.</p>
-
-      <div class="name-field">
-        <div class="search-icon">⌕</div>
-        <label>
-          <span>Votre nom</span>
-          <input id="trainerInput" type="text" autocomplete="name" placeholder="Marie Muller">
-        </label>
-        <button id="clearTrainer" type="button" aria-label="Effacer">×</button>
-      </div>
-      <div id="suggestions" class="suggestions"></div>
-
-      <button class="blue-btn" id="loginButton">Voir mes cours</button>
 
       <div class="skyline" aria-hidden="true">
-        <img src="assets/unipop-home-illustration.png" alt="">
+        <img src="assets/luxembourg-skyline.png" alt="">
       </div>
-      <div id="dataStatus" class="data-status">Chargement du catalogue...</div>
     </div>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
-  <button class="tab" data-go="homeScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/><rect x="8" y="8" width="8" height="8" rx="1" fill="#063258"/></svg></span><small>Aujourd'hui</small></button>
-  <button class="tab" data-go="calendarScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M6 8h12M6 11h12M6 14h12M6 17h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Calendrier</small></button>
-  <button class="tab" data-go="placesScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><small>Lieux</small></button>
-  <button class="tab" data-go="loginScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 12 5l7 6.2V19h-5v-5h-4v5H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Accueil</small></button>
-</nav>
+      <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+      <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+      <button class="tab" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+      <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
+    </nav>
   </section>
 
   <section class="screen" id="homeScreen">
@@ -113,10 +121,10 @@
       <button class="blue-btn calendar-wide" id="calendarButton">Voir mon calendrier</button>
     </main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
-  <button class="tab" data-go="homeScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/><rect x="8" y="8" width="8" height="8" rx="1" fill="#063258"/></svg></span><small>Aujourd'hui</small></button>
-  <button class="tab" data-go="calendarScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M6 8h12M6 11h12M6 14h12M6 17h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Calendrier</small></button>
-  <button class="tab" data-go="placesScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><small>Lieux</small></button>
-  <button class="tab" data-go="loginScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 12 5l7 6.2V19h-5v-5h-4v5H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Accueil</small></button>
+  <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+  <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+  <button class="tab" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+  <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
 </nav>
   </section>
 
@@ -156,10 +164,10 @@
       </section>
     </main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
-  <button class="tab" data-go="homeScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/><rect x="8" y="8" width="8" height="8" rx="1" fill="#063258"/></svg></span><small>Aujourd'hui</small></button>
-  <button class="tab" data-go="calendarScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M6 8h12M6 11h12M6 14h12M6 17h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Calendrier</small></button>
-  <button class="tab" data-go="placesScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><small>Lieux</small></button>
-  <button class="tab" data-go="loginScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 12 5l7 6.2V19h-5v-5h-4v5H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Accueil</small></button>
+  <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+  <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+  <button class="tab" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+  <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
 </nav>
   </section>
 
@@ -191,10 +199,10 @@
       <div id="calendarOtherCourses"></div>
     </main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
-  <button class="tab" data-go="homeScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/><rect x="8" y="8" width="8" height="8" rx="1" fill="#063258"/></svg></span><small>Aujourd'hui</small></button>
-  <button class="tab" data-go="calendarScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M6 8h12M6 11h12M6 14h12M6 17h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Calendrier</small></button>
-  <button class="tab" data-go="placesScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><small>Lieux</small></button>
-  <button class="tab" data-go="loginScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 12 5l7 6.2V19h-5v-5h-4v5H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Accueil</small></button>
+  <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+  <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+  <button class="tab" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+  <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
 </nav>
   </section>
 
@@ -208,10 +216,10 @@
       <div id="techSteps"></div>
     </main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
-  <button class="tab" data-go="homeScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/><rect x="8" y="8" width="8" height="8" rx="1" fill="#063258"/></svg></span><small>Aujourd'hui</small></button>
-  <button class="tab" data-go="calendarScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M6 8h12M6 11h12M6 14h12M6 17h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Calendrier</small></button>
-  <button class="tab" data-go="placesScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><small>Lieux</small></button>
-  <button class="tab" data-go="loginScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 12 5l7 6.2V19h-5v-5h-4v5H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Accueil</small></button>
+  <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+  <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+  <button class="tab" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+  <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
 </nav>
   </section>
 
@@ -225,10 +233,10 @@
     </header>
     <main class="main-panel" id="placesList"></main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
-  <button class="tab" data-go="homeScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/><rect x="8" y="8" width="8" height="8" rx="1" fill="#063258"/></svg></span><small>Aujourd'hui</small></button>
-  <button class="tab" data-go="calendarScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12M6 8h12M6 11h12M6 14h12M6 17h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><small>Calendrier</small></button>
-  <button class="tab" data-go="placesScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span><small>Lieux</small></button>
-  <button class="tab" data-go="loginScreen"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11.2 12 5l7 6.2V19h-5v-5h-4v5H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><small>Accueil</small></button>
+  <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+  <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+  <button class="tab" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+  <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
 </nav>
   </section>
 
