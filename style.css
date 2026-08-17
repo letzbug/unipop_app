@@ -2502,3 +2502,15 @@ html.device-tablet #loginScreen .skyline,
 html.device-desktop #loginScreen .skyline{
   width:min(100%,853px) !important;
 }
+
+/* =========================================================
+   V17 — iOS Safari input zoom fix
+   Safari automatically zooms the page when focusing an input
+   whose computed font-size is below 16px. The V16 login design
+   used 12px here, so the zoom remained active when navigating
+   to the calendar. Keep the compact layout, but never go below
+   Safari's 16px focus threshold on phones.
+   ========================================================= */
+html.device-phone #loginScreen .name-field input{
+  font-size:16px !important;
+}
