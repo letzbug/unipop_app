@@ -2157,3 +2157,79 @@ html.device-desktop .global-tabs .nav-icon{
   box-shadow:none !important;
   border-radius:999px !important;
 }
+
+
+/* =========================================================
+   V15 — FINAL IPHONE CALENDAR RECTANGLE FIX
+   Old device-phone rule had higher specificity.
+   ========================================================= */
+
+html.device-phone .calendar-grid button,
+html.device-phone .calendar-grid button.has-course,
+html.device-phone .calendar-grid button.selected,
+html.device-phone .calendar-grid button.selected.has-course,
+html.device-phone .calendar-grid button.selected:not(.has-course),
+html.device-phone .calendar-grid button:focus,
+html.device-phone .calendar-grid button:focus-visible,
+html.device-phone .calendar-grid button:active,
+html.device-phone .calendar-grid button:hover{
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  border:0 !important;
+  outline:0 !important;
+  outline-offset:0 !important;
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
+html.device-tablet .calendar-grid button,
+html.device-tablet .calendar-grid button.has-course,
+html.device-tablet .calendar-grid button.selected,
+html.device-desktop .calendar-grid button,
+html.device-desktop .calendar-grid button.has-course,
+html.device-desktop .calendar-grid button.selected{
+  border:0 !important;
+  outline:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+}
+
+html.device-phone .calendar-grid button.has-course .day-number,
+html.device-tablet .calendar-grid button.has-course .day-number,
+html.device-desktop .calendar-grid button.has-course .day-number{
+  width:44px !important;
+  height:44px !important;
+  border-radius:50% !important;
+  background:#dbeeff !important;
+  color:#07559c !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+  font-weight:900 !important;
+}
+
+html.device-phone .calendar-grid button.selected.has-course .day-number,
+html.device-tablet .calendar-grid button.selected.has-course .day-number,
+html.device-desktop .calendar-grid button.selected.has-course .day-number{
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:0 3px 10px rgba(8,115,213,.25) !important;
+}
+
+html.device-phone .calendar-grid button.selected:not(.has-course) .day-number,
+html.device-tablet .calendar-grid button.selected:not(.has-course) .day-number,
+html.device-desktop .calendar-grid button.selected:not(.has-course) .day-number{
+  background:#5b7390 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+}
+
+html.device-phone .calendar-grid .course-marker{
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+}
