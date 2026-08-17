@@ -111,18 +111,28 @@ $("#trainerInput").addEventListener("input",()=>{
   const box=$("#suggestions");box.innerHTML="";
   teacherMatches($("#trainerInput").value).forEach(n=>{
     const b=document.createElement("button");b.type="button";b.textContent=n;
-    b.onclick=()=>{$("#trainerInput").value=n;box.innerHTML="";};box.appendChild(b);
+    b.onclick=()=>{
+      $("#trainerInput").value=n;
+      box.innerHTML="";
+      selectTrainer(n);
+    };box.appendChild(b);
   });
 });
 $("#clearTrainer").onclick=()=>{$("#trainerInput").value="";$("#suggestions").innerHTML="";$("#trainerInput").focus();};
 
-$("#loginButton").onclick=()=>{
-  releaseIOSFocus();
-  const query=$("#trainerInput").value.trim();if(!query)return;
-  const match=teacherMatches(query)[0];if(!match){alert("Formateur introuvable dans le catalogue.");return;}
+function selectTrainer(name){
+  const match=teacherMatches(name)[0];
+  if(!match)return false;
   currentTrainer=match;
   trainerCourses=trainings.filter(c=>(c.enseignants||[]).some(e=>normalizeText(teacherName(e))===normalizeText(match)));
   localStorage.setItem("unipopTrainer",match);
+  return true;
+}
+
+$("#loginButton").onclick=()=>{
+  releaseIOSFocus();
+  const query=$("#trainerInput").value.trim();if(!query)return;
+  if(!selectTrainer(query)){alert("Formateur introuvable dans le catalogue.");return;}
   renderHome();
 };
 
@@ -231,8 +241,11 @@ function openCalendar(){
 $("#calendarButton").onclick=openCalendar;$("#calendarTopButton").onclick=openCalendar;
 const loginCalendarButton=$("#loginCalendarButton");
 if(loginCalendarButton) loginCalendarButton.onclick=()=>{
-  if(currentTrainer){ openCalendar(); return; }
+  releaseIOSFocus();
   const input=$("#trainerInput");
+  const query=input ? input.value.trim() : "";
+  if(!currentTrainer && query) selectTrainer(query);
+  if(currentTrainer){ openCalendar(); return; }
   if(input) input.focus();
 };
 $("#prevMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar();};
