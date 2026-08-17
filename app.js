@@ -87,7 +87,15 @@ async function loadAll(){
   }
 }
 
+function releaseIOSFocus(){
+  const active=document.activeElement;
+  if(active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)){
+    active.blur();
+  }
+}
+
 function showScreen(id,push=true){
+  releaseIOSFocus();
   const active=$(".screen.active");
   if(push&&active&&active.id!==id)backStack.push(active.id);
   $$(".screen").forEach(s=>s.classList.remove("active"));
@@ -108,6 +116,7 @@ $("#trainerInput").addEventListener("input",()=>{
 $("#clearTrainer").onclick=()=>{$("#trainerInput").value="";$("#suggestions").innerHTML="";$("#trainerInput").focus();};
 
 $("#loginButton").onclick=()=>{
+  releaseIOSFocus();
   const query=$("#trainerInput").value.trim();if(!query)return;
   const match=teacherMatches(query)[0];if(!match){alert("Formateur introuvable dans le catalogue.");return;}
   currentTrainer=match;

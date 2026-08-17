@@ -2514,3 +2514,31 @@ html.device-desktop #loginScreen .skyline{
 html.device-phone #loginScreen .name-field input{
   font-size:16px !important;
 }
+
+
+/* =========================================================
+   V18 — iOS Safari focus zoom: hard fix
+   ---------------------------------------------------------
+   The previous device-phone override depended on device
+   detection. Safari can still focus-zoom before/around that
+   rule in some cases. Apply the 16px threshold directly to
+   the real control, independent of device classes.
+   ========================================================= */
+#loginScreen #trainerInput{
+  font-size:16px !important;
+  line-height:40px !important;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+
+#loginScreen input,
+#loginScreen textarea,
+#loginScreen select{
+  font-size:16px !important;
+}
+
+#loginScreen .name-field,
+#loginScreen #trainerInput,
+#loginScreen button{
+  touch-action:manipulation;
+}
