@@ -2542,3 +2542,91 @@ html.device-phone #loginScreen .name-field input{
 #loginScreen button{
   touch-action:manipulation;
 }
+
+/* =========================================================
+   V19 — Phone-only login control sizing
+   Larger touch targets and text on iPhone / Android phones.
+   Tablet (including iPad) and desktop remain unchanged.
+   ========================================================= */
+html.device-phone #loginScreen .login-content{
+  width:min(calc(100vw - 36px),360px) !important;
+}
+
+html.device-phone #loginScreen .field-label{
+  margin-bottom:9px;
+  font-size:15px !important;
+  line-height:1.2;
+}
+
+html.device-phone #loginScreen .name-field{
+  min-height:54px !important;
+  padding:0 14px !important;
+  grid-template-columns:28px minmax(0,1fr) 28px;
+  gap:5px;
+  border-radius:9px !important;
+}
+
+html.device-phone #loginScreen .login-user-icon{
+  width:21px;
+  height:21px;
+}
+
+html.device-phone #loginScreen #trainerInput{
+  height:52px !important;
+  font-size:17px !important;
+  line-height:52px !important;
+}
+
+html.device-phone #loginScreen .name-field button{
+  width:26px;
+  height:26px;
+  font-size:21px;
+  line-height:24px;
+}
+
+html.device-phone #loginScreen #loginButton{
+  min-height:52px !important;
+  margin-top:16px !important;
+  border-radius:8px !important;
+  font-size:16px !important;
+}
+
+html.device-phone #loginScreen .login-divider{
+  margin:19px 0 16px;
+}
+
+html.device-phone #loginScreen .login-divider small{
+  font-size:13px !important;
+}
+
+html.device-phone #loginScreen .login-calendar-btn{
+  min-height:50px;
+  border-radius:8px;
+  font-size:15px;
+  gap:9px;
+}
+
+html.device-phone #loginScreen .login-calendar-btn svg{
+  width:19px;
+  height:19px;
+  flex-basis:19px;
+}
+
+html.device-phone #loginScreen .privacy-note{
+  margin-top:18px;
+  gap:7px;
+  font-size:12px;
+}
+
+html.device-phone #loginScreen .privacy-note svg{
+  width:14px;
+  height:14px;
+  flex-basis:14px;
+}
+
+/* Keep small phones usable without shrinking the touch targets. */
+@media (max-width:360px){
+  html.device-phone #loginScreen .login-content{
+    width:calc(100vw - 28px) !important;
+  }
+}
