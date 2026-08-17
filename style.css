@@ -2752,3 +2752,55 @@ html.device-phone #loginScreen .privacy-note svg{
 /* V22 — UniPop Go title */
 #loginScreen .login-shell h1{font-size:32px !important;line-height:1.08 !important;font-weight:800 !important;}
 html.device-phone #loginScreen .login-shell h1{font-size:38px !important;line-height:1.06 !important;}
+
+
+/* =========================================================
+   V23 — DESKTOP APP VIEW
+   Keep UniPop Go in the same narrow app format on desktop.
+   Phones/tablets keep their existing responsive layout.
+   ========================================================= */
+html.device-desktop body{
+  background:#061f38 !important;
+}
+
+html.device-desktop #phoneApp{
+  width:607px !important;
+  max-width:607px !important;
+  min-width:607px !important;
+  min-height:100dvh !important;
+  margin:0 auto !important;
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 0 40px rgba(0,0,0,.22);
+}
+
+html.device-desktop #phoneApp > .screen{
+  width:607px !important;
+  max-width:607px !important;
+  min-width:607px !important;
+  margin:0 !important;
+}
+
+html.device-desktop .global-tabs{
+  left:50% !important;
+  right:auto !important;
+  width:607px !important;
+  max-width:607px !important;
+  min-width:607px !important;
+  transform:translateX(-50%);
+}
+
+html.device-desktop .login-shell{
+  max-width:560px !important;
+}
+
+@media (max-width:606px){
+  html.device-desktop #phoneApp,
+  html.device-desktop #phoneApp > .screen,
+  html.device-desktop .global-tabs{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+  }
+}
