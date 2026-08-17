@@ -2630,3 +2630,120 @@ html.device-phone #loginScreen .privacy-note svg{
     width:calc(100vw - 28px) !important;
   }
 }
+
+/* =========================================================
+   V20 — SMARTPHONE ONLY: +20% login/start controls
+   ---------------------------------------------------------
+   Uses a real CSS phone viewport condition instead of relying
+   only on the JS device class. This makes the sizing apply
+   reliably in iOS Safari and Android browsers, while iPad and
+   desktop/tablet layouts remain unchanged.
+   ========================================================= */
+@media (max-width:600px) and (pointer:coarse){
+  #loginScreen .login-content{
+    width:calc(100vw - 24px) !important;
+    max-width:430px !important;
+  }
+
+  #loginScreen .login-shell h1{
+    font-size:31px !important;
+    margin-bottom:16px !important;
+  }
+
+  #loginScreen .login-copy{
+    font-size:16px !important;
+    line-height:1.42 !important;
+    margin-bottom:35px !important;
+  }
+
+  #loginScreen .field-label{
+    margin:0 0 11px 1px !important;
+    font-size:18px !important;
+    line-height:1.2 !important;
+  }
+
+  #loginScreen .name-field{
+    min-height:65px !important;
+    padding:0 17px !important;
+    grid-template-columns:34px minmax(0,1fr) 34px !important;
+    gap:6px !important;
+    border-radius:11px !important;
+  }
+
+  #loginScreen .login-user-icon{
+    width:25px !important;
+    height:25px !important;
+  }
+
+  #loginScreen #trainerInput{
+    height:63px !important;
+    font-size:20px !important;
+    line-height:63px !important;
+  }
+
+  #loginScreen .name-field button{
+    width:31px !important;
+    height:31px !important;
+    font-size:25px !important;
+    line-height:29px !important;
+  }
+
+  #loginScreen #loginButton{
+    min-height:62px !important;
+    margin-top:19px !important;
+    border-radius:10px !important;
+    font-size:19px !important;
+  }
+
+  #loginScreen .login-divider{
+    margin:23px 0 19px !important;
+    gap:14px !important;
+  }
+
+  #loginScreen .login-divider small{
+    font-size:16px !important;
+  }
+
+  #loginScreen .login-calendar-btn{
+    min-height:60px !important;
+    border-radius:10px !important;
+    gap:11px !important;
+    font-size:18px !important;
+  }
+
+  #loginScreen .login-calendar-btn svg{
+    width:23px !important;
+    height:23px !important;
+    flex-basis:23px !important;
+  }
+
+  #loginScreen .privacy-note{
+    margin-top:22px !important;
+    gap:8px !important;
+    font-size:14px !important;
+  }
+
+  #loginScreen .privacy-note svg{
+    width:17px !important;
+    height:17px !important;
+    flex-basis:17px !important;
+  }
+}
+
+/* Fallback for phone browsers that do not expose pointer:coarse. */
+@media (max-width:600px){
+  html.device-phone #loginScreen .login-content{
+    width:calc(100vw - 24px) !important;
+    max-width:430px !important;
+  }
+  html.device-phone #loginScreen .login-shell h1{font-size:31px !important}
+  html.device-phone #loginScreen .login-copy{font-size:16px !important}
+  html.device-phone #loginScreen .field-label{font-size:18px !important}
+  html.device-phone #loginScreen .name-field{min-height:65px !important;padding:0 17px !important;grid-template-columns:34px minmax(0,1fr) 34px !important;border-radius:11px !important}
+  html.device-phone #loginScreen .login-user-icon{width:25px !important;height:25px !important}
+  html.device-phone #loginScreen #trainerInput{height:63px !important;font-size:20px !important;line-height:63px !important}
+  html.device-phone #loginScreen #loginButton{min-height:62px !important;font-size:19px !important}
+  html.device-phone #loginScreen .login-divider small{font-size:16px !important}
+  html.device-phone #loginScreen .login-calendar-btn{min-height:60px !important;font-size:18px !important}
+  html.device-phone #loginScreen .privacy-note{font-size:14px !important}
+}

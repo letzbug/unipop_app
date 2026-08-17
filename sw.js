@@ -1,7 +1,7 @@
-const VERSION="19";
+const VERSION="20";
 const CACHE_NAME="unipop-formateur-v"+VERSION;
 const STATIC_ASSETS=[
-  "./","./index.html","./style.css?v=19","./app.js?v=19","./manifest.webmanifest?v=19",
+  "./","./index.html","./style.css?v=20","./app.js?v=20","./manifest.webmanifest?v=20",
   "./data/locations.json","./assets/icon.svg","./assets/luxembourg-skyline.png",
   "./assets/demo-map.jpg","./assets/demo-building.jpg","./assets/demo-entry.jpg","./assets/demo-room.jpg"
 ];
