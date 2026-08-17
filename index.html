@@ -10,7 +10,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>UniPop · Espace Formateur</title>
-  <link rel="manifest" href="manifest.webmanifest?v=20">
+  <link rel="manifest" href="manifest.webmanifest?v=21">
   
 <script>
 (function(){
@@ -29,12 +29,15 @@
 
   let device = "desktop";
 
-  if (isIPhone || isAndroidPhone) {
+  // V21: physical touch-screen size wins over Safari's desktop-style UA/viewport.
+  // On some iPhones Safari can report a Mac/iPad-like UA and a ~850px layout
+  // viewport. screen.width/height still expose the actual phone-sized screen.
+  const physicalPhone = touch > 0 && shortSide <= 600;
+
+  if (isIPhone || isAndroidPhone || physicalPhone) {
     device = "phone";
   } else if (isIPad || isAndroidTablet) {
     device = "tablet";
-  } else if (touch > 0 && shortSide <= 520) {
-    device = "phone";
   } else if (touch > 0 && shortSide <= 1100) {
     device = "tablet";
   } else if (cssShortSide <= 520) {
@@ -48,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
 <div id="phoneApp">
@@ -273,6 +276,6 @@
   }
 })();
 </script>
-<script src="app.js?v=20"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>

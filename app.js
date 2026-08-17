@@ -10,12 +10,13 @@ function refreshDeviceClass(){
   const isAndroidPhone=isAndroid&&/Mobile/i.test(ua);
   const isAndroidTablet=isAndroid&&!/Mobile/i.test(ua);
   let mode="desktop";
-  if(isIPhone||isAndroidPhone) mode="phone";
+  const physicalShortSide=Math.min(screen.width||window.innerWidth,screen.height||window.innerHeight);
+  const physicalPhone=touch>0&&physicalShortSide<=600;
+  if(isIPhone||isAndroidPhone||physicalPhone) mode="phone";
   else if(isIPad||isAndroidTablet) mode="tablet";
   else {
     const shortSide=Math.min(window.innerWidth,window.innerHeight);
-    if(touch>0&&shortSide<=520) mode="phone";
-    else if(touch>0&&shortSide<=1100) mode="tablet";
+    if(touch>0&&shortSide<=1100) mode="tablet";
     else if(shortSide<=520) mode="phone";
     else if(shortSide<=1100) mode="tablet";
   }
