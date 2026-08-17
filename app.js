@@ -358,15 +358,46 @@ function findSiteForCourse(c){
     return names.some(n=>n&&(venue.includes(n)||n.includes(venue))) || (addr&&siteAddr&&(siteAddr.includes(addr)||addr.includes(siteAddr)));
   })||null;
 }
+function courseIsCurrentOrFuture(c){
+  const today=new Date();today.setHours(0,0,0,0);
+  const end=parseDate(c.dateFin)||parseDate(c.dateDebut);
+  // If the catalogue has no usable date, keep the location visible rather than hiding useful data.
+  return !end || end>=today;
+}
+function trainerPlaceCourses(){
+  const relevant=trainerCourses.filter(courseIsCurrentOrFuture);
+  // If every course is historical, fall back to all trainer courses so the Lieux tab is never misleadingly empty.
+  return relevant.length?relevant:trainerCourses;
+}
 function renderPlaces(){
-  const remote=(sitesData.locations||[]).filter(x=>x.active!==false);
-  if(remote.length){
-    $("#placesList").innerHTML=remote.map(site=>`<section class="place-card dynamic-place" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml((site.rooms||[]).length?`${site.rooms.length} salle${site.rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`).join("");
-    $$(".dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
+  if(!currentTrainer){
+    $("#placesList").innerHTML=`<div class="empty-card">Sélectionnez d'abord un formateur.</div>`;
     return;
   }
-  const seen=new Map();trainerCourses.forEach(c=>seen.set(locationKey(c),c));
-  $("#placesList").innerHTML=[...seen.values()].map(c=>{const a=c.adresseCours||{},loc=locationData(c);return `<section class="place-card"><h3>${escapeHtml(venueLabel(c))}</h3><p>${escapeHtml([a.rueNumero,a.codePostal,a.localite].filter(Boolean).join(", "))}</p><p><strong>${escapeHtml(roomLabel(c))}</strong></p><p>${escapeHtml(loc.access||"Informations d'accès à compléter.")}</p></section>`;}).join("")||`<div class="empty-card">Aucun lieu trouvé.</div>`;
+
+  const courses=trainerPlaceCourses();
+  const matchedSites=new Map();
+  const unmatchedCourses=new Map();
+
+  courses.forEach(c=>{
+    const site=findSiteForCourse(c);
+    if(site && site.active!==false){
+      matchedSites.set(String(site.id),site);
+    }else{
+      const key=locationKey(c)||normalizeText(venueLabel(c));
+      if(key)unmatchedCourses.set(key,c);
+    }
+  });
+
+  const siteCards=[...matchedSites.values()].map(site=>`<section class="place-card dynamic-place" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml((site.rooms||[]).length?`${site.rooms.length} salle${site.rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`);
+
+  const fallbackCards=[...unmatchedCourses.values()].map(c=>{
+    const a=c.adresseCours||{},loc=locationData(c);
+    return `<section class="place-card"><div><h3>${escapeHtml(venueLabel(c))}</h3><p>${escapeHtml([a.rueNumero,a.codePostal,a.localite].filter(Boolean).join(", "))}</p><p><strong>${escapeHtml(roomLabel(c))}</strong></p><p>${escapeHtml(loc.access||"Informations du lieu bientôt disponibles.")}</p></div></section>`;
+  });
+
+  $("#placesList").innerHTML=[...siteCards,...fallbackCards].join("")||`<div class="empty-card">Aucun lieu trouvé pour les cours de ce formateur.</div>`;
+  $$(".dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
 }
 function openSite(id){
   selectedSite=(sitesData.locations||[]).find(x=>String(x.id)===String(id));
