@@ -2233,3 +2233,106 @@ html.device-phone .calendar-grid .course-marker{
   outline:0 !important;
   box-shadow:none !important;
 }
+
+
+/* =========================================================
+   V16 — NEW UNIPOP HERO IMAGE + SVG FOOTER ICONS
+   ========================================================= */
+
+/* Home/login illustration stays below the form and never overlaps it */
+.login-shell{
+  overflow:hidden !important;
+}
+
+.skyline{
+  width:min(100%,560px) !important;
+  margin-top:auto !important;
+  padding-top:18px !important;
+  flex:0 0 auto !important;
+}
+
+.skyline img{
+  display:block !important;
+  width:100% !important;
+  height:auto !important;
+  max-height:300px !important;
+  object-fit:contain !important;
+  object-position:center bottom !important;
+}
+
+/* Small phone: keep enough room for form first */
+html.device-phone .skyline{
+  width:min(100%,500px) !important;
+  padding-top:12px !important;
+}
+
+html.device-phone .skyline img{
+  max-height:260px !important;
+}
+
+/* Short iPhones: shrink illustration before shrinking text */
+@media (max-height:760px){
+  html.device-phone .skyline img{
+    max-height:180px !important;
+  }
+}
+
+@media (max-height:650px){
+  html.device-phone .skyline{
+    padding-top:8px !important;
+  }
+  html.device-phone .skyline img{
+    max-height:130px !important;
+  }
+}
+
+/* Footer icons as crisp inline SVGs */
+.global-tabs .nav-icon{
+  width:34px !important;
+  height:34px !important;
+  display:grid !important;
+  place-items:center !important;
+  color:#b9ccdb !important;
+  opacity:1 !important;
+}
+
+.global-tabs .nav-icon svg{
+  width:30px !important;
+  height:30px !important;
+  display:block !important;
+}
+
+.global-tabs .tab.active .nav-icon{
+  color:#ffffff !important;
+}
+
+.global-tabs .tab[data-go="calendarScreen"].active .nav-icon{
+  color:#2cc48d !important;
+}
+
+.global-tabs .tab small{
+  font-size:14px !important;
+  margin-top:5px !important;
+}
+
+.global-tabs .tab[data-go="calendarScreen"].active small{
+  color:#2cc48d !important;
+}
+
+/* Make footer visibly separated and always readable */
+.global-tabs{
+  border-top:1px solid rgba(255,255,255,.09) !important;
+}
+
+/* Tablet / desktop scaling */
+html.device-tablet .global-tabs .nav-icon,
+html.device-desktop .global-tabs .nav-icon{
+  width:36px !important;
+  height:36px !important;
+}
+
+html.device-tablet .global-tabs .nav-icon svg,
+html.device-desktop .global-tabs .nav-icon svg{
+  width:32px !important;
+  height:32px !important;
+}
