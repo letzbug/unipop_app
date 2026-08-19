@@ -2891,3 +2891,115 @@ html.device-phone .place-map-frame{height:250px}
   .place-room-card>img,
   .place-room-card>img.place-room-hero{height:240px;max-height:240px}
 }
+
+/* =========================================================
+   V27 — Mobile-only Lieu detail optimization
+   Desktop/web remains unchanged.
+   ========================================================= */
+html.device-phone #placeDetailScreen{
+  max-width:100% !important;
+}
+html.device-phone .place-detail-page,
+html.device-phone .place-detail-head,
+html.device-phone #placeDetailScreen > .global-tabs{
+  max-width:100% !important;
+}
+html.device-phone .place-hero{
+  width:100% !important;
+  max-width:100% !important;
+  height:210px !important;
+  max-height:210px !important;
+  object-fit:cover !important;
+  object-position:center !important;
+}
+html.device-phone .place-detail-card{
+  padding:18px 16px 42px !important;
+}
+html.device-phone .place-detail-card h1{
+  font-size:32px !important;
+  line-height:1.08 !important;
+  margin-bottom:10px !important;
+}
+html.device-phone .place-address,
+html.device-phone .place-description{
+  font-size:18px !important;
+  line-height:1.5 !important;
+}
+html.device-phone .place-map-actions{
+  gap:10px !important;
+}
+html.device-phone .place-map-actions button{
+  min-height:56px !important;
+  font-size:17px !important;
+}
+html.device-phone .place-detail-card h3{
+  font-size:22px !important;
+  line-height:1.2 !important;
+  margin:28px 0 13px !important;
+}
+html.device-phone .place-access-card{
+  grid-template-columns:40px 1fr !important;
+  gap:12px !important;
+  padding:15px !important;
+}
+html.device-phone .place-access-card>span{
+  width:38px !important;
+  height:38px !important;
+}
+html.device-phone .place-access-card b{
+  font-size:17px !important;
+}
+html.device-phone .place-access-card small{
+  font-size:15px !important;
+  line-height:1.4 !important;
+}
+html.device-phone .place-gallery{
+  gap:8px !important;
+}
+html.device-phone .place-gallery img{
+  aspect-ratio:4/3 !important;
+}
+html.device-phone .place-room-card{
+  border-radius:12px !important;
+}
+html.device-phone .place-room-card>img,
+html.device-phone .place-room-card>img.place-room-hero{
+  width:100% !important;
+  height:230px !important;
+  max-height:230px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  background:#eef2f6 !important;
+}
+html.device-phone .place-room-card>div{
+  padding:16px !important;
+}
+html.device-phone .place-room-card h4{
+  font-size:19px !important;
+  line-height:1.25 !important;
+}
+html.device-phone .place-room-card p{
+  font-size:16px !important;
+  line-height:1.45 !important;
+}
+html.device-phone .equipment-pills span{
+  font-size:13px !important;
+  padding:7px 10px !important;
+}
+html.device-phone .place-room-gallery img{
+  aspect-ratio:4/3 !important;
+}
+html.device-phone .place-files a{
+  min-height:54px !important;
+  padding:14px !important;
+  font-size:16px !important;
+}
+html.device-phone .place-files a b{
+  font-size:13px !important;
+}
+html.device-phone .place-map-frame{
+  height:270px !important;
+}
+html.device-phone .place-detail-page{
+  padding-bottom:calc(122px + env(safe-area-inset-bottom)) !important;
+}
