@@ -275,9 +275,24 @@
           <div id="placePlans" class="place-files"></div>
         </section>
 
+        <section id="placeMediaSection" class="place-section hidden">
+          <h3>Médias</h3>
+          <div id="placeMedia" class="place-files"></div>
+        </section>
+
         <section id="placeTutorialsSection" class="place-section">
           <h3>Tutoriels</h3>
           <div id="placeTutorials" class="place-files"></div>
+        </section>
+
+        <section id="placeContactSection" class="place-section hidden">
+          <h3>Contact</h3>
+          <div id="placeContact" class="place-files"></div>
+        </section>
+
+        <section id="placeMapSection" class="place-section hidden">
+          <h3>Carte</h3>
+          <iframe id="placeMapFrame" class="place-map-frame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Carte du lieu"></iframe>
         </section>
       </section>
     </main>
@@ -293,7 +308,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "25";
+  const APP_VERSION = "26";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {

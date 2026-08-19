@@ -406,19 +406,76 @@ function openSite(id){
 }
 function renderSiteDetail(){
   const s=selectedSite;if(!s)return;
-  $("#placeDetailTopTitle").textContent=s.name||"Lieu";$("#placeName").textContent=s.name||"";
+  $("#placeDetailTopTitle").textContent=s.name||"Lieu";
+  $("#placeName").textContent=s.name||"";
   $("#placeAddress").innerHTML=escapeHtml(s.address||"").replace(/\n/g,"<br>");
-  const hero=siteAssetUrl(s.hero||s.heroThumb||"");$("#placeHero").src=hero;$("#placeHero").classList.toggle("hidden",!hero);
+
+  const hero=siteAssetUrl(s.hero||s.heroThumb||"");
+  $("#placeHero").src=hero;
+  $("#placeHero").classList.toggle("hidden",!hero);
   $("#placeDescription").textContent=s.description||"";
-  const query=(s.lat&&s.lng)?`${s.lat},${s.lng}`:siteAddressOneLine(s);
+  $("#placeDescription").classList.toggle("hidden",!s.description);
+
+  const hasGps=s.lat!==""&&s.lng!==""&&Number.isFinite(Number(s.lat))&&Number.isFinite(Number(s.lng));
+  const lat=Number(s.lat),lng=Number(s.lng);
+  const query=hasGps?`${lat},${lng}`:siteAddressOneLine(s);
   $("#placeGoogleMaps").onclick=()=>window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,"_blank");
-  $("#placeAppleMaps").onclick=()=>window.open(`https://maps.apple.com/?q=${encodeURIComponent(s.name||"")}${s.lat&&s.lng?`&ll=${s.lat},${s.lng}`:""}`,"_blank");
-  const access=[];if(s.parking)access.push({icon:"P",title:s.parking,text:s.parkingInfo||""});if(s.transport)access.push({icon:"▣",title:s.transport,text:s.transportInfo||""});if(s.accessInfo)access.push({icon:"→",title:"Entrée",text:s.accessInfo});if(s.pmr)access.push({icon:"♿",title:"Accès PMR",text:"Accessible"});
+  $("#placeAppleMaps").onclick=()=>window.open(`https://maps.apple.com/?q=${encodeURIComponent(s.name||"")}${hasGps?`&ll=${lat},${lng}`:""}`,"_blank");
+
+  const access=[];
+  if(s.parking)access.push({icon:"P",title:s.parking,text:s.parkingInfo||""});
+  if(s.transport)access.push({icon:"▣",title:s.transport,text:s.transportInfo||""});
+  if(s.accessInfo)access.push({icon:"→",title:"Accès",text:s.accessInfo});
+  if(s.pmr)access.push({icon:"♿",title:"Accès PMR",text:"Accessible PMR"});
   $("#placeAccessCards").innerHTML=access.map(a=>`<div class="place-access-card"><span>${escapeHtml(a.icon)}</span><div><b>${escapeHtml(a.title)}</b>${a.text?`<small>${escapeHtml(a.text)}</small>`:""}</div></div>`).join("")||`<div class="empty-card">Informations d'accès à compléter.</div>`;
-  const gallery=(s.gallery||[]).filter(x=>x.path);$("#placeGallery").innerHTML=gallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||"Photo")}">`).join("");$("#placeGallerySection").classList.toggle("hidden",gallery.length===0);
-  const rooms=s.rooms||[];$("#placeRooms").innerHTML=rooms.map(r=>`<article class="place-room-card">${r.hero?`<img src="${escapeHtml(siteAssetUrl(r.hero))}" alt="">`:""}<div><h4>${escapeHtml(r.name||"Salle")}</h4>${r.floor?`<p><b>Étage:</b> ${escapeHtml(r.floor)}</p>`:""}${r.directions?`<p>${escapeHtml(r.directions)}</p>`:""}${(r.equipment||[]).length?`<div class="equipment-pills">${r.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}</div></article>`).join("");$("#placeRoomsSection").classList.toggle("hidden",rooms.length===0);
-  const plans=s.plans||[];$("#placePlans").innerHTML=plans.map(p=>`<a href="${escapeHtml(siteAssetUrl(p.path))}" target="_blank" rel="noopener">▱ <span>${escapeHtml(p.name||"Plan")}</span><b>Ouvrir</b></a>`).join("");$("#placePlansSection").classList.toggle("hidden",plans.length===0);
-  const tutorials=s.tutorials||[];$("#placeTutorials").innerHTML=tutorials.map(t=>{const u=t.path?siteAssetUrl(t.path):t.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">▶ <span>${escapeHtml(t.title||t.name||"Tutoriel")}</span><b>Ouvrir</b></a>`}).join("");$("#placeTutorialsSection").classList.toggle("hidden",tutorials.length===0);
+
+  const gallery=[...(s.gallery||[]),...(s.media||[]).filter(m=>m.type?.startsWith("image/"))].filter(x=>x.path);
+  $("#placeGallery").innerHTML=gallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||"Photo")}">`).join("");
+  $("#placeGallerySection").classList.toggle("hidden",gallery.length===0);
+
+  const rooms=s.rooms||[];
+  $("#placeRooms").innerHTML=rooms.map(r=>{
+    const roomGallery=(r.gallery||[]).filter(g=>g.path);
+    return `<article class="place-room-card">
+      ${r.hero?`<img class="place-room-hero" src="${escapeHtml(siteAssetUrl(r.hero))}" alt="${escapeHtml(r.name||"Salle")}">`:""}
+      <div>
+        <h4>${escapeHtml(r.name||"Salle")}</h4>
+        ${r.floor?`<p><b>Étage:</b> ${escapeHtml(r.floor)}</p>`:""}
+        ${r.description?`<p>${escapeHtml(r.description)}</p>`:""}
+        ${r.directions?`<p><b>Chemin:</b> ${escapeHtml(r.directions)}</p>`:""}
+        ${(r.equipment||[]).length?`<div class="equipment-pills">${r.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}
+        ${roomGallery.length?`<div class="place-room-gallery">${roomGallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||r.name||"Salle")}">`).join("")}</div>`:""}
+      </div>
+    </article>`;
+  }).join("");
+  $("#placeRoomsSection").classList.toggle("hidden",rooms.length===0);
+
+  const plans=(s.plans||[]).filter(p=>p.path||p.url);
+  $("#placePlans").innerHTML=plans.map(p=>{const u=p.path?siteAssetUrl(p.path):p.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">▱ <span>${escapeHtml(p.name||p.title||"Plan / document")}</span><b>Ouvrir</b></a>`}).join("");
+  $("#placePlansSection").classList.toggle("hidden",plans.length===0);
+
+  const media=(s.media||[]).filter(m=>!m.type?.startsWith("image/")&&(m.path||m.url));
+  $("#placeMedia").innerHTML=media.map(m=>{const u=m.path?siteAssetUrl(m.path):m.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">▧ <span>${escapeHtml(m.name||"Média")}</span><b>Ouvrir</b></a>`}).join("");
+  $("#placeMediaSection").classList.toggle("hidden",media.length===0);
+
+  const tutorials=s.tutorials||[];
+  $("#placeTutorials").innerHTML=tutorials.map(t=>{const u=t.path?siteAssetUrl(t.path):t.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">▶ <span>${escapeHtml(t.title||t.name||"Tutoriel")}</span><b>Ouvrir</b></a>`}).join("");
+  $("#placeTutorialsSection").classList.toggle("hidden",tutorials.length===0);
+
+  const contact=[];
+  if(s.website)contact.push(`<a href="${escapeHtml(s.website)}" target="_blank" rel="noopener">🌐 <span>Site web</span><b>Ouvrir</b></a>`);
+  if(s.phone)contact.push(`<a href="tel:${escapeHtml(s.phone)}">☎ <span>${escapeHtml(s.phone)}</span><b>Appeler</b></a>`);
+  if(s.email)contact.push(`<a href="mailto:${escapeHtml(s.email)}">✉ <span>${escapeHtml(s.email)}</span><b>Écrire</b></a>`);
+  $("#placeContact").innerHTML=contact.join("");
+  $("#placeContactSection").classList.toggle("hidden",contact.length===0);
+
+  if(hasGps){
+    $("#placeMapFrame").src=`https://www.openstreetmap.org/export/embed.html?bbox=${lng-.01}%2C${lat-.006}%2C${lng+.01}%2C${lat+.006}&layer=mapnik&marker=${lat}%2C${lng}`;
+    $("#placeMapSection").classList.remove("hidden");
+  }else{
+    $("#placeMapFrame").removeAttribute("src");
+    $("#placeMapSection").classList.add("hidden");
+  }
 }
 
 $$(".global-tabs .tab").forEach(btn=>btn.onclick=()=>{
