@@ -116,6 +116,9 @@
       <h3 class="section-title">Vos prochains cours</h3>
       <div id="nextCourses"></div>
       <button class="blue-btn calendar-wide" id="calendarButton">Voir mon calendrier</button>
+      <div class="home-credit" aria-label="Crédit de développement">
+        <span>Built by Frank G</span><span class="home-credit-sep">·</span><strong>IBM Certified AI Developer</strong>
+      </div>
     </main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
   <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
@@ -308,7 +311,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "27";
+  const APP_VERSION = "28";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {

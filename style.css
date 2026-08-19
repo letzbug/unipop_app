@@ -2893,7 +2893,7 @@ html.device-phone .place-map-frame{height:250px}
 }
 
 /* =========================================================
-   V27 — Mobile-only Lieu detail optimization
+   V28 — Mobile-only Lieu detail optimization
    Desktop/web remains unchanged.
    ========================================================= */
 html.device-phone #placeDetailScreen{
@@ -3002,4 +3002,110 @@ html.device-phone .place-map-frame{
 }
 html.device-phone .place-detail-page{
   padding-bottom:calc(122px + env(safe-area-inset-bottom)) !important;
+}
+
+
+/* =========================================================
+   V28 — Mobile readability + room image geometry
+   Mobile only. Desktop/web detail geometry stays unchanged.
+   ========================================================= */
+.home-credit{
+  margin:20px auto 8px;
+  padding:8px 12px;
+  width:max-content;
+  max-width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:1px solid rgba(20,65,100,.12);
+  border-radius:999px;
+  color:#61778b;
+  background:rgba(255,255,255,.72);
+  font-size:11px;
+  line-height:1.2;
+  letter-spacing:.01em;
+  text-align:center;
+}
+.home-credit strong{font-weight:700;color:#365a76}
+.home-credit-sep{opacity:.55}
+
+html.device-phone .home-credit{
+  margin-top:24px;
+  padding:9px 12px;
+  gap:5px;
+  font-size:12px;
+  flex-wrap:wrap;
+}
+
+/* Phone Lieu detail: readable at normal viewing distance. */
+html.device-phone .place-detail-card{
+  font-size:17px !important;
+}
+html.device-phone .place-detail-card h1{
+  font-size:34px !important;
+}
+html.device-phone .place-address,
+html.device-phone .place-description{
+  font-size:19px !important;
+  line-height:1.52 !important;
+}
+html.device-phone .place-map-actions button{
+  min-height:58px !important;
+  font-size:18px !important;
+}
+html.device-phone .place-detail-card h3{
+  font-size:24px !important;
+  margin-top:30px !important;
+}
+html.device-phone .place-access-card{
+  min-height:70px !important;
+  padding:16px !important;
+}
+html.device-phone .place-access-card b{
+  font-size:18px !important;
+}
+html.device-phone .place-access-card small{
+  font-size:16px !important;
+}
+
+/* Keep the whole room photo visible like the desktop card, without side bars. */
+html.device-phone .place-room-card>img,
+html.device-phone .place-room-card>img.place-room-hero{
+  width:100% !important;
+  height:auto !important;
+  max-height:none !important;
+  aspect-ratio:16 / 9 !important;
+  object-fit:cover !important;
+  object-position:center !important;
+  background:#eef2f6 !important;
+}
+html.device-phone .place-room-card>div{
+  padding:17px !important;
+}
+html.device-phone .place-room-card h4{
+  font-size:21px !important;
+  margin-bottom:8px !important;
+}
+html.device-phone .place-room-card p{
+  font-size:17px !important;
+  line-height:1.5 !important;
+}
+html.device-phone .equipment-pills{
+  gap:7px !important;
+}
+html.device-phone .equipment-pills span{
+  font-size:14px !important;
+  padding:8px 11px !important;
+}
+html.device-phone .place-files a{
+  min-height:60px !important;
+  padding:15px 14px !important;
+  font-size:17px !important;
+}
+html.device-phone .place-files a b{
+  font-size:14px !important;
+}
+html.device-phone .place-map-frame{
+  height:290px !important;
 }
