@@ -1,4 +1,4 @@
-const VERSION = "v30";
+const VERSION = "v31";
 const CACHE_NAME="unipop-formateur-"+VERSION;
 const STATIC_ASSETS=[
   "./","./index.html","./style.css?v=30","./app.js?v=30","./manifest.webmanifest?v=30",

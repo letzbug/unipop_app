@@ -31,7 +31,7 @@ refreshDeviceClass();
 const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
 const SITES_URL="https://raw.githubusercontent.com/letzbug/unipop_go_sites/main/sites.json";
 
-let trainings=[], locations={}, sitesData={schemaVersion:2,locations:[]}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null, selectedSite=null;
+let trainings=[], locations={}, sitesData={schemaVersion:3,guides:[],locations:[]}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null, selectedSite=null;
 let backStack=[], selectedDate=new Date(), calendarCursor=new Date();
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -211,6 +211,26 @@ function renderHome(){
   bindOccurrences();showScreen("homeScreen",false);
 }
 
+function technicalGuideById(id){
+  if(!id)return null;
+  return (sitesData.guides||[]).find(g=>String(g.id)===String(id))||null;
+}
+function guideUrl(g){
+  if(!g)return "";
+  return g.path?siteAssetUrl(g.path):(g.url||"");
+}
+function technicalGuideForCourse(site,room){
+  // A confirmed room only shows its own explicitly assigned guide.
+  // This intentionally does not inherit the lieu guide, so a room that needs no guide shows no button.
+  if(room)return technicalGuideById(room.guideId);
+  return technicalGuideById(site?.guideId);
+}
+function guideButtonHtml(g){
+  const u=guideUrl(g);
+  if(!g||!u)return "";
+  return `<a class="blue-btn technical-guide-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">Voir le guide technique</a>${g.description?`<p class="technical-guide-note">${escapeHtml(g.description)}</p>`:""}`;
+}
+
 function renderDetail(){
   const{course:c,date,time}=selectedOccurrence,loc=locationData(c),site=loc.site,room=loc.room,a=c.adresseCours||{};
   const row=scheduleRows(c).find(x=>x.heure===time),dur=row?.duree||c.duree||"",end=time?addMinutes(time,minutesFromDuration(dur)):"";
@@ -228,6 +248,7 @@ function renderDetail(){
   const plans=(site?.plans||[]).filter(x=>x.path||x.url), tutorials=(site?.tutorials||[]).filter(x=>x.path||x.url);
   const media=(site?.media||[]).filter(x=>x.path||x.url);
   const roomGallery=(room?.gallery||[]).filter(x=>x.path);
+  const techGuide=technicalGuideForCourse(site,room);
   const fileRows=(items,icon)=>items.map(x=>{const u=x.path?siteAssetUrl(x.path):x.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">${icon} <span>${escapeHtml(x.name||x.title||"Document")}</span><b>Ouvrir</b></a>`}).join("");
   const contact=site?[site.website&&`<a href="${escapeHtml(/^https?:\/\//i.test(site.website)?site.website:'https://'+site.website)}" target="_blank" rel="noopener">🌐 <span>Site web</span><b>Ouvrir</b></a>`,site.phone&&`<a href="tel:${escapeHtml(site.phone)}">☎️ <span>${escapeHtml(site.phone)}</span><b>Appeler</b></a>`,site.email&&`<a href="mailto:${escapeHtml(site.email)}">✉️ <span>${escapeHtml(site.email)}</span><b>Écrire</b></a>`].filter(Boolean).join(""):"";
   const hasGps=site&&Number.isFinite(Number(site.lat))&&Number.isFinite(Number(site.lng))&&site.lat!==""&&site.lng!=="";
@@ -240,6 +261,7 @@ function renderDetail(){
     ${gallery.length?`<h4>Photos du lieu</h4><div class="course-gallery">${gallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||"Photo")}">`).join("")}</div>`:""}
     ${access.length?`<h4>Accès & transport</h4><div class="course-access-grid">${access.map(x=>`<div class="course-access-card"><span>${escapeHtml(x.icon)}</span><div><b>${escapeHtml(x.title)}</b>${x.text?`<small>${escapeHtml(x.text)}</small>`:""}</div></div>`).join("")}</div>`:""}
     ${room?`<h4>Salle</h4><article class="course-room-card">${room.hero?`<img src="${escapeHtml(siteAssetUrl(room.hero))}" alt="${escapeHtml(room.name||"Salle")}">`:""}<div><h3>${escapeHtml(room.name||"Salle")}</h3>${room.floor?`<p><b>Étage:</b> ${escapeHtml(room.floor)}</p>`:""}${room.directions?`<p><b>Chemin:</b> ${escapeHtml(room.directions)}</p>`:""}${room.description?`<p>${escapeHtml(room.description)}</p>`:""}${(room.equipment||[]).length?`<div class="equipment-pills">${room.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}${roomGallery.length?`<div class="course-room-gallery">${roomGallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||room.name||"Salle")}">`).join("")}</div>`:""}</div></article>`:`<h4>Salle</h4><div class="course-room-pending">Salle à confirmer</div>`}
+    ${techGuide?`<div class="course-guide-box"><h4>Guide technique</h4>${guideButtonHtml(techGuide)}</div>`:""}
     ${plans.length?`<h4>Plans & documents</h4><div class="course-files">${fileRows(plans,"▱")}</div>`:""}
     ${media.length?`<h4>Médias</h4><div class="course-files">${fileRows(media,"▧")}</div>`:""}
     ${tutorials.length?`<h4>Tutoriels</h4><div class="course-files">${fileRows(tutorials,"▶")}</div>`:""}
@@ -480,11 +502,16 @@ function renderSiteDetail(){
         ${r.description?`<p>${escapeHtml(r.description)}</p>`:""}
         ${r.directions?`<p><b>Chemin:</b> ${escapeHtml(r.directions)}</p>`:""}
         ${(r.equipment||[]).length?`<div class="equipment-pills">${r.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}
+        ${technicalGuideById(r.guideId)?guideButtonHtml(technicalGuideById(r.guideId)):""}
         ${roomGallery.length?`<div class="place-room-gallery">${roomGallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||r.name||"Salle")}">`).join("")}</div>`:""}
       </div>
     </article>`;
   }).join("");
   $("#placeRoomsSection").classList.toggle("hidden",rooms.length===0);
+
+  const siteGuide=technicalGuideById(s.guideId);
+  const guideHost=document.getElementById("placeGuideSection");
+  if(guideHost){guideHost.innerHTML=siteGuide?`<h3>Guide technique</h3>${guideButtonHtml(siteGuide)}`:"";guideHost.classList.toggle("hidden",!siteGuide)}
 
   const plans=(s.plans||[]).filter(p=>p.path||p.url);
   $("#placePlans").innerHTML=plans.map(p=>{const u=p.path?siteAssetUrl(p.path):p.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">▱ <span>${escapeHtml(p.name||p.title||"Plan / document")}</span><b>Ouvrir</b></a>`}).join("");
