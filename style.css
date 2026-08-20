@@ -3109,3 +3109,39 @@ html.device-phone .place-files a b{
 html.device-phone .place-map-frame{
   height:290px !important;
 }
+
+/* =========================================================
+   V29 — iPad-only Lieu detail width lock
+   Keep the complete Lieu detail aligned to the same 607px
+   column as the bottom navigation. Phone + desktop untouched.
+   ========================================================= */
+html.device-tablet #placeDetailScreen{
+  width:607px !important;
+  max-width:607px !important;
+  min-width:0 !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  overflow-x:hidden !important;
+  background:#fff;
+}
+html.device-tablet #placeDetailScreen > .place-detail-head,
+html.device-tablet #placeDetailScreen > .place-detail-page,
+html.device-tablet #placeDetailScreen > .global-tabs{
+  width:607px !important;
+  max-width:607px !important;
+  min-width:0 !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  box-sizing:border-box !important;
+}
+html.device-tablet #placeDetailScreen .place-hero,
+html.device-tablet #placeDetailScreen .place-detail-card,
+html.device-tablet #placeDetailScreen .place-map-frame,
+html.device-tablet #placeDetailScreen .place-room-card,
+html.device-tablet #placeDetailScreen .place-gallery{
+  max-width:100% !important;
+  box-sizing:border-box !important;
+}
+html.device-tablet #placeDetailScreen .place-hero{
+  width:100% !important;
+}
