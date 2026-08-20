@@ -68,15 +68,25 @@ function teacherMatches(q){
   return allTeacherNames().map(n=>[n,nameScore(q,n)]).filter(x=>x[1]<=Math.max(4,Math.ceil(normalizeText(q).length*.38)+1)).sort((a,b)=>a[1]-b[1]).slice(0,6).map(x=>x[0]);
 }
 function locationKey(c){const a=c.adresseCours||{};return normalizeText(`${a.nom||""}${a.rueNumero||""}${a.localite||""}`);}
+function isRoomConfirmed(name=""){
+  const n=normalizeText(name);
+  return !!n && !n.includes("aconfirmer") && !n.includes("confirmer") && n!=="salle";
+}
+function findRoomForCourse(site,c,legacy={}){
+  if(!site)return null;
+  const wanted=legacy.room||c.salle||c.salleNom||c.room||"";
+  if(!isRoomConfirmed(wanted))return null;
+  const w=normalizeText(wanted);
+  return (site.rooms||[]).find(r=>[r.name,...(r.aliases||[])].map(normalizeText).some(n=>n&&(n===w||n.includes(w)||w.includes(n))))||null;
+}
 function locationData(c){
   const key=locationKey(c);
-  const byCourse=locations.courses?.[normalizeText(c.code||c.reference||c.id||"")];
+  const byCourse=locations.courses?.[normalizeText(c.code||c.reference||c.id||c.coursCode||c.coursId||"")];
   const legacy=byCourse?{...locations._default,...byCourse}:{...locations._default,...(locations.places?.[key]||{})};
   const site=findSiteForCourse(c);
   if(!site)return legacy;
-  const wantedRoom=normalizeText(legacy.room||"");
-  const room=(site.rooms||[]).find(r=>[r.name,...(r.aliases||[])].map(normalizeText).some(n=>n&&(n===wantedRoom||n.includes(wantedRoom)||wantedRoom.includes(n))));
-  return {...legacy,phone:site.phone||legacy.phone,access:room?.directions||site.accessInfo||legacy.access,photos:[...(site.gallery||[]).slice(0,2).map(g=>({label:g.name||"Photo",file:siteAssetUrl(g.path)})),...(room?.hero?[{label:room.name,file:siteAssetUrl(room.hero)}]:[])],equipment:room?.equipment||legacy.equipment,room:room?.name||legacy.room,site};
+  const room=findRoomForCourse(site,c,legacy);
+  return {...legacy,site,room,phone:site.phone||"",access:room?.directions||site.accessInfo||"",photos:[],equipment:room?.equipment||[],room:room?.name||(isRoomConfirmed(legacy.room)?legacy.room:"Salle à confirmer")};
 }
 
 async function loadAll(){
@@ -202,19 +212,45 @@ function renderHome(){
 }
 
 function renderDetail(){
-  const{course:c,date,time}=selectedOccurrence,loc=locationData(c),a=c.adresseCours||{};
+  const{course:c,date,time}=selectedOccurrence,loc=locationData(c),site=loc.site,room=loc.room,a=c.adresseCours||{};
   const row=scheduleRows(c).find(x=>x.heure===time),dur=row?.duree||c.duree||"",end=time?addMinutes(time,minutesFromDuration(dur)):"";
-  $("#detailIntro").innerHTML=`<div class="when">${escapeHtml(time||"")}${end?` – ${escapeHtml(end)}`:""}</div><div class="date">${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}</div><h1>${escapeHtml(c.intitule||"Cours")}</h1><p>⌖ ${escapeHtml(venueLabel(c))} – ${escapeHtml(roomLabel(c))}</p>`;
-  $("#addressText").innerHTML=[a.rueNumero,[a.codePostal,a.localite].filter(Boolean).join(" ")].filter(Boolean).map(escapeHtml).join("<br>");
-  $("#accessText").textContent=loc.access||"Informations d'accès à compléter.";
-  const photos=loc.photos||[],defaults=[{label:"Bâtiment",file:"assets/demo-building.jpg"},{label:"Entrée",file:"assets/demo-entry.jpg"},{label:roomLabel(c),file:"assets/demo-room.jpg"}];
-  $("#photoGrid").innerHTML=(photos.length?photos:defaults).slice(0,3).map(p=>`<div class="photo-tile" ${p.file?`style="background-image:url('${escapeHtml(p.file)}')"`:""}><span>${escapeHtml(p.label||"Photo")}</span></div>`).join("");
-  $("#equipmentGrid").innerHTML=(loc.equipment||[]).map(x=>`<div>${escapeHtml(x)}</div>`).join("");
-  const addr=[a.rueNumero,a.codePostal,a.localite,a.paysNom].filter(Boolean).join(", ");
-  $("#routeButton").onclick=()=>window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`,"_blank");
-  $("#phoneButton").onclick=()=>location.href=`tel:${loc.phone||"+35280029001"}`;
+  const roomName=room?.name||(isRoomConfirmed(loc.room)?loc.room:"Salle à confirmer");
+  $("#detailIntro").innerHTML=`<div class="when">${escapeHtml(time||"")}${end?` – ${escapeHtml(end)}`:""}</div><div class="date">${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}</div><h1>${escapeHtml(c.intitule||"Cours")}</h1><p>⌖ ${escapeHtml(venueLabel(c))} – ${escapeHtml(roomName)}</p>`;
+
+  const address=site?.address||[a.rueNumero,[a.codePostal,a.localite].filter(Boolean).join(" ")].filter(Boolean).join("\n");
+  const hero=site?siteAssetUrl(site.hero||site.heroThumb||""):"";
+  const gallery=site?[...(site.gallery||[]).filter(g=>g.path)]:[];
+  const access=[];
+  if(site?.parking)access.push({icon:"P",title:site.parking,text:site.parkingInfo||""});
+  if(site?.transport)access.push({icon:"▣",title:site.transport,text:site.transportInfo||""});
+  if(site?.accessInfo)access.push({icon:"→",title:"Accès",text:site.accessInfo});
+  if(site?.pmr)access.push({icon:"♿",title:"Accès PMR",text:"Accessible PMR"});
+  const plans=(site?.plans||[]).filter(x=>x.path||x.url), tutorials=(site?.tutorials||[]).filter(x=>x.path||x.url);
+  const media=(site?.media||[]).filter(x=>x.path||x.url);
+  const roomGallery=(room?.gallery||[]).filter(x=>x.path);
+  const fileRows=(items,icon)=>items.map(x=>{const u=x.path?siteAssetUrl(x.path):x.url;return `<a href="${escapeHtml(u||"#")}" target="_blank" rel="noopener">${icon} <span>${escapeHtml(x.name||x.title||"Document")}</span><b>Ouvrir</b></a>`}).join("");
+  const contact=site?[site.website&&`<a href="${escapeHtml(/^https?:\/\//i.test(site.website)?site.website:'https://'+site.website)}" target="_blank" rel="noopener">🌐 <span>Site web</span><b>Ouvrir</b></a>`,site.phone&&`<a href="tel:${escapeHtml(site.phone)}">☎️ <span>${escapeHtml(site.phone)}</span><b>Appeler</b></a>`,site.email&&`<a href="mailto:${escapeHtml(site.email)}">✉️ <span>${escapeHtml(site.email)}</span><b>Écrire</b></a>`].filter(Boolean).join(""):"";
+  const hasGps=site&&Number.isFinite(Number(site.lat))&&Number.isFinite(Number(site.lng))&&site.lat!==""&&site.lng!=="";
+  const map=hasGps?`<iframe class="course-map-frame" loading="lazy" title="Carte du lieu" src="https://www.openstreetmap.org/export/embed.html?bbox=${Number(site.lng)-.008}%2C${Number(site.lat)-.005}%2C${Number(site.lng)+.008}%2C${Number(site.lat)+.005}&layer=mapnik&marker=${Number(site.lat)}%2C${Number(site.lng)}"></iframe>`:"";
+
+  $("#courseSiteDetail").innerHTML=`
+    <h4>Adresse</h4><p class="course-address">${escapeHtml(address).replace(/\n/g,"<br>")}</p>
+    ${site?.description?`<p class="course-site-description">${escapeHtml(site.description)}</p>`:""}
+    ${hero?`<img class="course-building-hero" src="${escapeHtml(hero)}" alt="${escapeHtml(site.name||"Lieu")}">`:""}
+    ${gallery.length?`<h4>Photos du lieu</h4><div class="course-gallery">${gallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||"Photo")}">`).join("")}</div>`:""}
+    ${access.length?`<h4>Accès & transport</h4><div class="course-access-grid">${access.map(x=>`<div class="course-access-card"><span>${escapeHtml(x.icon)}</span><div><b>${escapeHtml(x.title)}</b>${x.text?`<small>${escapeHtml(x.text)}</small>`:""}</div></div>`).join("")}</div>`:""}
+    ${room?`<h4>Salle</h4><article class="course-room-card">${room.hero?`<img src="${escapeHtml(siteAssetUrl(room.hero))}" alt="${escapeHtml(room.name||"Salle")}">`:""}<div><h3>${escapeHtml(room.name||"Salle")}</h3>${room.floor?`<p><b>Étage:</b> ${escapeHtml(room.floor)}</p>`:""}${room.directions?`<p><b>Chemin:</b> ${escapeHtml(room.directions)}</p>`:""}${room.description?`<p>${escapeHtml(room.description)}</p>`:""}${(room.equipment||[]).length?`<div class="equipment-pills">${room.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}${roomGallery.length?`<div class="course-room-gallery">${roomGallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||room.name||"Salle")}">`).join("")}</div>`:""}</div></article>`:`<h4>Salle</h4><div class="course-room-pending">Salle à confirmer</div>`}
+    ${plans.length?`<h4>Plans & documents</h4><div class="course-files">${fileRows(plans,"▱")}</div>`:""}
+    ${media.length?`<h4>Médias</h4><div class="course-files">${fileRows(media,"▧")}</div>`:""}
+    ${tutorials.length?`<h4>Tutoriels</h4><div class="course-files">${fileRows(tutorials,"▶")}</div>`:""}
+    ${contact?`<h4>Contact</h4><div class="course-files">${contact}</div>`:""}
+    ${map?`<h4>Carte</h4>${map}`:""}`;
+
+  const query=site&&hasGps?`${site.lat},${site.lng}`:(siteAddressOneLine(site||{})||address.replace(/\n/g,", "));
+  $("#routeButton").onclick=()=>window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,"_blank");
+  $("#phoneButton").disabled=!site?.phone;
+  $("#phoneButton").onclick=()=>{if(site?.phone)location.href=`tel:${site.phone}`};
   $("#icsButton").onclick=downloadICS;
-  $("#techButton").onclick=()=>{renderTech(loc,c);showScreen("techScreen");};
 }
 function renderTech(loc,c){
   $("#techTitle").textContent=`Guide technique – ${roomLabel(c)}`;
