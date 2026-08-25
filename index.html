@@ -10,7 +10,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>UniPop Go</title>
-  <link rel="manifest" href="manifest.webmanifest?v=27">
+  <link rel="manifest" href="manifest.webmanifest?v=32">
   
 <script>
 (function(){
@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=31">
+  <link rel="stylesheet" href="style.css?v=33">
 </head>
 <body>
 <div id="phoneApp">
@@ -59,33 +59,87 @@
   <section class="screen active" id="loginScreen">
     <div class="login-shell">
       <div class="login-content">
-        <h1>UniPop Go !</h1>
-        <p class="login-copy">Connectez-vous pour voir vos cours d'aujourd'hui<br class="login-copy-break"> et vos prochains cours</p>
+        <div id="authLoggedOut">
+          <h1>UniPop Go !</h1>
+          <p class="login-copy">Connectez-vous avec votre compte formateur.</p>
 
-        <div class="login-form-group">
-          <label class="field-label" for="trainerInput">Votre nom</label>
-          <div class="name-field">
-            <svg class="login-user-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 8a7 7 0 0 0-14 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-            </svg>
-            <input id="trainerInput" type="text" autocomplete="name" placeholder="Entrez votre nom" aria-label="Votre nom">
-            <button id="clearTrainer" type="button" aria-label="Effacer">×</button>
+          <div class="auth-form">
+            <label class="field-label" for="authEmail">E-mail</label>
+            <div class="name-field auth-field">
+              <svg class="login-user-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16v12H4zM4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <input id="authEmail" type="email" autocomplete="email" placeholder="prenom.nom@..." aria-label="E-mail">
+            </div>
+
+            <label class="field-label" for="authPassword">Mot de passe</label>
+            <div class="name-field auth-field">
+              <svg class="login-user-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v9H5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <input id="authPassword" type="password" autocomplete="current-password" placeholder="Votre mot de passe" aria-label="Mot de passe">
+            </div>
+
+            <button class="blue-btn" id="authLoginButton" type="button">Se connecter</button>
+            <div class="auth-links">
+              <button id="showRegister" type="button">Première connexion</button>
+              <button id="forgotPassword" type="button">Mot de passe oublié ?</button>
+            </div>
           </div>
-          <div id="suggestions" class="suggestions"></div>
+
+          <div id="registerPanel" class="auth-panel hidden">
+            <h3>Première connexion</h3>
+            <p>Utilisez l’adresse e-mail autorisée par UniPop et choisissez votre propre mot de passe.</p>
+            <label class="field-label" for="registerEmail">E-mail</label>
+            <input id="registerEmail" class="auth-simple-input" type="email" autocomplete="email">
+            <label class="field-label" for="registerPassword">Nouveau mot de passe</label>
+            <input id="registerPassword" class="auth-simple-input" type="password" autocomplete="new-password">
+            <label class="field-label" for="registerPassword2">Confirmer le mot de passe</label>
+            <input id="registerPassword2" class="auth-simple-input" type="password" autocomplete="new-password">
+            <button class="blue-btn" id="registerButton" type="button">Créer mon accès</button>
+            <button class="auth-cancel" id="cancelRegister" type="button">Annuler</button>
+          </div>
+
+          <div id="recoveryPanel" class="auth-panel hidden">
+            <h3>Nouveau mot de passe</h3>
+            <p>Choisissez votre nouveau mot de passe.</p>
+            <label class="field-label" for="recoveryPassword">Nouveau mot de passe</label>
+            <input id="recoveryPassword" class="auth-simple-input" type="password" autocomplete="new-password">
+            <label class="field-label" for="recoveryPassword2">Confirmer le mot de passe</label>
+            <input id="recoveryPassword2" class="auth-simple-input" type="password" autocomplete="new-password">
+            <button class="blue-btn" id="saveRecoveryPassword" type="button">Enregistrer le mot de passe</button>
+          </div>
+
+          <div id="authStatus" class="data-status auth-status" aria-live="polite"></div>
+          <div id="dataStatus" class="data-status" aria-live="polite">Chargement du catalogue...</div>
         </div>
 
-        <button class="blue-btn" id="loginButton">Voir mes cours</button>
-
-        <div class="login-divider" aria-hidden="true"><span></span><small>ou</small><span></span></div>
-
-        <button class="login-calendar-btn" id="loginCalendarButton" type="button">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>Aller au calendrier</span>
-        </button>
-
-        <div id="dataStatus" class="data-status" aria-live="polite">Chargement du catalogue...</div>
+        <div id="authLoggedIn" class="auth-account hidden">
+          <h1>UniPop Go !</h1>
+          <div class="account-card">
+            <div class="account-avatar" id="accountAvatar">FG</div>
+            <div>
+              <small>Connecté en tant que</small>
+              <h3 id="accountTrainer">Formateur</h3>
+              <p id="accountEmail"></p>
+            </div>
+          </div>
+          <div id="accountBlocked" class="account-warning hidden">
+            Votre accès UniPop Go a été désactivé. Veuillez contacter UniPop.
+          </div>
+          <button class="blue-btn" id="accountCoursesButton" type="button">Voir mes cours</button>
+          <button class="login-calendar-btn" id="accountCalendarButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Aller au calendrier</span>
+          </button>
+          <button class="login-calendar-btn hidden" id="openAdminButton" type="button">
+            <span>Ouvrir l’administration</span>
+          </button>
+          <button class="auth-logout" id="logoutButton" type="button">Se déconnecter</button>
+          <div id="accountStatus" class="data-status" aria-live="polite"></div>
+        </div>
       </div>
 
       <div class="skyline" aria-hidden="true">
@@ -297,7 +351,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "29";
+  const APP_VERSION = "32";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -326,6 +380,7 @@
   }
 })();
 </script>
-<script src="app.js?v=31"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js?v=33"></script>
 </body>
 </html>

@@ -31,6 +31,16 @@ refreshDeviceClass();
 const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
 const SITES_URL="https://raw.githubusercontent.com/letzbug/unipop_go_sites/main/sites.json";
 
+const SUPABASE_URL="https://tbjlwhbwcxdvagjoonwb.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_z2AUPoYHLMqxxizwKrjhwQ_tESJhSxp";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
+
+let authProfile=null;
+let authSession=null;
+let authBootstrapped=false;
+
 let trainings=[], locations={}, sitesData={schemaVersion:3,guides:[],locations:[]}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null, selectedSite=null;
 let backStack=[], selectedDate=new Date(), calendarCursor=new Date();
 
@@ -101,8 +111,6 @@ async function loadAll(){
     locations=await r2.json();
     if(r3&&r3.ok){const remote=await r3.json();if(remote&&Array.isArray(remote.locations))sitesData=remote;}
     $("#dataStatus").textContent=`${trainings.length} cours chargés`;
-    const saved=localStorage.getItem("unipopTrainer");
-    if(saved)$("#trainerInput").value=saved;
   }catch(err){
     console.error(err);
     $("#dataStatus").textContent="Catalogue indisponible — vérifiez la connexion.";
@@ -128,34 +136,242 @@ function showScreen(id,push=true){
 
 $$("[data-back]").forEach(b=>b.addEventListener("click",()=>showScreen(backStack.pop()||"homeScreen",false)));
 
-$("#trainerInput").addEventListener("input",()=>{
-  const box=$("#suggestions");box.innerHTML="";
-  teacherMatches($("#trainerInput").value).forEach(n=>{
-    const b=document.createElement("button");b.type="button";b.textContent=n;
-    b.onclick=()=>{
-      $("#trainerInput").value=n;
-      box.innerHTML="";
-      selectTrainer(n);
-    };box.appendChild(b);
-  });
-});
-$("#clearTrainer").onclick=()=>{$("#trainerInput").value="";$("#suggestions").innerHTML="";$("#trainerInput").focus();};
 
 function selectTrainer(name){
-  const match=teacherMatches(name)[0];
-  if(!match)return false;
-  currentTrainer=match;
-  trainerCourses=trainings.filter(c=>(c.enseignants||[]).some(e=>normalizeText(teacherName(e))===normalizeText(match)));
-  localStorage.setItem("unipopTrainer",match);
+  const exact=allTeacherNames().find(n=>normalizeText(n)===normalizeText(name));
+  if(!exact)return false;
+  currentTrainer=exact;
+  trainerCourses=trainings.filter(c=>(c.enseignants||[]).some(e=>normalizeText(teacherName(e))===normalizeText(exact)));
   return true;
 }
 
-$("#loginButton").onclick=()=>{
-  releaseIOSFocus();
-  const query=$("#trainerInput").value.trim();if(!query)return;
-  if(!selectTrainer(query)){alert("Formateur introuvable dans le catalogue.");return;}
-  renderHome();
-};
+
+
+function authMessage(msg,type="info"){
+  const el=$("#authStatus");
+  if(!el)return;
+  el.textContent=msg||"";
+  el.dataset.type=type;
+}
+function accountInitials(name=""){
+  return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"UP";
+}
+function setAuthView(loggedIn){
+  $("#authLoggedOut")?.classList.toggle("hidden",loggedIn);
+  $("#authLoggedIn")?.classList.toggle("hidden",!loggedIn);
+}
+function setAccessEnabled(enabled){
+  $("#accountCoursesButton").disabled=!enabled;
+  $("#accountCalendarButton").disabled=!enabled;
+  $("#accountBlocked").classList.toggle("hidden",enabled);
+}
+async function claimTrainerAccess(){
+  try{await sb.rpc("claim_trainer_access");}catch(e){console.warn("claim_trainer_access",e);}
+}
+async function loadOwnProfile(){
+  const user=authSession?.user;
+  if(!user)return null;
+  await claimTrainerAccess();
+  const {data,error}=await sb.from("trainer_access")
+    .select("id,email,trainer_name,role,active,auth_user_id")
+    .eq("auth_user_id",user.id)
+    .maybeSingle();
+  if(error)throw error;
+  return data||null;
+}
+async function applyAuthenticatedSession(session,{openHome=false}={}){
+  authSession=session||null;
+  if(!session?.user){
+    authProfile=null;
+    currentTrainer=null;
+    trainerCourses=[];
+    setAuthView(false);
+    setAccessEnabled(false);
+    showScreen("loginScreen",false);
+    return false;
+  }
+
+  setAuthView(true);
+  $("#accountEmail").textContent=session.user.email||"";
+  $("#accountStatus").textContent="Vérification de votre accès…";
+
+  try{
+    authProfile=await loadOwnProfile();
+    if(!authProfile){
+      currentTrainer=null;trainerCourses=[];
+      $("#accountTrainer").textContent="Accès non autorisé";
+      $("#accountAvatar").textContent="UP";
+      $("#accountStatus").textContent="Cette adresse e-mail n'est pas autorisée pour UniPop Go.";
+      setAccessEnabled(false);
+      showScreen("loginScreen",false);
+      return false;
+    }
+
+    const isAdmin=authProfile.role==="admin";
+    $("#openAdminButton")?.classList.toggle("hidden",!isAdmin);
+
+    if(!authProfile.active){
+      currentTrainer=null;trainerCourses=[];
+      $("#accountTrainer").textContent=isAdmin?"Administrateur":"Accès désactivé";
+      $("#accountAvatar").textContent=isAdmin?"AD":"UP";
+      $("#accountStatus").textContent="Compte désactivé.";
+      setAccessEnabled(false);
+      showScreen("loginScreen",false);
+      return false;
+    }
+
+    if(isAdmin && !authProfile.trainer_name){
+      currentTrainer=null;
+      trainerCourses=[];
+      $("#accountTrainer").textContent="Administrateur UniPop Go";
+      $("#accountAvatar").textContent="FG";
+      $("#accountStatus").textContent="Accès administrateur actif.";
+      setAccessEnabled(false);
+      showScreen("loginScreen",false);
+      return true;
+    }
+
+    $("#accountTrainer").textContent=authProfile.trainer_name||"Formateur";
+    $("#accountAvatar").textContent=accountInitials(authProfile.trainer_name||"UP");
+
+    if(!authProfile.trainer_name || !selectTrainer(authProfile.trainer_name)){
+      currentTrainer=null;trainerCourses=[];
+      $("#accountStatus").textContent="Le formateur lié à ce compte n'existe pas dans le catalogue actuel.";
+      setAccessEnabled(false);
+      showScreen("loginScreen",false);
+      return false;
+    }
+
+    setAccessEnabled(true);
+    $("#accountStatus").textContent=`${trainerCourses.length} cours liés à votre profil`;
+    if(openHome)renderHome();
+    return true;
+  }catch(err){
+    console.error(err);
+    currentTrainer=null;trainerCourses=[];
+    $("#accountTrainer").textContent="Connexion";
+    $("#accountStatus").textContent="Impossible de vérifier votre profil. Réessayez dans un instant.";
+    setAccessEnabled(false);
+    showScreen("loginScreen",false);
+    return false;
+  }
+}
+function validPassword(p){return typeof p==="string"&&p.length>=8;}
+async function loginWithPassword(){
+  const email=$("#authEmail").value.trim();
+  const password=$("#authPassword").value;
+  if(!email||!password){authMessage("Entrez votre e-mail et votre mot de passe.","error");return;}
+  authMessage("Connexion…");
+  $("#authLoginButton").disabled=true;
+  try{
+    const {data,error}=await sb.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    authMessage("");
+    await applyAuthenticatedSession(data.session,{openHome:true});
+  }catch(err){
+    console.error(err);
+    authMessage("E-mail ou mot de passe incorrect.","error");
+  }finally{$("#authLoginButton").disabled=false;}
+}
+async function registerFirstAccess(){
+  const email=$("#registerEmail").value.trim();
+  const p1=$("#registerPassword").value;
+  const p2=$("#registerPassword2").value;
+  if(!email){authMessage("Entrez votre adresse e-mail.","error");return;}
+  if(!validPassword(p1)){authMessage("Le mot de passe doit contenir au moins 8 caractères.","error");return;}
+  if(p1!==p2){authMessage("Les deux mots de passe ne correspondent pas.","error");return;}
+
+  $("#registerButton").disabled=true;
+  authMessage("Vérification de votre autorisation…");
+  try{
+    const {data:allowed,error:checkError}=await sb.rpc("check_trainer_invitation",{p_email:email});
+    if(checkError)throw checkError;
+    if(!allowed){authMessage("Cette adresse e-mail n'est pas encore autorisée par UniPop.","error");return;}
+
+    const redirectTo=location.origin+location.pathname;
+    const {data,error}=await sb.auth.signUp({email,password:p1,options:{emailRedirectTo:redirectTo}});
+    if(error)throw error;
+
+    if(data.session){
+      $("#registerPanel").classList.add("hidden");
+      authMessage("");
+      await applyAuthenticatedSession(data.session,{openHome:true});
+    }else{
+      authMessage("Compte créé. Vérifiez votre e-mail pour confirmer votre adresse.","success");
+      $("#registerPanel").classList.add("hidden");
+    }
+  }catch(err){
+    console.error(err);
+    authMessage(err?.message||"Impossible de créer le compte.","error");
+  }finally{$("#registerButton").disabled=false;}
+}
+async function sendPasswordReset(){
+  const email=$("#authEmail").value.trim()||prompt("Adresse e-mail du compte UniPop Go :","");
+  if(!email)return;
+  try{
+    authMessage("Envoi du lien de réinitialisation…");
+    const redirectTo=location.origin+location.pathname+"?recovery=1";
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+    if(error)throw error;
+    authMessage("Un e-mail de réinitialisation vient d'être envoyé.","success");
+  }catch(err){
+    console.error(err);
+    authMessage("Impossible d'envoyer le lien de réinitialisation.","error");
+  }
+}
+async function saveRecoveryPassword(){
+  const p1=$("#recoveryPassword").value;
+  const p2=$("#recoveryPassword2").value;
+  if(!validPassword(p1)){authMessage("Le mot de passe doit contenir au moins 8 caractères.","error");return;}
+  if(p1!==p2){authMessage("Les deux mots de passe ne correspondent pas.","error");return;}
+  const {error}=await sb.auth.updateUser({password:p1});
+  if(error){authMessage("Impossible d'enregistrer le nouveau mot de passe.","error");return;}
+  $("#recoveryPanel").classList.add("hidden");
+  authMessage("Mot de passe mis à jour.","success");
+}
+async function logout(){
+  await sb.auth.signOut();
+  authProfile=null;authSession=null;currentTrainer=null;trainerCourses=[];
+  setAuthView(false);
+  showScreen("loginScreen",false);
+}
+async function initAuth(){
+  const {data:{session}}=await sb.auth.getSession();
+  await applyAuthenticatedSession(session,{openHome:!!session});
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==="PASSWORD_RECOVERY"){
+      authSession=session;
+      setAuthView(false);
+      $("#registerPanel").classList.add("hidden");
+      $("#recoveryPanel").classList.remove("hidden");
+      showScreen("loginScreen",false);
+      return;
+    }
+    if(event==="SIGNED_OUT"){
+      await applyAuthenticatedSession(null);
+      return;
+    }
+    if(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"||event==="USER_UPDATED"){
+      await applyAuthenticatedSession(session,{openHome:event==="SIGNED_IN"});
+    }
+  });
+}
+
+$("#authLoginButton")?.addEventListener("click",loginWithPassword);
+$("#authPassword")?.addEventListener("keydown",e=>{if(e.key==="Enter")loginWithPassword();});
+$("#showRegister")?.addEventListener("click",()=>{
+  $("#registerEmail").value=$("#authEmail").value.trim();
+  $("#registerPanel").classList.remove("hidden");
+  $("#recoveryPanel").classList.add("hidden");
+});
+$("#cancelRegister")?.addEventListener("click",()=>$("#registerPanel").classList.add("hidden"));
+$("#registerButton")?.addEventListener("click",registerFirstAccess);
+$("#forgotPassword")?.addEventListener("click",sendPasswordReset);
+$("#saveRecoveryPassword")?.addEventListener("click",saveRecoveryPassword);
+$("#openAdminButton")?.addEventListener("click",()=>{location.href="admin.html";});
+$("#logoutButton")?.addEventListener("click",logout);
+$("#accountCoursesButton")?.addEventListener("click",()=>{if(currentTrainer)renderHome();});
+$("#accountCalendarButton")?.addEventListener("click",()=>{if(currentTrainer)openCalendar();});
 
 function scheduleRows(c){
   if(Array.isArray(c.horaires)&&c.horaires.length)return c.horaires;
@@ -308,15 +524,6 @@ function openCalendar(){
   showScreen("calendarScreen");
 }
 $("#calendarButton").onclick=openCalendar;$("#calendarTopButton").onclick=openCalendar;
-const loginCalendarButton=$("#loginCalendarButton");
-if(loginCalendarButton) loginCalendarButton.onclick=()=>{
-  releaseIOSFocus();
-  const input=$("#trainerInput");
-  const query=input ? input.value.trim() : "";
-  if(!currentTrainer && query) selectTrainer(query);
-  if(currentTrainer){ openCalendar(); return; }
-  if(input) input.focus();
-};
 $("#prevMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar();};
 $("#nextMonth").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar();};
 
@@ -544,10 +751,14 @@ function renderSiteDetail(){
 $$(".global-tabs .tab").forEach(btn=>btn.onclick=()=>{
   const id=btn.dataset.go;
   if(id==="loginScreen"){showScreen("loginScreen",false);return;}
-  if(!currentTrainer){showScreen("loginScreen",false);return;}
+  if(!authProfile?.active||!currentTrainer){showScreen("loginScreen",false);return;}
   if(id==="homeScreen")renderHome();
   else if(id==="calendarScreen")openCalendar();
   else if(id==="placesScreen"){renderPlaces();showScreen("placesScreen");}
 });
 
-loadAll();
+async function bootstrap(){
+  await loadAll();
+  await initAuth();
+}
+bootstrap();

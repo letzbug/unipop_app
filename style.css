@@ -3156,3 +3156,144 @@ html.device-phone #detailScreen .detail-card{font-size:16px}html.device-phone #d
 
 /* v31 Guides techniques */
 .technical-guide-link{display:block;text-align:center;text-decoration:none;margin-top:10px}.technical-guide-note{margin:8px 2px 0;color:#68758a;font-size:.9rem}.course-guide-box{margin-top:18px}.course-guide-box h4{margin-bottom:8px}.place-room-card .technical-guide-link{margin:14px 0 4px}.place-detail-section .technical-guide-link{max-width:100%}
+
+
+/* =========================================================
+   V32 — Supabase Auth
+   ========================================================= */
+.hidden{display:none !important}
+
+.auth-form{
+  width:min(100%,500px);
+  margin:22px auto 0;
+}
+.auth-form .field-label,
+.auth-panel .field-label{
+  display:block;
+  margin:14px 0 7px;
+  text-align:left;
+}
+.auth-field{
+  width:100% !important;
+}
+.auth-field input{
+  min-width:0;
+}
+.auth-links{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  margin-top:14px;
+}
+.auth-links button,
+.auth-cancel,
+.auth-logout{
+  border:0;
+  background:transparent;
+  color:#6fb8ff;
+  font:inherit;
+  cursor:pointer;
+  padding:8px 0;
+}
+.auth-links button:hover,
+.auth-cancel:hover,
+.auth-logout:hover{
+  text-decoration:underline;
+}
+.auth-panel{
+  width:min(100%,500px);
+  margin:18px auto 0;
+  padding:18px;
+  border:1px solid rgba(80,130,180,.28);
+  border-radius:16px;
+  background:rgba(4,27,48,.42);
+}
+.auth-panel h3{margin:0 0 7px;font-size:20px}
+.auth-panel p{margin:0 0 10px;color:#8fa8bf;line-height:1.45}
+.auth-simple-input{
+  width:100%;
+  box-sizing:border-box;
+  min-height:52px;
+  border:1px solid rgba(115,150,185,.28);
+  border-radius:13px;
+  background:#0a1725;
+  color:#eef7ff;
+  padding:0 14px;
+  font:inherit;
+  font-size:16px;
+  outline:none;
+}
+.auth-simple-input:focus{
+  border-color:#3289dc;
+  box-shadow:0 0 0 3px rgba(50,137,220,.12);
+}
+.auth-panel .blue-btn{width:100%;margin-top:18px}
+.auth-status[data-type="error"]{color:#ff9090}
+.auth-status[data-type="success"]{color:#75dfb6}
+
+.auth-account{
+  width:min(100%,500px);
+  margin:0 auto;
+}
+.account-card{
+  display:flex;
+  gap:15px;
+  align-items:center;
+  margin:24px 0 18px;
+  padding:17px;
+  border:1px solid rgba(80,130,180,.26);
+  border-radius:16px;
+  background:rgba(4,27,48,.42);
+  text-align:left;
+}
+.account-avatar{
+  flex:0 0 54px;
+  width:54px;
+  height:54px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#1468b8,#0a3f70);
+  color:#fff;
+  font-weight:800;
+  font-size:19px;
+}
+.account-card small{color:#8fa8bf}
+.account-card h3{margin:3px 0 2px;font-size:20px}
+.account-card p{margin:0;color:#a8b9c9;overflow-wrap:anywhere}
+.account-warning{
+  margin:12px 0 18px;
+  padding:14px;
+  border:1px solid rgba(255,120,120,.35);
+  border-radius:13px;
+  background:rgba(115,24,24,.18);
+  color:#ffb2b2;
+  line-height:1.45;
+}
+.auth-account .blue-btn{width:100%;margin-top:8px}
+.auth-account .login-calendar-btn{width:100%;margin-top:12px}
+.auth-logout{
+  display:block;
+  margin:15px auto 0;
+}
+button:disabled{
+  opacity:.45 !important;
+  cursor:not-allowed !important;
+}
+
+html.device-phone #loginScreen .auth-form,
+html.device-phone #loginScreen .auth-panel,
+html.device-phone #loginScreen .auth-account{
+  width:100%;
+}
+html.device-phone #loginScreen .auth-field,
+html.device-phone #loginScreen .auth-simple-input{
+  min-height:62px !important;
+  font-size:18px !important;
+}
+html.device-phone #loginScreen .auth-links button{
+  font-size:15px;
+}
+html.device-phone #loginScreen .account-card h3{
+  font-size:22px;
+}
