@@ -227,7 +227,9 @@ async function applyAuthenticatedSession(session,{openHome=false}={}){
       $("#accountTrainer").textContent="Administrateur UniPop Go";
       $("#accountAvatar").textContent="FG";
       $("#accountStatus").textContent="Accès administrateur actif.";
-      setAccessEnabled(false);
+      $("#accountCoursesButton").disabled=true;
+      $("#accountCalendarButton").disabled=true;
+      $("#accountBlocked").classList.add("hidden");
       showScreen("loginScreen",false);
       return true;
     }
