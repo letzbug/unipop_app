@@ -173,8 +173,9 @@ async function loadOwnProfile(){
   if(!user)return null;
   await claimTrainerAccess();
   const {data,error}=await sb.from("trainer_access")
-    .select("id,email,trainer_name,role,active,auth_user_id")
+    .select("id,email,trainer_name,role,active,deleted_at,auth_user_id")
     .eq("auth_user_id",user.id)
+    .is("deleted_at",null)
     .maybeSingle();
   if(error)throw error;
   return data||null;
@@ -210,7 +211,7 @@ async function applyAuthenticatedSession(session,{openHome=false}={}){
     const isAdmin=authProfile.role==="admin";
     $("#openAdminButton")?.classList.toggle("hidden",!isAdmin);
 
-    if(!authProfile.active){
+    if(authProfile.active!==true || authProfile.deleted_at){
       currentTrainer=null;trainerCourses=[];
       $("#accountTrainer").textContent=isAdmin?"Administrateur":"Accès désactivé";
       $("#accountAvatar").textContent=isAdmin?"AD":"UP";
