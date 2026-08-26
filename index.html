@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=34">
+  <link rel="stylesheet" href="style.css?v=35">
 </head>
 <body>
 <div id="phoneApp">
@@ -88,11 +88,17 @@
           </div>
 
           <div id="registerPanel" class="auth-panel hidden">
-            <h3>Première connexion</h3>
-            <p>Entrez l’adresse e-mail autorisée par UniPop. Vous recevrez un lien sécurisé pour activer votre accès et choisir votre mot de passe.</p>
+            <h3>Première connexion / Réinitialisation</h3>
+            <p>Entrez votre e-mail, le code d’activation reçu de UniPop et choisissez votre mot de passe.</p>
             <label class="field-label" for="registerEmail">E-mail</label>
-            <input id="registerEmail" class="auth-simple-input" type="email" autocomplete="email" placeholder="prenom.nom@...">
-            <button class="blue-btn" id="registerButton" type="button">Recevoir mon lien d’accès</button>
+            <input id="registerEmail" class="auth-simple-input" type="email" autocomplete="email">
+            <label class="field-label" for="activationCode">Code d’activation</label>
+            <input id="activationCode" class="auth-simple-input code-input" type="text" autocomplete="one-time-code" placeholder="UPG-XXXX-XXXX">
+            <label class="field-label" for="registerPassword">Nouveau mot de passe</label>
+            <input id="registerPassword" class="auth-simple-input" type="password" autocomplete="new-password">
+            <label class="field-label" for="registerPassword2">Confirmer le mot de passe</label>
+            <input id="registerPassword2" class="auth-simple-input" type="password" autocomplete="new-password">
+            <button class="blue-btn" id="registerButton" type="button">Activer mon accès</button>
             <button class="auth-cancel" id="cancelRegister" type="button">Annuler</button>
           </div>
 
@@ -377,6 +383,6 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=34"></script>
+<script src="app.js?v=35"></script>
 </body>
 </html>

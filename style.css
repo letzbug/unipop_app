@@ -3297,3 +3297,5 @@ html.device-phone #loginScreen .auth-links button{
 html.device-phone #loginScreen .account-card h3{
   font-size:22px;
 }
+
+.code-input{text-transform:uppercase;letter-spacing:.12em;font-weight:800}
