@@ -323,6 +323,7 @@ async function registerFirstAccess(){
     if(button)button.disabled=false;
   }
 }
+window.unipopActivateAccess=(event)=>{if(event)event.preventDefault();return registerFirstAccess();};
 function openCodePanel(){
   $("#registerEmail").value=$("#authEmail").value.trim();
   $("#registerPanel").classList.remove("hidden");
@@ -362,10 +363,12 @@ $("#cancelRegister")?.addEventListener("click",()=>$("#registerPanel").classList
 document.addEventListener("DOMContentLoaded",()=>{
   const activationButton=document.getElementById("registerButton");
   if(activationButton){
-    activationButton.addEventListener("click",(event)=>{
-      event.preventDefault();
-      registerFirstAccess();
-    });
+    if(!activationButton.getAttribute("onclick")){
+      activationButton.addEventListener("click",(event)=>{
+        event.preventDefault();
+        registerFirstAccess();
+      });
+    }
   }else{
     console.error("UniPop: registerButton introuvable.");
   }

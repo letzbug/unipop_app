@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=42">
+  <link rel="stylesheet" href="style.css?v=43">
 </head>
 <body>
 <div id="phoneApp">
@@ -98,7 +98,7 @@
             <input id="registerPassword" class="auth-simple-input" type="password" autocomplete="new-password">
             <label class="field-label" for="registerPassword2">Confirmer le mot de passe</label>
             <input id="registerPassword2" class="auth-simple-input" type="password" autocomplete="new-password">
-            <button class="blue-btn" id="registerButton" type="button">Activer mon accès</button>
+            <button class="blue-btn" id="registerButton" type="button" onclick="window.unipopActivateAccess && window.unipopActivateAccess(event)">Activer mon accès</button>
             <button class="auth-cancel" id="cancelRegister" type="button">Annuler</button>
           </div>
 
@@ -353,7 +353,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "32";
+  const APP_VERSION = "43";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -383,6 +383,6 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=42"></script>
+<script src="app.js?v=43"></script>
 </body>
 </html>
