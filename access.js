@@ -1,4 +1,4 @@
-const URL="https://tbjlwhbwcxdvagjoonwb.supabase.co";
+const SUPABASE_URL="https://tbjlwhbwcxdvagjoonwb.supabase.co";
 const KEY="sb_publishable_z2AUPoYHLMqxxizwKrjhwQ_tESJhSxp";
 const DATA="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
 
@@ -15,7 +15,7 @@ function status(msg="",error=false){
 
 async function fn(action,payload={}){
   const {data:{session}}=await sb.auth.getSession();
-  const r=await fetch(`${URL}/functions/v1/access-manager`,{
+  const r=await fetch(`${SUPABASE_URL}/functions/v1/access-manager`,{
     method:"POST",
     headers:{
       "Content-Type":"application/json",
@@ -151,7 +151,7 @@ async function act(id,a){
 document.addEventListener("DOMContentLoaded",async()=>{
   try{
     if(!window.supabase?.createClient)throw Error("La bibliothèque Supabase n’a pas pu être chargée.");
-    sb=window.supabase.createClient(URL,KEY);
+    sb=window.supabase.createClient(SUPABASE_URL,KEY);
 
     $("#login").addEventListener("click",login);
     $("#password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
