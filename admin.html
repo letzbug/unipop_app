@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#06111f">
   <title>UniPop Go · Administration</title>
-  <link rel="stylesheet" href="admin.css?v=45">
+  <link rel="stylesheet" href="admin.css?v=46">
 </head>
 <body>
 <main class="shell">
@@ -97,14 +97,27 @@
             <option value="blocked">Bloqués</option>
           </select>
           <input id="search" type="search" placeholder="Rechercher nom ou e-mail">
+          <select id="pageSize" aria-label="Nombre d'utilisateurs par page">
+            <option value="20" selected>20 / page</option>
+            <option value="50">50 / page</option>
+            <option value="100">100 / page</option>
+          </select>
         </div>
       </div>
       <div id="list" class="users-list"></div>
+      <div id="pager" class="pager hidden">
+        <div id="pagerInfo" class="pager-info"></div>
+        <div class="pager-controls">
+          <button id="prevPage" class="ghost">‹ Précédent</button>
+          <div id="pageNumbers" class="page-numbers"></div>
+          <button id="nextPage" class="ghost">Suivant ›</button>
+        </div>
+      </div>
     </section>
   </div>
 </main>
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer src="admin.js?v=45"></script>
+<script defer src="admin.js?v=46"></script>
 </body>
 </html>

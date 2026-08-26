@@ -2,7 +2,7 @@ const SUPABASE_URL="https://tbjlwhbwcxdvagjoonwb.supabase.co";
 const KEY="sb_publishable_z2AUPoYHLMqxxizwKrjhwQ_tESJhSxp";
 const DATA="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
 
-let sb=null, users=[], names=[], currentAdmin=null, lastCreatedCode="";
+let sb=null, users=[], names=[], currentAdmin=null, lastCreatedCode="", currentPage=1, pageSize=20;
 const $=s=>document.querySelector(s);
 const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
 
@@ -97,20 +97,36 @@ async function createAccess(){
     $("#createdCode").classList.toggle("hidden",!lastCreatedCode);
     createStatus(role==="admin"?"Accès administrateur prêt.":"Accès formateur prêt. Transmettez le code d’activation.","success");
     $("#trainer").value="";$("#trainerEmail").value="";
+    currentPage=1;
     await load();
   }catch(e){createStatus(e.message,"error")}
   finally{$("#create").disabled=false}
 }
 function render(){
   const q=$("#search").value.trim().toLowerCase(),filter=$("#roleFilter").value;
-  const shown=users.filter(u=>{
-    const matchesQ=!q||String(u.trainer_name||"Administrateur UniPop Go").toLowerCase().includes(q)||String(u.email||"").toLowerCase().includes(q);
-    const matchesRole=filter==="all"||(filter==="blocked"?!u.active:u.role===filter);
+
+  const filtered=users.filter(u=>{
+    const matchesQ=!q
+      ||String(u.trainer_name||"Administrateur UniPop Go").toLowerCase().includes(q)
+      ||String(u.email||"").toLowerCase().includes(q);
+    const matchesRole=filter==="all"
+      ||(filter==="blocked"?!u.active:u.role===filter);
     return matchesQ&&matchesRole;
   });
+
   const trainers=users.filter(u=>u.role==="trainer").length;
   const admins=users.filter(u=>u.role==="admin").length;
   $("#count").textContent=`${users.length} accès · ${trainers} formateurs · ${admins} administrateur(s)`;
+
+  const total=filtered.length;
+  const totalPages=Math.max(1,Math.ceil(total/pageSize));
+  if(currentPage>totalPages)currentPage=totalPages;
+  if(currentPage<1)currentPage=1;
+
+  const startIndex=(currentPage-1)*pageSize;
+  const endIndex=Math.min(startIndex+pageSize,total);
+  const shown=filtered.slice(startIndex,endIndex);
+
   $("#list").innerHTML=shown.map(u=>{
     const self=u.auth_user_id&&u.auth_user_id===currentAdmin?.auth_user_id;
     return `<article class="row" data-id="${u.id}">
@@ -132,7 +148,45 @@ function render(){
       </div>
     </article>`;
   }).join("")||"<p>Aucun accès correspondant.</p>";
-  document.querySelectorAll(".row button").forEach(b=>b.addEventListener("click",()=>act(b.closest(".row").dataset.id,b.dataset.a)));
+
+  document.querySelectorAll(".row button").forEach(b=>
+    b.addEventListener("click",()=>act(b.closest(".row").dataset.id,b.dataset.a))
+  );
+
+  const pager=$("#pager");
+  pager.classList.toggle("hidden",total<=pageSize);
+
+  $("#pagerInfo").textContent=total
+    ? `${startIndex+1}–${endIndex} sur ${total}`
+    : "0 résultat";
+
+  $("#prevPage").disabled=currentPage<=1;
+  $("#nextPage").disabled=currentPage>=totalPages;
+
+  const numbers=$("#pageNumbers");
+  const pages=[];
+  const addPage=n=>pages.push(`<button class="${n===currentPage?"active":""}" data-page="${n}">${n}</button>`);
+  const addDots=()=>pages.push('<span class="dots">…</span>');
+
+  if(totalPages<=7){
+    for(let i=1;i<=totalPages;i++)addPage(i);
+  }else{
+    addPage(1);
+    if(currentPage>4)addDots();
+    const from=Math.max(2,currentPage-1);
+    const to=Math.min(totalPages-1,currentPage+1);
+    for(let i=from;i<=to;i++)addPage(i);
+    if(currentPage<totalPages-3)addDots();
+    addPage(totalPages);
+  }
+  numbers.innerHTML=pages.join("");
+  numbers.querySelectorAll("button[data-page]").forEach(b=>
+    b.addEventListener("click",()=>{
+      currentPage=Number(b.dataset.page)||1;
+      render();
+      document.querySelector("#list")?.scrollIntoView({behavior:"smooth",block:"start"});
+    })
+  );
 }
 async function load(){
   const {data,error}=await sb.from("trainer_access")
@@ -182,8 +236,26 @@ document.addEventListener("DOMContentLoaded",async()=>{
       $("#trainerField").classList.toggle("hidden",admin);
       if(admin)$("#trainer").value="";
     });
-    $("#search").addEventListener("input",render);
-    $("#roleFilter").addEventListener("change",render);
+    $("#search").addEventListener("input",()=>{currentPage=1;render();});
+    $("#roleFilter").addEventListener("change",()=>{currentPage=1;render();});
+    $("#pageSize").addEventListener("change",()=>{
+      pageSize=Number($("#pageSize").value)||20;
+      currentPage=1;
+      render();
+    });
+    $("#prevPage").addEventListener("click",()=>{
+      if(currentPage>1){currentPage--;render();document.querySelector("#list")?.scrollIntoView({behavior:"smooth",block:"start"});}
+    });
+    $("#nextPage").addEventListener("click",()=>{
+      const q=$("#search").value.trim().toLowerCase(),filter=$("#roleFilter").value;
+      const total=users.filter(u=>{
+        const matchesQ=!q||String(u.trainer_name||"Administrateur UniPop Go").toLowerCase().includes(q)||String(u.email||"").toLowerCase().includes(q);
+        const matchesRole=filter==="all"||(filter==="blocked"?!u.active:u.role===filter);
+        return matchesQ&&matchesRole;
+      }).length;
+      const totalPages=Math.max(1,Math.ceil(total/pageSize));
+      if(currentPage<totalPages){currentPage++;render();document.querySelector("#list")?.scrollIntoView({behavior:"smooth",block:"start"});}
+    });
     await boot();
   }catch(e){
     console.error(e);gateStatus(`Erreur de démarrage: ${e.message}`,true);

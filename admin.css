@@ -51,3 +51,72 @@ label{display:grid;gap:7px;color:#c8d8e8;font-size:13px;font-weight:700}
   .head-actions{align-items:stretch}
   .created-code{align-items:stretch;flex-direction:column}
 }
+
+/* =========================================================
+   V46 — Pagination for 200–300 users
+   Existing access/auth logic unchanged.
+   ========================================================= */
+.filters #pageSize{width:125px}
+.pager{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid #18334a;
+}
+.pager-info{
+  color:#91a8bd;
+  font-size:13px;
+  white-space:nowrap;
+}
+.pager-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.pager-controls>button:disabled{
+  opacity:.38;
+  cursor:not-allowed;
+}
+.page-numbers{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.page-numbers button{
+  min-width:38px;
+  min-height:38px;
+  padding:0 9px;
+  border:1px solid #294e6b;
+  border-radius:9px;
+  background:transparent;
+  color:#c8d8e8;
+}
+.page-numbers button.active{
+  background:#1477c9;
+  border-color:#1477c9;
+  color:#fff;
+}
+.page-numbers .dots{
+  color:#7891a7;
+  padding:0 3px;
+}
+@media(max-width:800px){
+  .filters #pageSize{width:100%}
+  .pager{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .pager-controls{
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .page-numbers{
+    order:3;
+    width:100%;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+}
