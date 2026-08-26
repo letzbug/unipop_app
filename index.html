@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=33">
+  <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
 <div id="phoneApp">
@@ -89,20 +89,16 @@
 
           <div id="registerPanel" class="auth-panel hidden">
             <h3>Première connexion</h3>
-            <p>Utilisez l’adresse e-mail autorisée par UniPop et choisissez votre propre mot de passe.</p>
+            <p>Entrez l’adresse e-mail autorisée par UniPop. Vous recevrez un lien sécurisé pour activer votre accès et choisir votre mot de passe.</p>
             <label class="field-label" for="registerEmail">E-mail</label>
-            <input id="registerEmail" class="auth-simple-input" type="email" autocomplete="email">
-            <label class="field-label" for="registerPassword">Nouveau mot de passe</label>
-            <input id="registerPassword" class="auth-simple-input" type="password" autocomplete="new-password">
-            <label class="field-label" for="registerPassword2">Confirmer le mot de passe</label>
-            <input id="registerPassword2" class="auth-simple-input" type="password" autocomplete="new-password">
-            <button class="blue-btn" id="registerButton" type="button">Créer mon accès</button>
+            <input id="registerEmail" class="auth-simple-input" type="email" autocomplete="email" placeholder="prenom.nom@...">
+            <button class="blue-btn" id="registerButton" type="button">Recevoir mon lien d’accès</button>
             <button class="auth-cancel" id="cancelRegister" type="button">Annuler</button>
           </div>
 
           <div id="recoveryPanel" class="auth-panel hidden">
-            <h3>Nouveau mot de passe</h3>
-            <p>Choisissez votre nouveau mot de passe.</p>
+            <h3>Choisir votre mot de passe</h3>
+            <p>Choisissez un mot de passe personnel pour votre compte UniPop Go.</p>
             <label class="field-label" for="recoveryPassword">Nouveau mot de passe</label>
             <input id="recoveryPassword" class="auth-simple-input" type="password" autocomplete="new-password">
             <label class="field-label" for="recoveryPassword2">Confirmer le mot de passe</label>
@@ -381,6 +377,6 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=33"></script>
+<script src="app.js?v=34"></script>
 </body>
 </html>

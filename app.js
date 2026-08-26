@@ -273,50 +273,107 @@ async function loginWithPassword(){
     authMessage("E-mail ou mot de passe incorrect.","error");
   }finally{$("#authLoginButton").disabled=false;}
 }
+
+function appRedirectUrl(mode=""){
+  const u=new URL(location.href);
+  u.pathname=u.pathname.replace(/admin\.html$/i,"index.html");
+  u.search=mode?`?${mode}=1`:"";
+  u.hash="";
+  return u.toString();
+}
+function randomTemporaryPassword(){
+  const bytes=new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("")+"Aa!9";
+}
+async function invitationState(email){
+  const {data,error}=await sb.rpc("trainer_access_state",{p_email:email});
+  if(error)throw error;
+  return data||{authorized:false,has_account:false};
+}
+function showPasswordPanel(){
+  setAuthView(false);
+  $("#registerPanel").classList.add("hidden");
+  $("#recoveryPanel").classList.remove("hidden");
+  showScreen("loginScreen",false);
+  setTimeout(()=>$("#recoveryPassword")?.focus(),50);
+}
 async function registerFirstAccess(){
-  const email=$("#registerEmail").value.trim();
-  const p1=$("#registerPassword").value;
-  const p2=$("#registerPassword2").value;
+  const email=$("#registerEmail").value.trim().toLowerCase();
   if(!email){authMessage("Entrez votre adresse e-mail.","error");return;}
-  if(!validPassword(p1)){authMessage("Le mot de passe doit contenir au moins 8 caractères.","error");return;}
-  if(p1!==p2){authMessage("Les deux mots de passe ne correspondent pas.","error");return;}
 
   $("#registerButton").disabled=true;
-  authMessage("Vérification de votre autorisation…");
+  authMessage("Vérification de votre accès…");
   try{
-    const {data:allowed,error:checkError}=await sb.rpc("check_trainer_invitation",{p_email:email});
-    if(checkError)throw checkError;
-    if(!allowed){authMessage("Cette adresse e-mail n'est pas encore autorisée par UniPop.","error");return;}
+    const state=await invitationState(email);
+    if(!state.authorized){
+      authMessage("Cette adresse e-mail n'est pas encore autorisée par UniPop.","error");
+      return;
+    }
 
-    const redirectTo=location.origin+location.pathname;
-    const {data,error}=await sb.auth.signUp({email,password:p1,options:{emailRedirectTo:redirectTo}});
+    // Existing Auth account: use a secure recovery link.
+    // This also fixes users who were removed and later re-authorised.
+    if(state.has_account){
+      const {error}=await sb.auth.resetPasswordForEmail(email,{
+        redirectTo:appRedirectUrl("setup")
+      });
+      if(error)throw error;
+      $("#registerPanel").classList.add("hidden");
+      authMessage("Un lien d’accès vient d’être envoyé par e-mail. Ouvrez-le pour choisir votre mot de passe.","success");
+      return;
+    }
+
+    // First ever account: create an Auth account with a random temporary secret.
+    // The user never sees or uses this secret. Ownership is proven through the
+    // confirmation e-mail, then the app asks them to choose their own password.
+    const {data,error}=await sb.auth.signUp({
+      email,
+      password:randomTemporaryPassword(),
+      options:{emailRedirectTo:appRedirectUrl("setup")}
+    });
     if(error)throw error;
 
+    $("#registerPanel").classList.add("hidden");
     if(data.session){
-      $("#registerPanel").classList.add("hidden");
-      authMessage("");
-      await applyAuthenticatedSession(data.session,{openHome:true});
+      authSession=data.session;
+      showPasswordPanel();
+      authMessage("Choisissez maintenant votre mot de passe personnel.","success");
     }else{
-      authMessage("Compte créé. Vérifiez votre e-mail pour confirmer votre adresse.","success");
-      $("#registerPanel").classList.add("hidden");
+      authMessage("Un lien d’activation vient d’être envoyé par e-mail. Ouvrez-le pour choisir votre mot de passe.","success");
     }
   }catch(err){
     console.error(err);
-    authMessage(err?.message||"Impossible de créer le compte.","error");
-  }finally{$("#registerButton").disabled=false;}
+    authMessage(err?.message||"Impossible d'envoyer le lien d’accès.","error");
+  }finally{
+    $("#registerButton").disabled=false;
+  }
 }
 async function sendPasswordReset(){
-  const email=$("#authEmail").value.trim()||prompt("Adresse e-mail du compte UniPop Go :","");
-  if(!email)return;
+  const email=$("#authEmail").value.trim().toLowerCase();
+  if(!email){
+    authMessage("Entrez d’abord votre adresse e-mail dans le champ E-mail.","error");
+    $("#authEmail").focus();
+    return;
+  }
   try{
-    authMessage("Envoi du lien de réinitialisation…");
-    const redirectTo=location.origin+location.pathname+"?recovery=1";
-    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});
+    authMessage("Vérification du compte…");
+    const state=await invitationState(email);
+    if(!state.authorized){
+      authMessage("Cette adresse e-mail n'est pas autorisée pour UniPop Go.","error");
+      return;
+    }
+    if(!state.has_account){
+      authMessage("Ce compte n’a pas encore été activé. Utilisez « Première connexion ».","error");
+      return;
+    }
+    const {error}=await sb.auth.resetPasswordForEmail(email,{
+      redirectTo:appRedirectUrl("recovery")
+    });
     if(error)throw error;
-    authMessage("Un e-mail de réinitialisation vient d'être envoyé.","success");
+    authMessage("Un lien de réinitialisation vient d’être envoyé par e-mail.","success");
   }catch(err){
     console.error(err);
-    authMessage("Impossible d'envoyer le lien de réinitialisation.","error");
+    authMessage(err?.message||"Impossible d'envoyer le lien de réinitialisation.","error");
   }
 }
 async function saveRecoveryPassword(){
@@ -324,10 +381,28 @@ async function saveRecoveryPassword(){
   const p2=$("#recoveryPassword2").value;
   if(!validPassword(p1)){authMessage("Le mot de passe doit contenir au moins 8 caractères.","error");return;}
   if(p1!==p2){authMessage("Les deux mots de passe ne correspondent pas.","error");return;}
-  const {error}=await sb.auth.updateUser({password:p1});
-  if(error){authMessage("Impossible d'enregistrer le nouveau mot de passe.","error");return;}
-  $("#recoveryPanel").classList.add("hidden");
-  authMessage("Mot de passe mis à jour.","success");
+
+  $("#saveRecoveryPassword").disabled=true;
+  try{
+    const {data,error}=await sb.auth.updateUser({password:p1});
+    if(error)throw error;
+    await claimTrainerAccess();
+
+    $("#recoveryPanel").classList.add("hidden");
+    $("#recoveryPassword").value="";
+    $("#recoveryPassword2").value="";
+    history.replaceState({},document.title,location.pathname);
+
+    const {data:{session}}=await sb.auth.getSession();
+    authSession=session;
+    authMessage("Mot de passe enregistré.","success");
+    await applyAuthenticatedSession(session,{openHome:true});
+  }catch(err){
+    console.error(err);
+    authMessage(err?.message||"Impossible d'enregistrer le nouveau mot de passe.","error");
+  }finally{
+    $("#saveRecoveryPassword").disabled=false;
+  }
 }
 async function logout(){
   await sb.auth.signOut();
@@ -336,15 +411,12 @@ async function logout(){
   showScreen("loginScreen",false);
 }
 async function initAuth(){
-  const {data:{session}}=await sb.auth.getSession();
-  await applyAuthenticatedSession(session,{openHome:!!session});
+  // Register listener BEFORE getSession so PASSWORD_RECOVERY cannot be missed.
   sb.auth.onAuthStateChange(async(event,session)=>{
+    authSession=session||null;
+
     if(event==="PASSWORD_RECOVERY"){
-      authSession=session;
-      setAuthView(false);
-      $("#registerPanel").classList.add("hidden");
-      $("#recoveryPanel").classList.remove("hidden");
-      showScreen("loginScreen",false);
+      showPasswordPanel();
       return;
     }
     if(event==="SIGNED_OUT"){
@@ -352,9 +424,24 @@ async function initAuth(){
       return;
     }
     if(event==="SIGNED_IN"||event==="TOKEN_REFRESHED"||event==="USER_UPDATED"){
+      const params=new URLSearchParams(location.search);
+      if(params.has("setup")||params.has("recovery")){
+        showPasswordPanel();
+        return;
+      }
       await applyAuthenticatedSession(session,{openHome:event==="SIGNED_IN"});
     }
   });
+
+  const {data:{session}}=await sb.auth.getSession();
+  authSession=session||null;
+  const params=new URLSearchParams(location.search);
+
+  if(session&&(params.has("setup")||params.has("recovery"))){
+    showPasswordPanel();
+    return;
+  }
+  await applyAuthenticatedSession(session,{openHome:!!session});
 }
 
 $("#authLoginButton")?.addEventListener("click",loginWithPassword);

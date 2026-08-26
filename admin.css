@@ -41,3 +41,13 @@ input:focus,select:focus{border-color:#3c91df;box-shadow:0 0 0 3px rgba(60,145,2
   .user-actions{justify-content:flex-start}
   h1{font-size:28px}
 }
+
+.user-search{
+  width:min(340px,100%);
+}
+.list-head>div h2{margin-bottom:4px}
+.list-head>div span{color:#8199af;font-size:13px}
+@media(max-width:760px){
+  .list-head{align-items:stretch;flex-direction:column}
+  .user-search{width:100%}
+}
