@@ -3310,3 +3310,35 @@ html.device-phone #loginScreen .account-card h3{
   touch-action:manipulation;
   -webkit-tap-highlight-color:rgba(255,255,255,.12);
 }
+
+
+/* =========================================================
+   V44 — visible activation validation
+   The old .data-status is screen-reader-only on the login page.
+   Activation errors must be visible to the user.
+   ========================================================= */
+#registerPanel .activation-status{
+  display:block !important;
+  position:static !important;
+  width:auto !important;
+  height:auto !important;
+  clip:auto !important;
+  clip-path:none !important;
+  overflow:visible !important;
+  white-space:normal !important;
+  min-height:22px;
+  margin:12px 2px 0;
+  font-size:14px;
+  line-height:1.4;
+  color:#ffadad;
+}
+#registerPanel .activation-status[data-type="success"]{color:#7ee0b8}
+#registerPanel .activation-status[data-type="info"]{color:#b9d9f7}
+html.device-phone #registerPanel .activation-status{
+  font-size:16px !important;
+  min-height:24px;
+}
+#registerPassword:invalid,
+#registerPassword2:invalid{
+  border-color:rgba(255,140,140,.55);
+}

@@ -291,40 +291,57 @@ async function accessFunction(action,payload={}){
 }
 async function registerFirstAccess(){
   const button=document.getElementById("registerButton");
+  const status=document.getElementById("activationStatus");
+  const show=(msg,type="error")=>{
+    if(status){
+      status.textContent=msg||"";
+      status.dataset.type=type;
+    }
+    authMessage(msg,type);
+  };
+
   try{
     const email=(document.getElementById("registerEmail")?.value||"").trim().toLowerCase();
     const code=(document.getElementById("activationCode")?.value||"").trim().toUpperCase();
     const p1=document.getElementById("registerPassword")?.value||"";
     const p2=document.getElementById("registerPassword2")?.value||"";
 
-    if(!email||!code){authMessage("E-mail et code d’activation obligatoires.","error");return;}
-    if(!validPassword(p1)){authMessage("Le mot de passe doit contenir au moins 8 caractères.","error");return;}
-    if(p1!==p2){authMessage("Les deux mots de passe ne correspondent pas.","error");return;}
+    if(!email){show("Entrez votre adresse e-mail.");return;}
+    if(!code){show("Entrez votre code d’activation UPG-XXXX-XXXX.");return;}
+    if(p1.length<8){
+      show("Le mot de passe doit contenir au moins 8 caractères.");
+      document.getElementById("registerPassword")?.focus();
+      return;
+    }
+    if(p1!==p2){
+      show("Les deux mots de passe ne correspondent pas.");
+      document.getElementById("registerPassword2")?.focus();
+      return;
+    }
 
     if(button)button.disabled=true;
-    authMessage("Activation de votre accès…");
+    show("Activation de votre accès…","info");
 
     const result=await accessFunction("activate",{email,code,password:p1});
     if(!result?.ok)throw new Error("L’activation n’a pas été confirmée.");
 
+    show("Accès activé. Connexion…","success");
     const {data,error}=await sb.auth.signInWithPassword({email,password:p1});
     if(error)throw error;
+
     document.getElementById("registerPanel")?.classList.add("hidden");
+    if(status)status.textContent="";
     authMessage("");
     await applyAuthenticatedSession(data.session,{openHome:true});
   }catch(err){
     console.error("Activation UniPop:",err);
-    const msg=err?.message||String(err)||"Activation impossible.";
-    authMessage(msg,"error");
-    // Fallback so a browser/UI issue can never look like a dead button.
-    const m=document.getElementById("authMessage");
-    if(!m || !m.textContent) alert("Activation impossible : "+msg);
+    show(err?.message||String(err)||"Activation impossible.");
   }finally{
     if(button)button.disabled=false;
   }
 }
-window.unipopActivateAccess=(event)=>{if(event)event.preventDefault();return registerFirstAccess();};
 function openCodePanel(){
+  const activationStatus=document.getElementById("activationStatus");if(activationStatus)activationStatus.textContent="";
   $("#registerEmail").value=$("#authEmail").value.trim();
   $("#registerPanel").classList.remove("hidden");
   $("#recoveryPanel").classList.add("hidden");
@@ -359,20 +376,16 @@ $("#showRegister")?.addEventListener("click",openCodePanel);
 $("#cancelRegister")?.addEventListener("click",()=>$("#registerPanel").classList.add("hidden"));
 
 
-// v42: robust activation-button binding
-document.addEventListener("DOMContentLoaded",()=>{
-  const activationButton=document.getElementById("registerButton");
-  if(activationButton){
-    if(!activationButton.getAttribute("onclick")){
-      activationButton.addEventListener("click",(event)=>{
-        event.preventDefault();
-        registerFirstAccess();
-      });
-    }
-  }else{
-    console.error("UniPop: registerButton introuvable.");
-  }
-});
+// v44: activation button + visible validation feedback.
+const activationButton=document.getElementById("registerButton");
+if(activationButton){
+  activationButton.addEventListener("click",(event)=>{
+    event.preventDefault();
+    registerFirstAccess();
+  });
+}else{
+  console.error("UniPop: registerButton introuvable.");
+}
 $("#forgotPassword")?.addEventListener("click",openCodePanel);
 $("#saveRecoveryPassword")?.addEventListener("click",saveRecoveryPassword);
 $("#openAdminButton")?.addEventListener("click",()=>{location.href="admin.html";});

@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=43">
+  <link rel="stylesheet" href="style.css?v=44">
 </head>
 <body>
 <div id="phoneApp">
@@ -95,10 +95,11 @@
             <label class="field-label" for="activationCode">Code d’activation</label>
             <input id="activationCode" class="auth-simple-input code-input" type="text" autocomplete="one-time-code" placeholder="UPG-XXXX-XXXX">
             <label class="field-label" for="registerPassword">Nouveau mot de passe</label>
-            <input id="registerPassword" class="auth-simple-input" type="password" autocomplete="new-password">
+            <input id="registerPassword" class="auth-simple-input" type="password" autocomplete="new-password" minlength="8" placeholder="Minimum 8 caractères">
             <label class="field-label" for="registerPassword2">Confirmer le mot de passe</label>
-            <input id="registerPassword2" class="auth-simple-input" type="password" autocomplete="new-password">
-            <button class="blue-btn" id="registerButton" type="button" onclick="window.unipopActivateAccess && window.unipopActivateAccess(event)">Activer mon accès</button>
+            <input id="registerPassword2" class="auth-simple-input" type="password" autocomplete="new-password" minlength="8" placeholder="Répétez le mot de passe">
+            <button class="blue-btn" id="registerButton" type="button">Activer mon accès</button>
+            <div id="activationStatus" class="activation-status" aria-live="polite"></div>
             <button class="auth-cancel" id="cancelRegister" type="button">Annuler</button>
           </div>
 
@@ -353,7 +354,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "43";
+  const APP_VERSION = "44";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -383,6 +384,6 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=43"></script>
+<script src="app.js?v=44"></script>
 </body>
 </html>
