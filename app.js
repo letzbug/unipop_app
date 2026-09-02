@@ -478,25 +478,33 @@ function ensureGuideViewer(){
   if(viewer)return viewer;
   const style=document.createElement("style");
   style.textContent=`
-    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:#071a2b;display:flex;flex-direction:column}
+    #guideViewerOverlay{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100vh;z-index:99999;background:#071a2b;display:flex;flex-direction:column;overflow:hidden}
     #guideViewerOverlay.hidden{display:none}
     #guideViewerBar{box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.14);flex:0 0 auto}
     #guideViewerBar strong{font-size:16px}
     #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
-    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:0;overflow:auto;background:#071a2b}
+    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:0;overflow:auto;background:#071a2b;overscroll-behavior:contain}
     #guideViewerImage{display:block;width:auto;max-width:1100px;height:auto;margin:0 auto}
     #guideViewerFrame{display:block;width:100%;height:100%;min-height:0;border:0;background:#fff}
     @media(max-width:700px){
       #guideViewerBar{padding:8px 10px}
       #guideViewerBar strong{font-size:14px}
       #guideViewerClose{padding:9px 12px}
-      #guideViewerStage{overflow-y:auto;overflow-x:hidden}
+      #guideViewerStage{
+        width:100vw;
+        max-width:100vw;
+        overflow-y:auto;
+        overflow-x:hidden;
+        background:#071a2b;
+        padding:0;
+        margin:0;
+      }
       #guideViewerImage{
         display:block;
-        width:100%;
-        max-width:100%;
+        width:92vw;
+        max-width:92vw;
         height:auto;
-        margin:0;
+        margin:0 auto;
       }
     }
   `;
