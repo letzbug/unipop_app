@@ -456,9 +456,15 @@ function guideUrl(g){
   return g.path?siteAssetUrl(g.path):(g.url||"");
 }
 function technicalGuideForCourse(site,room){
-  // A confirmed room only shows its own explicitly assigned guide.
-  // This intentionally does not inherit the lieu guide, so a room that needs no guide shows no button.
-  if(room)return technicalGuideById(room.guideId);
+  // A confirmed room only shows its own explicitly assigned guide/tutorial.
+  // It intentionally does not inherit the lieu guide.
+  if(room){
+    if(room.tutorialGuidePath){
+      const tut=(site?.tutorials||[]).find(t=>String(t.path||t.url)===String(room.tutorialGuidePath));
+      return tut?{...tut,_isTutorialGuide:true}:{path:room.tutorialGuidePath,title:'Tutoriel'};
+    }
+    return technicalGuideById(room.guideId);
+  }
   return technicalGuideById(site?.guideId);
 }
 function guideButtonHtml(g){
