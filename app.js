@@ -470,8 +470,53 @@ function technicalGuideForCourse(site,room){
 function guideButtonHtml(g){
   const u=guideUrl(g);
   if(!g||!u)return "";
-  return `<a class="blue-btn technical-guide-link" href="${escapeHtml(u)}" target="_blank" rel="noopener">Voir le guide technique</a>${g.description?`<p class="technical-guide-note">${escapeHtml(g.description)}</p>`:""}`;
+  return `<button class="blue-btn technical-guide-link" type="button" data-guide-url="${escapeHtml(u)}">Voir le guide technique</button>${g.description?`<p class="technical-guide-note">${escapeHtml(g.description)}</p>`:""}`;
 }
+
+function ensureGuideViewer(){
+  let viewer=document.getElementById("guideViewerOverlay");
+  if(viewer)return viewer;
+  const style=document.createElement("style");
+  style.textContent=`
+    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:rgba(3,16,30,.94);display:flex;flex-direction:column}
+    #guideViewerOverlay.hidden{display:none}
+    #guideViewerBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.15)}
+    #guideViewerBar strong{font-size:16px}
+    #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
+    #guideViewerFrame{flex:1;width:100%;border:0;background:#fff}
+  `;
+  document.head.appendChild(style);
+  viewer=document.createElement("div");
+  viewer.id="guideViewerOverlay";
+  viewer.className="hidden";
+  viewer.innerHTML=`<div id="guideViewerBar"><strong>Guide technique</strong><button id="guideViewerClose" type="button">← Retour</button></div><iframe id="guideViewerFrame" title="Guide technique"></iframe>`;
+  document.body.appendChild(viewer);
+  document.getElementById("guideViewerClose").onclick=closeGuideViewer;
+  return viewer;
+}
+function openGuideViewer(url){
+  if(!url)return;
+  const viewer=ensureGuideViewer();
+  const frame=document.getElementById("guideViewerFrame");
+  frame.src=url;
+  viewer.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+}
+function closeGuideViewer(){
+  const viewer=document.getElementById("guideViewerOverlay");
+  if(!viewer)return;
+  viewer.classList.add("hidden");
+  const frame=document.getElementById("guideViewerFrame");
+  if(frame)frame.src="about:blank";
+  document.body.style.overflow="";
+}
+document.addEventListener("click",e=>{
+  const btn=e.target.closest?.(".technical-guide-link[data-guide-url]");
+  if(!btn)return;
+  e.preventDefault();
+  e.stopPropagation();
+  openGuideViewer(btn.dataset.guideUrl);
+});
 
 function renderDetail(){
   const{course:c,date,time}=selectedOccurrence,loc=locationData(c),site=loc.site,room=loc.room,a=c.adresseCours||{};
@@ -735,7 +780,7 @@ function renderSiteDetail(){
         ${r.description?`<p>${escapeHtml(r.description)}</p>`:""}
         ${r.directions?`<p><b>Chemin:</b> ${escapeHtml(r.directions)}</p>`:""}
         ${(r.equipment||[]).length?`<div class="equipment-pills">${r.equipment.map(e=>`<span>${escapeHtml(e)}</span>`).join("")}</div>`:""}
-        ${technicalGuideById(r.guideId)?guideButtonHtml(technicalGuideById(r.guideId)):""}
+        ${technicalGuideForCourse(s,r)?guideButtonHtml(technicalGuideForCourse(s,r)):""}
         ${roomGallery.length?`<div class="place-room-gallery">${roomGallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||r.name||"Salle")}">`).join("")}</div>`:""}
       </div>
     </article>`;
