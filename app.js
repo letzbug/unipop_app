@@ -500,11 +500,13 @@ function ensureGuideViewer(){
       }
       #guideViewerImage{
         position:absolute;
-        inset:0;
-        margin:auto;
-        width:96%;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-50%);
+        margin:0;
+        width:96vw;
         height:96%;
-        max-width:96%;
+        max-width:96vw;
         max-height:96%;
         object-fit:contain;
         object-position:center center;
@@ -556,7 +558,9 @@ async function openGuideViewer(url){
           stage.scrollLeft=0;
           stage.scrollTop=0;
         }
-        window.scrollTo({left:0,top:window.scrollY,behavior:"auto"});
+        image.style.left="50%";
+        image.style.top="50%";
+        image.style.transform="translate(-50%,-50%)";
       };
       image.src=guideViewerObjectUrl;
       image.hidden=false;
