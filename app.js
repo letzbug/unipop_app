@@ -478,18 +478,44 @@ function ensureGuideViewer(){
   if(viewer)return viewer;
   const style=document.createElement("style");
   style.textContent=`
-    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:rgba(3,16,30,.94);display:flex;flex-direction:column}
+    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:#071a2b;display:flex;flex-direction:column;align-items:center}
     #guideViewerOverlay.hidden{display:none}
-    #guideViewerBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.15)}
+    #guideViewerBar{box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.14);flex:0 0 auto}
     #guideViewerBar strong{font-size:16px}
     #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
-    #guideViewerFrame{flex:1;width:100%;border:0;background:#fff}
+    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;padding:0;overflow:auto;background:#071a2b}
+    #guideViewerImage{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;margin:auto}
+    #guideViewerFrame{display:block;width:100%;height:100%;min-height:0;border:0;background:#fff}
+    @media(max-width:700px){
+      #guideViewerBar{padding:8px 10px}
+      #guideViewerBar strong{font-size:14px}
+      #guideViewerClose{padding:9px 12px}
+      #guideViewerStage{
+        position:relative;
+        overflow:hidden;
+        width:100vw;
+        max-width:100vw;
+        margin:0;
+        padding:0;
+      }
+      #guideViewerImage{
+        position:absolute;
+        inset:0;
+        margin:auto;
+        width:96%;
+        height:96%;
+        max-width:96%;
+        max-height:96%;
+        object-fit:contain;
+        object-position:center center;
+      }
+    }
   `;
   document.head.appendChild(style);
   viewer=document.createElement("div");
   viewer.id="guideViewerOverlay";
   viewer.className="hidden";
-  viewer.innerHTML=`<div id="guideViewerBar"><strong>Guide technique</strong><button id="guideViewerClose" type="button">← Retour</button></div><iframe id="guideViewerFrame" title="Guide technique"></iframe>`;
+  viewer.innerHTML=`<div id="guideViewerBar"><strong>Guide technique</strong><button id="guideViewerClose" type="button">← Retour</button></div><div id="guideViewerStage"><img id="guideViewerImage" alt="Guide technique" hidden><iframe id="guideViewerFrame" title="Guide technique" hidden></iframe></div>`;
   document.body.appendChild(viewer);
   document.getElementById("guideViewerClose").onclick=closeGuideViewer;
   return viewer;
@@ -499,21 +525,47 @@ async function openGuideViewer(url){
   if(!url)return;
   const viewer=ensureGuideViewer();
   const frame=document.getElementById("guideViewerFrame");
+  const image=document.getElementById("guideViewerImage");
   viewer.classList.remove("hidden");
   document.body.style.overflow="hidden";
+
+  frame.hidden=true;
+  frame.removeAttribute("srcdoc");
+  frame.src="about:blank";
+  image.hidden=true;
+  image.removeAttribute("src");
+
   try{
     if(guideViewerObjectUrl){
       URL.revokeObjectURL(guideViewerObjectUrl);
       guideViewerObjectUrl="";
     }
-    frame.srcdoc=`<div style="font-family:system-ui;padding:24px">Chargement du guide…</div>`;
+
     const res=await fetch(url,{cache:"no-store"});
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     const blob=await res.blob();
     guideViewerObjectUrl=URL.createObjectURL(blob);
-    frame.removeAttribute("srcdoc");
-    frame.src=guideViewerObjectUrl;
+
+    const type=(blob.type||"").toLowerCase();
+    const looksLikeImage=type.startsWith("image/") || /\.(png|jpe?g|webp|gif|avif|svg)(?:$|[?#])/i.test(url);
+
+    if(looksLikeImage){
+      image.onload=()=>{
+        const stage=document.getElementById("guideViewerStage");
+        if(stage){
+          stage.scrollLeft=0;
+          stage.scrollTop=0;
+        }
+        window.scrollTo({left:0,top:window.scrollY,behavior:"auto"});
+      };
+      image.src=guideViewerObjectUrl;
+      image.hidden=false;
+    }else{
+      frame.src=guideViewerObjectUrl;
+      frame.hidden=false;
+    }
   }catch(err){
+    frame.hidden=false;
     frame.removeAttribute("src");
     frame.srcdoc=`<div style="font-family:system-ui;padding:24px;line-height:1.5">
       <h2>Guide technique</h2>
@@ -528,9 +580,15 @@ function closeGuideViewer(){
   if(!viewer)return;
   viewer.classList.add("hidden");
   const frame=document.getElementById("guideViewerFrame");
+  const image=document.getElementById("guideViewerImage");
   if(frame){
+    frame.hidden=true;
     frame.removeAttribute("srcdoc");
     frame.src="about:blank";
+  }
+  if(image){
+    image.hidden=true;
+    image.removeAttribute("src");
   }
   if(guideViewerObjectUrl){
     URL.revokeObjectURL(guideViewerObjectUrl);
