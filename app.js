@@ -489,6 +489,7 @@ function ensureGuideViewer(){
     #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:100%;overflow:auto;background:#071a2b;overscroll-behavior:contain}
     #guideViewerImage{display:block;width:auto;max-width:1100px;height:auto;margin:0 auto}
     #guideViewerFrame{display:block;width:100%;height:100%;min-height:0;border:0;background:#fff}
+    #guideViewerFrame[hidden],#guideViewerImage[hidden]{display:none !important}
     @media(max-width:700px){
       #guideViewerBar{padding:8px 10px}
       #guideViewerBar strong{font-size:14px}
