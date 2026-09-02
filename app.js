@@ -486,7 +486,7 @@ function ensureGuideViewer(){
     #guideViewerBar{box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.14);flex:0 0 auto}
     #guideViewerBar strong{font-size:16px}
     #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
-    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:100%;overflow:auto;background:#071a2b;overscroll-behavior:contain}
+    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:100%;overflow:auto;background:#071a2b;overscroll-behavior:contain;padding-bottom:24px}
     #guideViewerImage{display:block;width:auto;max-width:1100px;height:auto;margin:0 auto}
     #guideViewerFrame{display:block;width:100%;height:100%;min-height:0;border:0;background:#fff}
     #guideViewerFrame[hidden],#guideViewerImage[hidden]{display:none !important}
