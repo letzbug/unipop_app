@@ -478,18 +478,24 @@ function ensureGuideViewer(){
   if(viewer)return viewer;
   const style=document.createElement("style");
   style.textContent=`
-    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:rgba(3,16,30,.94);display:flex;flex-direction:column}
+    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:rgba(3,16,30,.94);display:flex;flex-direction:column;align-items:center}
     #guideViewerOverlay.hidden{display:none}
-    #guideViewerBar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.15)}
+    #guideViewerBar{box-sizing:border-box;width:min(100%,1100px);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.15)}
     #guideViewerBar strong{font-size:16px}
     #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
-    #guideViewerFrame{flex:1;width:100%;border:0;background:#fff}
+    #guideViewerStage{box-sizing:border-box;flex:1;width:100%;display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto}
+    #guideViewerFrame{display:block;width:min(100%,1100px);height:min(100%,calc(100dvh - 86px));min-height:320px;border:0;border-radius:12px;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.28)}
+    @media(max-width:700px){
+      #guideViewerBar{width:100%;padding:10px 12px}
+      #guideViewerStage{padding:8px}
+      #guideViewerFrame{width:100%;height:calc(100dvh - 74px);border-radius:10px}
+    }
   `;
   document.head.appendChild(style);
   viewer=document.createElement("div");
   viewer.id="guideViewerOverlay";
   viewer.className="hidden";
-  viewer.innerHTML=`<div id="guideViewerBar"><strong>Guide technique</strong><button id="guideViewerClose" type="button">← Retour</button></div><iframe id="guideViewerFrame" title="Guide technique"></iframe>`;
+  viewer.innerHTML=`<div id="guideViewerBar"><strong>Guide technique</strong><button id="guideViewerClose" type="button">← Retour</button></div><div id="guideViewerStage"><iframe id="guideViewerFrame" title="Guide technique"></iframe></div>`;
   document.body.appendChild(viewer);
   document.getElementById("guideViewerClose").onclick=closeGuideViewer;
   return viewer;
