@@ -491,25 +491,24 @@ function ensureGuideViewer(){
       #guideViewerBar strong{font-size:14px}
       #guideViewerClose{padding:9px 12px}
       #guideViewerStage{
-        position:relative;
-        overflow:hidden;
-        width:100vw;
-        max-width:100vw;
+        display:block;
+        overflow-y:auto;
+        overflow-x:hidden;
+        width:100%;
+        max-width:100%;
         margin:0;
         padding:0;
+        box-sizing:border-box;
       }
       #guideViewerImage{
-        position:absolute;
-        left:50%;
-        top:50%;
-        transform:translate(-50%,-50%);
-        margin:0;
+        position:static;
+        display:block;
         width:96vw;
-        height:96%;
         max-width:96vw;
-        max-height:96%;
+        height:auto;
+        max-height:none;
+        margin:0 auto;
         object-fit:contain;
-        object-position:center center;
       }
     }
   `;
@@ -558,9 +557,6 @@ async function openGuideViewer(url){
           stage.scrollLeft=0;
           stage.scrollTop=0;
         }
-        image.style.left="50%";
-        image.style.top="50%";
-        image.style.transform="translate(-50%,-50%)";
       };
       image.src=guideViewerObjectUrl;
       image.hidden=false;
