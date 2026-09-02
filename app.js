@@ -494,20 +494,48 @@ function ensureGuideViewer(){
   document.getElementById("guideViewerClose").onclick=closeGuideViewer;
   return viewer;
 }
-function openGuideViewer(url){
+let guideViewerObjectUrl="";
+async function openGuideViewer(url){
   if(!url)return;
   const viewer=ensureGuideViewer();
   const frame=document.getElementById("guideViewerFrame");
-  frame.src=url;
   viewer.classList.remove("hidden");
   document.body.style.overflow="hidden";
+  try{
+    if(guideViewerObjectUrl){
+      URL.revokeObjectURL(guideViewerObjectUrl);
+      guideViewerObjectUrl="";
+    }
+    frame.srcdoc=`<div style="font-family:system-ui;padding:24px">Chargement du guide…</div>`;
+    const res=await fetch(url,{cache:"no-store"});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const blob=await res.blob();
+    guideViewerObjectUrl=URL.createObjectURL(blob);
+    frame.removeAttribute("srcdoc");
+    frame.src=guideViewerObjectUrl;
+  }catch(err){
+    frame.removeAttribute("src");
+    frame.srcdoc=`<div style="font-family:system-ui;padding:24px;line-height:1.5">
+      <h2>Guide technique</h2>
+      <p>Le document ne peut pas être affiché directement ici.</p>
+      <p><button onclick="window.open(${JSON.stringify(url)},'_blank','noopener')" style="padding:10px 14px;font-weight:700">Ouvrir le document</button></p>
+    </div>`;
+    console.warn("Guide viewer:",err);
+  }
 }
 function closeGuideViewer(){
   const viewer=document.getElementById("guideViewerOverlay");
   if(!viewer)return;
   viewer.classList.add("hidden");
   const frame=document.getElementById("guideViewerFrame");
-  if(frame)frame.src="about:blank";
+  if(frame){
+    frame.removeAttribute("srcdoc");
+    frame.src="about:blank";
+  }
+  if(guideViewerObjectUrl){
+    URL.revokeObjectURL(guideViewerObjectUrl);
+    guideViewerObjectUrl="";
+  }
   document.body.style.overflow="";
 }
 document.addEventListener("click",e=>{
