@@ -478,37 +478,25 @@ function ensureGuideViewer(){
   if(viewer)return viewer;
   const style=document.createElement("style");
   style.textContent=`
-    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:#071a2b;display:flex;flex-direction:column;align-items:center}
+    #guideViewerOverlay{position:fixed;inset:0;z-index:99999;background:#071a2b;display:flex;flex-direction:column}
     #guideViewerOverlay.hidden{display:none}
     #guideViewerBar{box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.14);flex:0 0 auto}
     #guideViewerBar strong{font-size:16px}
     #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
-    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;padding:0;overflow:auto;background:#071a2b}
-    #guideViewerImage{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;margin:auto}
+    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:0;overflow:auto;background:#071a2b}
+    #guideViewerImage{display:block;width:auto;max-width:1100px;height:auto;margin:0 auto}
     #guideViewerFrame{display:block;width:100%;height:100%;min-height:0;border:0;background:#fff}
     @media(max-width:700px){
       #guideViewerBar{padding:8px 10px}
       #guideViewerBar strong{font-size:14px}
       #guideViewerClose{padding:9px 12px}
-      #guideViewerStage{
+      #guideViewerStage{overflow-y:auto;overflow-x:hidden}
+      #guideViewerImage{
         display:block;
-        overflow-y:auto;
-        overflow-x:hidden;
         width:100%;
         max-width:100%;
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-      }
-      #guideViewerImage{
-        position:static;
-        display:block;
-        width:96vw;
-        max-width:96vw;
         height:auto;
-        max-height:none;
-        margin:0 auto;
-        object-fit:contain;
+        margin:0;
       }
     }
   `;
@@ -554,8 +542,8 @@ async function openGuideViewer(url){
       image.onload=()=>{
         const stage=document.getElementById("guideViewerStage");
         if(stage){
-          stage.scrollLeft=0;
           stage.scrollTop=0;
+          stage.scrollLeft=0;
         }
       };
       image.src=guideViewerObjectUrl;
