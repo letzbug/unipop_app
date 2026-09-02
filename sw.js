@@ -1,7 +1,7 @@
-const VERSION = "v44";
+const VERSION = "v47";
 const CACHE_NAME="unipop-formateur-"+VERSION;
 const STATIC_ASSETS=[
-  "./","./index.html","./style.css?v=44","./app.js?v=44","./manifest.webmanifest?v=32",
+  "./","./index.html","./style.css?v=47","./app.js?v=47","./manifest.webmanifest?v=32",
   "./data/locations.json","./assets/icon.svg","./assets/luxembourg-skyline.png",
   "./assets/demo-map.jpg","./assets/demo-building.jpg","./assets/demo-entry.jpg","./assets/demo-room.jpg"
 ];
@@ -12,5 +12,21 @@ self.addEventListener("fetch",event=>{
   const req=event.request,url=new URL(req.url);
   if(req.mode==="navigate"||url.pathname.endsWith("/index.html")){event.respondWith(fetch(req,{cache:"no-store"}).then(r=>{const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put("./index.html",copy));return r}).catch(()=>caches.match("./index.html")));return}
   if(url.hostname==="raw.githubusercontent.com"){event.respondWith(fetch(req,{cache:"no-store"}).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put(req,copy))}return r}).catch(()=>caches.match(req)));return}
+  if(url.origin===self.location.origin && (
+    url.pathname.endsWith("/app.js") ||
+    url.pathname.endsWith("/style.css") ||
+    url.pathname.endsWith("/sw.js")
+  )){
+    event.respondWith(
+      fetch(req,{cache:"no-store"}).then(r=>{
+        if(r.ok){
+          const copy=r.clone();
+          caches.open(CACHE_NAME).then(c=>c.put(req,copy));
+        }
+        return r;
+      }).catch(()=>caches.match(req))
+    );
+    return;
+  }
   event.respondWith(caches.match(req).then(cached=>cached||fetch(req)));
 });
