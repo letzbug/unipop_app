@@ -478,12 +478,15 @@ function ensureGuideViewer(){
   if(viewer)return viewer;
   const style=document.createElement("style");
   style.textContent=`
-    #guideViewerOverlay{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100vh;z-index:99999;background:#071a2b;display:flex;flex-direction:column;overflow:hidden}
+        html.guide-viewer-open,
+    body.guide-viewer-open{background:#071a2b !important;min-height:100%;overscroll-behavior:none}
+    body.guide-viewer-open{margin:0}
+#guideViewerOverlay{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100vh;z-index:99999;background:#071a2b;display:flex;flex-direction:column;overflow:hidden}
     #guideViewerOverlay.hidden{display:none}
     #guideViewerBar{box-sizing:border-box;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#071a2b;color:#fff;border-bottom:1px solid rgba(255,255,255,.14);flex:0 0 auto}
     #guideViewerBar strong{font-size:16px}
     #guideViewerClose{border:0;border-radius:10px;padding:10px 14px;background:#fff;color:#082039;font-weight:700;cursor:pointer}
-    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:0;overflow:auto;background:#071a2b;overscroll-behavior:contain}
+    #guideViewerStage{box-sizing:border-box;flex:1 1 auto;width:100%;min-height:100%;overflow:auto;background:#071a2b;overscroll-behavior:contain}
     #guideViewerImage{display:block;width:auto;max-width:1100px;height:auto;margin:0 auto}
     #guideViewerFrame{display:block;width:100%;height:100%;min-height:0;border:0;background:#fff}
     @media(max-width:700px){
@@ -524,6 +527,8 @@ async function openGuideViewer(url){
   const frame=document.getElementById("guideViewerFrame");
   const image=document.getElementById("guideViewerImage");
   viewer.classList.remove("hidden");
+  document.documentElement.classList.add("guide-viewer-open");
+  document.body.classList.add("guide-viewer-open");
   document.body.style.overflow="hidden";
 
   frame.hidden=true;
@@ -591,6 +596,8 @@ function closeGuideViewer(){
     guideViewerObjectUrl="";
   }
   document.body.style.overflow="";
+  document.documentElement.classList.remove("guide-viewer-open");
+  document.body.classList.remove("guide-viewer-open");
 }
 document.addEventListener("click",e=>{
   const btn=e.target.closest?.(".technical-guide-link[data-guide-url]");
