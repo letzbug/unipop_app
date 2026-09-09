@@ -3701,3 +3701,93 @@ html.device-phone #calendarGrid button.public-holiday{
   background:#fff0dc !important;
   box-shadow:inset 0 0 0 3px #ef8a0c !important;
 }
+
+
+/* =========================================================
+   V65 — Holiday circles EXACTLY same size as course circles
+   ========================================================= */
+
+/* Base geometry: one circular calendar cell, identical for every state */
+#calendarGrid button{
+  width:48px !important;
+  height:48px !important;
+  min-width:48px !important;
+  min-height:48px !important;
+  padding:0 !important;
+  margin:0 auto !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+}
+
+/* Normal course day */
+#calendarGrid button.has-course:not(.school-holiday):not(.public-holiday){
+  background:#eaf4ff !important;
+  color:#0a6fd0 !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+}
+
+/* Congé scolaire — same 48x48 size, red instead of blue */
+#calendarGrid button.school-holiday{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+
+/* Jour férié — same 48x48 size, orange instead of blue */
+#calendarGrid button.public-holiday{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* Course on holiday: holiday color replaces blue, geometry remains 48x48 */
+#calendarGrid button.has-course.school-holiday{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+#calendarGrid button.has-course.public-holiday{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* Selected holiday stays same size, only a subtle shadow */
+#calendarGrid button.selected.school-holiday,
+#calendarGrid button.selected.has-course.school-holiday{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b,0 3px 8px rgba(239,59,59,.14) !important;
+}
+#calendarGrid button.selected.public-holiday,
+#calendarGrid button.selected.has-course.public-holiday{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c,0 3px 8px rgba(239,138,12,.14) !important;
+}
+
+/* Never allow pseudo-elements to enlarge holiday cells */
+#calendarGrid button.school-holiday::before,
+#calendarGrid button.school-holiday::after,
+#calendarGrid button.public-holiday::before,
+#calendarGrid button.public-holiday::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Course badge remains visible and uses the same semantic color */
+#calendarGrid button.school-holiday .course-marker{
+  background:#ef3b3b !important;
+  color:#fff !important;
+}
+#calendarGrid button.public-holiday .course-marker{
+  background:#ef8a0c !important;
+  color:#fff !important;
+}
+
+/* Match legend circle size to the calendar state language */
+.calendar-legend .legend-dot{
+  width:23px !important;
+  height:23px !important;
+  border-radius:50% !important;
+}
