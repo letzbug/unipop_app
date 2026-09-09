@@ -3839,3 +3839,36 @@ html.device-phone .public-holiday-stamp{
   font-size:14px;
   padding:5px 9px;
 }
+
+
+/* =========================================================
+   V67 — Uniform holiday colours across adjacent months
+   Congé scolaire / Jour férié look identical even with .other
+   ========================================================= */
+#calendarGrid button.other.school-holiday,
+#calendarGrid button.other.school-holiday.has-course,
+#calendarGrid button.other.school-holiday.selected,
+#calendarGrid button.other.school-holiday.selected.has-course{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+
+#calendarGrid button.other.public-holiday,
+#calendarGrid button.other.public-holiday.has-course,
+#calendarGrid button.other.public-holiday.selected,
+#calendarGrid button.other.public-holiday.selected.has-course{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+#calendarGrid button.other.school-holiday .course-marker{
+  background:#ef3b3b !important;
+  color:#fff !important;
+}
+
+#calendarGrid button.other.public-holiday .course-marker{
+  background:#ef8a0c !important;
+  color:#fff !important;
+}
