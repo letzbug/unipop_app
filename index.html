@@ -51,7 +51,7 @@
 })();
 </script>
 
-  <link rel="stylesheet" href="style.css?v=59">
+  <link rel="stylesheet" href="style.css?v=60">
 </head>
 <body>
 <div id="phoneApp">
@@ -231,8 +231,9 @@
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
         <div class="calendar-legend">
-          <span class="legend-dot"></span>
-          <span>Jour avec cours</span>
+          <span class="calendar-legend-item"><span class="legend-dot"></span><span>Jour avec cours</span></span>
+          <span class="calendar-legend-item"><span class="legend-dot legend-school-holiday"></span><span>Congé scolaire</span></span>
+          <span class="calendar-legend-item"><span class="legend-dot legend-public-holiday"></span><span>Jour férié</span></span>
         </div>
       </section>
       <h3 id="selectedDayTitle" class="date-heading"></h3>
@@ -354,7 +355,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "59";
+  const APP_VERSION = "60";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -384,6 +385,6 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=59"></script>
+<script src="app.js?v=60"></script>
 </body>
 </html>

@@ -49,6 +49,34 @@ const DAYS=["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"];
 const MONTHS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
 const MONTHS_SHORT=["JANV.","FÉVR.","MARS","AVR.","MAI","JUIN","JUIL.","AOÛT","SEPT.","OCT.","NOV.","DÉC."];
 
+const SCHOOL_HOLIDAY_RANGES=[
+  ["01/09/2026","14/09/2026"],
+  ["31/10/2026","08/11/2026"],
+  ["19/12/2026","03/01/2027"],
+  ["06/02/2027","14/02/2027"],
+  ["27/03/2027","11/04/2027"],
+  ["29/05/2027","06/06/2027"],
+  ["16/07/2027","14/09/2027"]
+];
+const PUBLIC_HOLIDAYS=[
+  "01/05/2027",
+  "06/05/2027",
+  "17/05/2027",
+  "23/06/2027"
+];
+
+function dayStamp(d){
+  return new Date(d.getFullYear(),d.getMonth(),d.getDate(),12).getTime();
+}
+function calendarDayType(d){
+  const stamp=dayStamp(d);
+  if(PUBLIC_HOLIDAYS.some(x=>dayStamp(parseDate(x))===stamp))return "public-holiday";
+  for(const [from,to] of SCHOOL_HOLIDAY_RANGES){
+    if(stamp>=dayStamp(parseDate(from))&&stamp<=dayStamp(parseDate(to)))return "school-holiday";
+  }
+  return "";
+}
+
 function normalizeText(s=""){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");}
 function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function parseDate(s){if(!s)return null;const p=String(s).split("/");if(p.length!==3)return null;const[d,m,y]=p.map(Number);return new Date(y,m-1,d,12);}
@@ -418,9 +446,11 @@ function roomLabel(c){return locationData(c).room||"Salle à confirmer";}
 function occurrenceCard(o,type="next"){
   const c=o.course,end=o.time?addMinutes(o.time,minutesFromDuration(o.duration)):"";
   if(type==="today"){
-    return `<article class="course-card today occurrence" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
+    const isSchoolHoliday=calendarDayType(o.date)==="school-holiday";
+    return `<article class="course-card today occurrence${isSchoolHoliday?" school-holiday-today":""}" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
       <div class="course-left time"><strong>${escapeHtml(o.time||"—")}</strong><span>${escapeHtml(end||"")}</span></div>
       <div class="course-info"><h4>${escapeHtml(c.intitule||"Cours")}</h4><p>${escapeHtml(venueLabel(c))}</p><p>${escapeHtml(roomLabel(c))}</p><span class="green-pill">Aujourd'hui</span></div>
+      ${isSchoolHoliday?'<span class="school-holiday-stamp">CONGÉ SCOLAIRE</span>':""}
     </article>`;
   }
   return `<article class="course-card occurrence" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
@@ -442,7 +472,12 @@ function renderHome(){
   const now=new Date(),todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()),todayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),23,59,59),futureEnd=new Date(now);
   futureEnd.setDate(futureEnd.getDate()+240);
   const today=trainerOccurrences(todayStart,todayEnd),next=trainerOccurrences(now,futureEnd).slice(0,8);
-  $("#todayCourse").innerHTML=today.length?today.map(o=>occurrenceCard(o,"today")).join(""):`<div class="empty-card">Aucun cours prévu aujourd'hui.</div>`;
+  const todayType=calendarDayType(todayStart);
+  $("#todayCourse").innerHTML=today.length
+    ? today.map(o=>occurrenceCard(o,"today")).join("")
+    : todayType==="school-holiday"
+      ? `<div class="empty-card school-holiday-today"><span class="school-holiday-stamp">CONGÉ SCOLAIRE</span>Aucun cours prévu aujourd'hui.</div>`
+      : `<div class="empty-card">Aucun cours prévu aujourd'hui.</div>`;
   $("#nextCourses").innerHTML=next.length?next.map(o=>occurrenceCard(o)).join(""):`<div class="empty-card">Aucun prochain cours trouvé.</div>`;
   bindOccurrences();showScreen("homeScreen",false);
 }
@@ -721,16 +756,18 @@ function renderCalendar(){
     const courses=byDate.get(key)||[];
     const hasCourse=courses.length>0;
     const isSelected=sameDay(d,selectedDate);
+    const dayType=calendarDayType(d);
+    const dayTypeLabel=dayType==="school-holiday"?"congé scolaire":dayType==="public-holiday"?"jour férié":"";
 
     const timeHint=hasCourse
       ? courses.map(x=>x.time||"Cours").join(", ")
       : "";
 
     html+=`<button
-      class="${d.getMonth()!==calendarCursor.getMonth()?"other ":""}${isSelected?"selected ":""}${hasCourse?"has-course ":""}"
+      class="${d.getMonth()!==calendarCursor.getMonth()?"other ":""}${isSelected?"selected ":""}${hasCourse?"has-course ":""}${dayType?dayType+" ":""}"
       data-date="${key}"
-      aria-label="${d.getDate()} ${MONTHS[d.getMonth()]}${hasCourse?`, cours ${timeHint}`:""}"
-      title="${hasCourse?`Cours: ${timeHint}`:""}"
+      aria-label="${d.getDate()} ${MONTHS[d.getMonth()]}${dayTypeLabel?`, ${dayTypeLabel}`:""}${hasCourse?`, cours ${timeHint}`:""}"
+      title="${[dayTypeLabel,hasCourse?`Cours: ${timeHint}`:""].filter(Boolean).join(" · ")}"
     >
       <span class="day-number">${d.getDate()}</span>
       ${hasCourse?`<span class="course-marker">${courses.length>1?courses.length:""}</span>`:""}

@@ -3342,3 +3342,128 @@ html.device-phone #registerPanel .activation-status{
 #registerPassword2:invalid{
   border-color:rgba(255,140,140,.55);
 }
+
+
+/* =========================================================
+   V60 — Calendrier: congés scolaires & jours fériés
+   Display only — course/auth/data logic unchanged.
+   ========================================================= */
+.calendar-legend{
+  flex-wrap:wrap;
+  column-gap:20px !important;
+  row-gap:9px !important;
+}
+.calendar-legend-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+.calendar-legend .legend-school-holiday{
+  background:#fde8e8 !important;
+  box-shadow:inset 0 0 0 3px #d83b3b !important;
+}
+.calendar-legend .legend-public-holiday{
+  background:#fff0dc !important;
+  box-shadow:inset 0 0 0 3px #e58a19 !important;
+}
+
+/* School holidays */
+.calendar-grid button.school-holiday{
+  color:#c52f2f !important;
+  background:#fdecec !important;
+  box-shadow:inset 0 0 0 2px #dc4a4a !important;
+}
+.calendar-grid button.school-holiday.other{
+  color:#d98686 !important;
+  background:#fff5f5 !important;
+}
+.calendar-grid button.school-holiday.selected{
+  color:#fff !important;
+  background:#d83b3b !important;
+  box-shadow:0 4px 12px rgba(216,59,59,.28),inset 0 0 0 2px #b92d2d !important;
+}
+.calendar-grid button.school-holiday.selected.has-course{
+  background:#d83b3b !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(216,59,59,.28),inset 0 0 0 2px #b92d2d !important;
+}
+
+/* Public holidays */
+.calendar-grid button.public-holiday{
+  color:#bd6d08 !important;
+  background:#fff0dc !important;
+  box-shadow:inset 0 0 0 2px #e58a19 !important;
+}
+.calendar-grid button.public-holiday.other{
+  color:#d9a15d !important;
+  background:#fff8ee !important;
+}
+.calendar-grid button.public-holiday.selected{
+  color:#fff !important;
+  background:#e58a19 !important;
+  box-shadow:0 4px 12px rgba(229,138,25,.28),inset 0 0 0 2px #c8750f !important;
+}
+.calendar-grid button.public-holiday.selected.has-course{
+  background:#e58a19 !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(229,138,25,.28),inset 0 0 0 2px #c8750f !important;
+}
+
+/* Keep the course-count marker readable on coloured dates. */
+.calendar-grid button.school-holiday .course-marker,
+.calendar-grid button.public-holiday .course-marker{
+  background:#0873d5;
+  color:#fff;
+}
+.calendar-grid button.school-holiday.selected .course-marker,
+.calendar-grid button.public-holiday.selected .course-marker{
+  background:#fff;
+  color:#0873d5;
+}
+
+/* Aujourd'hui during a school holiday */
+.school-holiday-today{
+  position:relative !important;
+  overflow:hidden;
+  background:#fff2f2 !important;
+  border-color:#efb2b2 !important;
+}
+.course-card.school-holiday-today .course-left{
+  background:#fde7e7 !important;
+}
+.school-holiday-today::after{
+  content:"";
+  position:absolute;
+  left:-8%;
+  top:50%;
+  width:116%;
+  height:2px;
+  background:rgba(190,38,38,.42);
+  transform:rotate(-8deg);
+  transform-origin:center;
+  pointer-events:none;
+  z-index:3;
+}
+.school-holiday-stamp{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) rotate(-8deg);
+  z-index:4;
+  padding:6px 12px;
+  border-radius:7px;
+  background:rgba(255,242,242,.92);
+  color:#bd2525;
+  border:2px solid rgba(189,37,37,.60);
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.055em;
+  white-space:nowrap;
+  pointer-events:none;
+  box-shadow:0 3px 10px rgba(90,0,0,.10);
+}
+html.device-phone .school-holiday-stamp{
+  font-size:14px;
+  padding:5px 9px;
+}
