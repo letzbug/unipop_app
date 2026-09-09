@@ -4047,3 +4047,77 @@ html.device-desktop #calendarGrid .day-number{
   content:none !important;
   display:none !important;
 }
+
+
+/* =========================================================
+   V70 — FINAL FIX: remove legacy OUTER blue course box
+   ========================================================= */
+
+/* These selectors intentionally match/exceed the old V68 specificity. */
+#calendarGrid button.has-course:not(.school-holiday):not(.public-holiday),
+html.device-phone #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday),
+html.device-tablet #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday),
+html.device-desktop #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday){
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  font-weight:600 !important;
+}
+
+/* Same reset for the selected normal course day:
+   selection is drawn only on the inner .day-number circle. */
+#calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday),
+html.device-phone #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday),
+html.device-tablet #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday),
+html.device-desktop #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday){
+  background:transparent !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  font-weight:600 !important;
+}
+
+/* ONE visual language on the inner 44x44 date circle. */
+#calendarGrid button.has-course:not(.school-holiday):not(.public-holiday) .day-number,
+html.device-phone #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday) .day-number,
+html.device-tablet #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday) .day-number,
+html.device-desktop #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday) .day-number{
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  margin:0 auto !important;
+  border-radius:50% !important;
+  background:#eaf4ff !important;
+  color:#0a6fd0 !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+  font-weight:600 !important;
+}
+
+/* Selected course = same 44x44 circle, filled blue. */
+#calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday) .day-number,
+html.device-phone #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday) .day-number,
+html.device-tablet #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday) .day-number,
+html.device-desktop #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday) .day-number{
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  font-weight:600 !important;
+}
+
+/* Red/orange use the exact same geometry and font weight. */
+#calendarGrid button.school-holiday .day-number,
+#calendarGrid button.public-holiday .day-number{
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  font-weight:600 !important;
+}
