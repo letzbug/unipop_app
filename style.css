@@ -3472,80 +3472,232 @@ html.device-phone .school-holiday-stamp{
 
 
 
+
+
 /* =========================================================
-   V62 — Correct combined course + holiday circles
+   V63 — Exact Congé scolaire / Jour férié circles
+   Same circle size as course days. Holiday color replaces blue.
    ========================================================= */
 
-/* Ensure calendar cells can host a circular outer ring. */
-.calendar-grid button{
-  overflow:visible !important;
-}
-
-/* Course day + school holiday:
-   keep the existing blue course circle, add a RED circular ring outside. */
-.calendar-grid button.has-course.school-holiday{
-  background:#eaf4ff !important;
-  color:#0a6fd0 !important;
-  box-shadow:inset 0 0 0 3px #0873d5 !important;
-}
-.calendar-grid button.has-course.school-holiday::before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:calc(100% + 8px);
-  height:calc(100% + 8px);
-  transform:translate(-50%,-50%);
-  border:3px solid #d83b3b;
-  border-radius:50%;
-  box-sizing:border-box;
-  pointer-events:none;
-  z-index:0;
-}
-
-/* Course day + public holiday:
-   keep the existing blue course circle, add an ORANGE circular ring outside. */
-.calendar-grid button.has-course.public-holiday{
-  background:#eaf4ff !important;
-  color:#0a6fd0 !important;
-  box-shadow:inset 0 0 0 3px #0873d5 !important;
-}
-.calendar-grid button.has-course.public-holiday::before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:calc(100% + 8px);
-  height:calc(100% + 8px);
-  transform:translate(-50%,-50%);
-  border:3px solid #e58a19;
-  border-radius:50%;
-  box-sizing:border-box;
-  pointer-events:none;
-  z-index:0;
-}
-
-/* Keep date number and course-count dot above the holiday ring. */
-.calendar-grid button.has-course.school-holiday .day-number,
-.calendar-grid button.has-course.public-holiday .day-number,
-.calendar-grid button.has-course.school-holiday .course-marker,
-.calendar-grid button.has-course.public-holiday .course-marker{
-  position:relative;
-  z-index:2;
-}
-
-/* Selected course day stays blue, but holiday ring remains visible. */
+/* Neutralize prior holiday backgrounds/rings from V60/V61/V62 */
+.calendar-grid button.school-holiday,
+.calendar-grid button.public-holiday,
+.calendar-grid button.has-course.school-holiday,
+.calendar-grid button.has-course.public-holiday,
 .calendar-grid button.selected.has-course.school-holiday,
 .calendar-grid button.selected.has-course.public-holiday{
+  border-radius:50% !important;
+}
+
+.calendar-grid button.school-holiday::before,
+.calendar-grid button.public-holiday::before,
+.calendar-grid button.has-course.school-holiday::before,
+.calendar-grid button.has-course.public-holiday::before{
+  content:none !important;
+  display:none !important;
+}
+
+/* School holiday = red circle, same size as course circle */
+.calendar-grid button.school-holiday{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+
+/* Public holiday = orange circle, same size as course circle */
+.calendar-grid button.public-holiday{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* If there is a course on a holiday, holiday styling REPLACES the blue course circle */
+.calendar-grid button.has-course.school-holiday{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+.calendar-grid button.has-course.public-holiday{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* Selected holiday stays holiday-colored, not blue */
+.calendar-grid button.selected.school-holiday,
+.calendar-grid button.selected.has-course.school-holiday{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b,0 4px 12px rgba(239,59,59,.18) !important;
+}
+.calendar-grid button.selected.public-holiday,
+.calendar-grid button.selected.has-course.public-holiday{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c,0 4px 12px rgba(239,138,12,.18) !important;
+}
+
+/* Keep course count dot visible; color it to the holiday too */
+.calendar-grid button.school-holiday .course-marker{
+  background:#ef3b3b !important;
+  color:#fff !important;
+}
+.calendar-grid button.public-holiday .course-marker{
+  background:#ef8a0c !important;
+  color:#fff !important;
+}
+
+/* Adjacent-month holiday dates stay softer but keep the same circular language */
+.calendar-grid button.other.school-holiday{
+  background:#fff4f4 !important;
+  color:#d98b8b !important;
+  box-shadow:inset 0 0 0 3px #f3b0b0 !important;
+}
+.calendar-grid button.other.public-holiday{
+  background:#fff8ef !important;
+  color:#d7a463 !important;
+  box-shadow:inset 0 0 0 3px #f4c68d !important;
+}
+
+/* On phones, same size and same 3px ring — no larger/double ring */
+html.device-phone .calendar-grid button.school-holiday,
+html.device-phone .calendar-grid button.public-holiday,
+html.device-phone .calendar-grid button.has-course.school-holiday,
+html.device-phone .calendar-grid button.has-course.public-holiday{
+  box-shadow:inset 0 0 0 3px currentColor !important;
+}
+html.device-phone .calendar-grid button.school-holiday,
+html.device-phone .calendar-grid button.has-course.school-holiday{
+  color:#c92f2f !important;
+}
+html.device-phone .calendar-grid button.public-holiday,
+html.device-phone .calendar-grid button.has-course.public-holiday{
+  color:#b96a08 !important;
+}
+
+
+/* =========================================================
+   V64 — FINAL calendar state mapping
+   Target:
+   - course = blue circle
+   - congé scolaire = red circle / pale red fill
+   - jour férié = orange circle / pale orange fill
+   - if course falls on congé/férié: holiday color REPLACES blue
+   - course-count dot follows the active circle color
+   - NO square cell background / NO double ring
+   ========================================================= */
+
+/* Reset calendar cell decoration first */
+#calendarGrid button{
+  background:transparent !important;
+  box-shadow:none !important;
+  border:none !important;
+  outline:none !important;
+  border-radius:50% !important;
+}
+
+/* Normal course day */
+#calendarGrid button.has-course{
+  background:#eaf4ff !important;
+  color:#0a6fd0 !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+}
+
+/* Congé scolaire — always red, even if it also has a course */
+#calendarGrid button.school-holiday,
+#calendarGrid button.school-holiday.has-course,
+#calendarGrid button.school-holiday.selected,
+#calendarGrid button.school-holiday.selected.has-course{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+
+/* Jour férié — always orange, even if it also has a course */
+#calendarGrid button.public-holiday,
+#calendarGrid button.public-holiday.has-course,
+#calendarGrid button.public-holiday.selected,
+#calendarGrid button.public-holiday.selected.has-course{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* Selected normal course day remains blue */
+#calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday){
   background:#0873d5 !important;
   color:#fff !important;
   box-shadow:0 4px 12px rgba(8,115,213,.28) !important;
 }
 
-/* Phone: slightly stronger outer ring, still circular. */
-html.device-phone .calendar-grid button.has-course.school-holiday::before{
-  border-width:4px;
+/* Selected non-course/non-holiday day */
+#calendarGrid button.selected:not(.has-course):not(.school-holiday):not(.public-holiday){
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(8,115,213,.28) !important;
 }
-html.device-phone .calendar-grid button.has-course.public-holiday::before{
-  border-width:4px;
+
+/* Course count badge follows the calendar meaning */
+#calendarGrid button.has-course .course-marker{
+  background:#0873d5 !important;
+  color:#fff !important;
+}
+#calendarGrid button.school-holiday .course-marker{
+  background:#ef3b3b !important;
+  color:#fff !important;
+}
+#calendarGrid button.public-holiday .course-marker{
+  background:#ef8a0c !important;
+  color:#fff !important;
+}
+
+/* Never use the old after-dot marker; the badge already indicates courses */
+#calendarGrid button.has-course::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Never draw any holiday pseudo-ring from previous versions */
+#calendarGrid button.school-holiday::before,
+#calendarGrid button.public-holiday::before{
+  content:none !important;
+  display:none !important;
+}
+
+/* Adjacent-month days stay faded unless they are a holiday */
+#calendarGrid button.other:not(.school-holiday):not(.public-holiday){
+  color:#b9c2ca !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+#calendarGrid button.other.school-holiday{
+  background:#fff1f1 !important;
+  color:#d17878 !important;
+  box-shadow:inset 0 0 0 3px #f0a0a0 !important;
+}
+#calendarGrid button.other.public-holiday{
+  background:#fff7ec !important;
+  color:#d39b55 !important;
+  box-shadow:inset 0 0 0 3px #f0bb79 !important;
+}
+
+/* Same visual size on phone/tablet/desktop */
+html.device-phone #calendarGrid button.has-course,
+html.device-phone #calendarGrid button.school-holiday,
+html.device-phone #calendarGrid button.public-holiday{
+  box-shadow:inherit !important;
+}
+
+/* Legend colors match the calendar exactly */
+.calendar-legend .legend-dot{
+  background:#eaf4ff !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+}
+.calendar-legend .legend-school-holiday{
+  background:#fde8e8 !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+.calendar-legend .legend-public-holiday{
+  background:#fff0dc !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
 }
