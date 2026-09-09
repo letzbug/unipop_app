@@ -3467,3 +3467,55 @@ html.device-phone .school-holiday-stamp{
   font-size:14px;
   padding:5px 9px;
 }
+
+
+/* =========================================================
+   V61 — Course day + holiday: show BOTH meanings
+   Blue inner course ring + red/orange outer holiday ring.
+   ========================================================= */
+.calendar-grid button.has-course.school-holiday:not(.selected){
+  color:#0a6fd0 !important;
+  background:#fdecec !important;
+  box-shadow:
+    inset 0 0 0 3px #0873d5,
+    0 0 0 3px #fdecec,
+    0 0 0 5px #d83b3b !important;
+}
+.calendar-grid button.has-course.public-holiday:not(.selected){
+  color:#0a6fd0 !important;
+  background:#fff0dc !important;
+  box-shadow:
+    inset 0 0 0 3px #0873d5,
+    0 0 0 3px #fff0dc,
+    0 0 0 5px #e58a19 !important;
+}
+
+/* Selected day: keep the selected fill, but preserve holiday identity with outer ring. */
+.calendar-grid button.selected.has-course.school-holiday{
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:
+    0 4px 12px rgba(8,115,213,.28),
+    0 0 0 4px #d83b3b !important;
+}
+.calendar-grid button.selected.has-course.public-holiday{
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:
+    0 4px 12px rgba(8,115,213,.28),
+    0 0 0 4px #e58a19 !important;
+}
+
+/* Make double rings a touch clearer on phones. */
+html.device-phone .calendar-grid button.has-course.school-holiday:not(.selected){
+  box-shadow:
+    inset 0 0 0 3px #0873d5,
+    0 0 0 3px #fdecec,
+    0 0 0 6px #d83b3b !important;
+}
+html.device-phone .calendar-grid button.has-course.public-holiday:not(.selected){
+  box-shadow:
+    inset 0 0 0 3px #0873d5,
+    0 0 0 3px #fff0dc,
+    0 0 0 6px #e58a19 !important;
+}
