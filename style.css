@@ -3895,3 +3895,155 @@ html.device-phone #calendarGrid button.selected.has-course:not(.school-holiday):
   border:none !important;
   outline:none !important;
 }
+
+
+/* =========================================================
+   V69 — CALENDAR CIRCLE CLEANUP
+   One circle only: always on .day-number.
+   Same diameter, same stroke, same font weight for
+   course / congé scolaire / jour férié.
+   ========================================================= */
+
+/* Outer calendar cell never draws a circle. */
+#calendarGrid button,
+#calendarGrid button.has-course,
+#calendarGrid button.school-holiday,
+#calendarGrid button.public-holiday,
+#calendarGrid button.selected,
+#calendarGrid button.selected.has-course,
+#calendarGrid button.selected.school-holiday,
+#calendarGrid button.selected.public-holiday,
+html.device-phone #calendarGrid button,
+html.device-tablet #calendarGrid button,
+html.device-desktop #calendarGrid button{
+  width:auto !important;
+  min-width:0 !important;
+  height:48px !important;
+  min-height:48px !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  color:#2f74d0 !important;
+  font-weight:600 !important;
+}
+
+/* One identical circle geometry for every marked date. */
+#calendarGrid .day-number,
+html.device-phone #calendarGrid .day-number,
+html.device-tablet #calendarGrid .day-number,
+html.device-desktop #calendarGrid .day-number{
+  width:44px !important;
+  height:44px !important;
+  min-width:44px !important;
+  min-height:44px !important;
+  display:grid !important;
+  place-items:center !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:50% !important;
+  box-sizing:border-box !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:inherit !important;
+  font-weight:600 !important;
+  line-height:1 !important;
+}
+
+/* COURSE — blue, exact same 3 px stroke. */
+#calendarGrid button.has-course:not(.school-holiday):not(.public-holiday) .day-number{
+  background:#eaf4ff !important;
+  color:#0a6fd0 !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+  font-weight:600 !important;
+}
+
+/* CONGÉ SCOLAIRE — red, same size/stroke/text weight. */
+#calendarGrid button.school-holiday .day-number{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+  font-weight:600 !important;
+}
+
+/* JOUR FÉRIÉ — orange, same size/stroke/text weight. */
+#calendarGrid button.public-holiday .day-number{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+  font-weight:600 !important;
+}
+
+/* Holiday colour wins when there is also a course. */
+#calendarGrid button.has-course.school-holiday .day-number{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+#calendarGrid button.has-course.public-holiday .day-number{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* Selected normal course: filled blue, no second ring. */
+#calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday) .day-number{
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:0 3px 10px rgba(8,115,213,.25) !important;
+  font-weight:700 !important;
+}
+
+/* Selected holiday remains holiday coloured. */
+#calendarGrid button.selected.school-holiday .day-number{
+  background:#fde8e8 !important;
+  color:#c92f2f !important;
+  box-shadow:inset 0 0 0 3px #ef3b3b !important;
+}
+#calendarGrid button.selected.public-holiday .day-number{
+  background:#fff0dc !important;
+  color:#b96a08 !important;
+  box-shadow:inset 0 0 0 3px #ef8a0c !important;
+}
+
+/* Selected normal day without a course. */
+#calendarGrid button.selected:not(.has-course):not(.school-holiday):not(.public-holiday) .day-number{
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:none !important;
+  font-weight:700 !important;
+}
+
+/* Adjacent month: only fade ordinary days.
+   Holidays keep their normal semantic colour. */
+#calendarGrid button.other:not(.school-holiday):not(.public-holiday) .day-number{
+  color:#b9c2ca !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Course marker remains independent and does not create another ring. */
+#calendarGrid button.has-course .course-marker{
+  background:#0873d5 !important;
+  color:#fff !important;
+}
+#calendarGrid button.school-holiday .course-marker{
+  background:#ef3b3b !important;
+  color:#fff !important;
+}
+#calendarGrid button.public-holiday .course-marker{
+  background:#ef8a0c !important;
+  color:#fff !important;
+}
+
+/* Kill every legacy pseudo-circle/dot rule. */
+#calendarGrid button::before,
+#calendarGrid button::after{
+  content:none !important;
+  display:none !important;
+}
