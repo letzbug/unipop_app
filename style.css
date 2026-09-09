@@ -3872,3 +3872,26 @@ html.device-phone .public-holiday-stamp{
   background:#ef8a0c !important;
   color:#fff !important;
 }
+
+
+/* =========================================================
+   V68 — Blue course ring matches red/orange ring thickness
+   ========================================================= */
+#calendarGrid button.has-course:not(.school-holiday):not(.public-holiday),
+html.device-phone #calendarGrid button.has-course:not(.school-holiday):not(.public-holiday){
+  background:#eaf4ff !important;
+  color:#0a6fd0 !important;
+  box-shadow:inset 0 0 0 3px #0873d5 !important;
+  border:none !important;
+  outline:none !important;
+}
+
+/* Selected normal course day keeps the normal filled state without an extra ring. */
+#calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday),
+html.device-phone #calendarGrid button.selected.has-course:not(.school-holiday):not(.public-holiday){
+  background:#0873d5 !important;
+  color:#fff !important;
+  box-shadow:0 4px 12px rgba(8,115,213,.28) !important;
+  border:none !important;
+  outline:none !important;
+}
