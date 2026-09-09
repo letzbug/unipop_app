@@ -3791,3 +3791,51 @@ html.device-phone #calendarGrid button.public-holiday{
   height:23px !important;
   border-radius:50% !important;
 }
+
+
+/* V66 — Upcoming course card on a public holiday.
+   Mirrors the existing Congé scolaire card treatment, in orange. */
+.public-holiday-upcoming{
+  position:relative !important;
+  overflow:hidden;
+  background:#fff7eb !important;
+  border-color:#f0c48a !important;
+}
+.course-card.public-holiday-upcoming .course-left{
+  background:#fff0dc !important;
+}
+.public-holiday-upcoming::after{
+  content:"";
+  position:absolute;
+  left:-8%;
+  top:50%;
+  width:116%;
+  height:2px;
+  background:rgba(211,120,15,.42);
+  transform:rotate(-8deg);
+  transform-origin:center;
+  pointer-events:none;
+  z-index:3;
+}
+.public-holiday-stamp{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) rotate(-8deg);
+  z-index:4;
+  padding:6px 12px;
+  border-radius:7px;
+  background:rgba(255,247,235,.94);
+  color:#b96a08;
+  border:2px solid rgba(229,138,25,.68);
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.055em;
+  white-space:nowrap;
+  pointer-events:none;
+  box-shadow:0 3px 10px rgba(100,55,0,.10);
+}
+html.device-phone .public-holiday-stamp{
+  font-size:14px;
+  padding:5px 9px;
+}

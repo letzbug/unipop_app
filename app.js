@@ -453,10 +453,18 @@ function occurrenceCard(o,type="next"){
       ${isSchoolHoliday?'<span class="school-holiday-stamp">CONGÉ SCOLAIRE</span>':""}
     </article>`;
   }
-  return `<article class="course-card occurrence" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
+  const dayType=calendarDayType(o.date);
+  const holidayClass=dayType==="school-holiday"?" school-holiday-today":dayType==="public-holiday"?" public-holiday-upcoming":"";
+  const holidayStamp=dayType==="school-holiday"
+    ? '<span class="school-holiday-stamp">CONGÉ SCOLAIRE</span>'
+    : dayType==="public-holiday"
+      ? '<span class="public-holiday-stamp">JOUR FÉRIÉ</span>'
+      : "";
+  return `<article class="course-card occurrence${holidayClass}" data-id="${escapeHtml(c.id)}" data-date="${formatDMY(o.date)}" data-time="${escapeHtml(o.time)}">
     <div class="course-left date"><small>${DAYS[o.date.getDay()].slice(0,3).toUpperCase()}</small><b>${o.date.getDate()}</b><small>${MONTHS_SHORT[o.date.getMonth()]}</small></div>
     <div class="course-info"><div class="line1">${escapeHtml(o.time||"—")}${end?` – ${escapeHtml(end)}`:""}</div><h4>${escapeHtml(c.intitule||"Cours")}</h4><p>${escapeHtml(venueLabel(c))} – ${escapeHtml(roomLabel(c))}</p></div>
     <div class="chev">›</div>
+    ${holidayStamp}
   </article>`;
 }
 function bindOccurrences(){
