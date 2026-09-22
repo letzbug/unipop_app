@@ -274,7 +274,17 @@
         <span></span>
       </div>
     </header>
-    <main class="main-panel" id="placesList"></main>
+    <main class="main-panel">
+      <div id="placesList"></div>
+      <section class="discover-sites-card" id="discoverSitesCard">
+        <div class="discover-sites-icon" aria-hidden="true">⌖</div>
+        <div class="discover-sites-copy">
+          <h3>Découvrez les autres sites</h3>
+          <p>Explorez les autres lieux et salles disponibles pour vos futurs cours.</p>
+          <button type="button" id="allSitesButton">Voir tous les sites <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+    </main>
     <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
   <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
   <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
@@ -283,6 +293,29 @@
 </nav>
   </section>
 
+
+  <section class="screen" id="allSitesScreen">
+    <header class="blue-head small-head">
+      <div class="detail-nav">
+        <button class="back-btn" data-back>‹</button>
+        <strong>Tous les sites</strong>
+        <span></span>
+      </div>
+    </header>
+    <main class="main-panel">
+      <div class="all-sites-intro">
+        <h2>Nos sites</h2>
+        <p>Découvrez les bâtiments et les salles disponibles pour organiser vos futurs cours.</p>
+      </div>
+      <div id="allSitesList"></div>
+    </main>
+    <nav class="bottom-tabs global-tabs" aria-label="Navigation principale">
+      <button class="tab" data-go="homeScreen"><span class="nav-icon">▣</span><small>Aujourd'hui</small></button>
+      <button class="tab" data-go="calendarScreen"><span class="nav-icon">▤</span><small>Calendrier</small></button>
+      <button class="tab active" data-go="placesScreen"><span class="nav-icon">⌖</span><small>Lieux</small></button>
+      <button class="tab" data-go="loginScreen"><span class="nav-icon">⌂</span><small>Accueil</small></button>
+    </nav>
+  </section>
 
   <section class="screen" id="placeDetailScreen">
     <header class="blue-head place-detail-head">
@@ -355,7 +388,7 @@
 
 <script>
 (function() {
-  const APP_VERSION = "71";
+  const APP_VERSION = "72";
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async () => {
       try {
@@ -385,6 +418,6 @@
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js?v=71"></script>
+<script src="app.js?v=72"></script>
 </body>
 </html>

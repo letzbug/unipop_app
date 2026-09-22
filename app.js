@@ -868,8 +868,17 @@ function renderPlaces(){
   });
 
   $("#placesList").innerHTML=[...siteCards,...fallbackCards].join("")||`<div class="empty-card">Aucun lieu trouvé pour les cours de ce formateur.</div>`;
-  $$(".dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
+  $$("#placesList .dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
 }
+function renderAllSites(){
+  const allSites=(sitesData.locations||[]).filter(site=>site&&site.active!==false);
+  const host=$("#allSitesList");
+  if(!host)return;
+  host.innerHTML=allSites.length?allSites.map(site=>`<section class="place-card dynamic-place all-site-card" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml((site.rooms||[]).length?`${site.rooms.length} salle${site.rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`).join(""):`<div class="empty-card">Aucun autre site disponible pour le moment.</div>`;
+  $$("#allSitesList .dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
+}
+const allSitesButton=$("#allSitesButton");
+if(allSitesButton)allSitesButton.addEventListener("click",()=>{renderAllSites();showScreen("allSitesScreen")});
 function openSite(id){
   selectedSite=(sitesData.locations||[]).find(x=>String(x.id)===String(id));
   if(!selectedSite)return;

@@ -3107,3 +3107,49 @@ html.device-phone .public-holiday-stamp{
   .legend-dot{width:21px;height:21px;flex-basis:21px}
 }
 
+
+
+/* V72 — Discover all UniPop sites from the trainer's Lieux screen */
+.discover-sites-card{
+  margin:20px 0 8px;
+  padding:18px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+  border:1px solid #cfe0ee;
+  border-radius:14px;
+  background:#eef6fc;
+}
+.discover-sites-icon{
+  width:48px;height:48px;
+  display:grid;place-items:center;
+  border-radius:13px;
+  background:#0f5688;
+  color:#fff;
+  font-size:25px;
+  font-weight:800;
+}
+.discover-sites-copy h3{margin:1px 0 6px;color:#102e47;font-size:18px}
+.discover-sites-copy p{margin:0 0 13px;color:#53697d;font-size:13px;line-height:1.45}
+.discover-sites-copy button{
+  border:0;
+  background:transparent;
+  padding:0;
+  color:#0f5f9d;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+.discover-sites-copy button span{display:inline-block;margin-left:3px;transition:transform .15s ease}
+.discover-sites-copy button:active span{transform:translateX(3px)}
+.all-sites-intro{margin:0 0 16px;padding:2px 2px 0}
+.all-sites-intro h2{margin:0 0 5px;color:#102e47;font-size:20px}
+.all-sites-intro p{margin:0;color:#667b8e;font-size:13px;line-height:1.45}
+.all-site-card{display:grid!important;grid-template-columns:76px minmax(0,1fr) auto;gap:12px;align-items:center;cursor:pointer}
+html.device-phone .discover-sites-card{padding:17px;grid-template-columns:52px minmax(0,1fr)}
+html.device-phone .discover-sites-icon{width:52px;height:52px}
+html.device-phone .discover-sites-copy h3{font-size:19px}
+html.device-phone .discover-sites-copy p{font-size:14px}
+html.device-phone .discover-sites-copy button{font-size:15px}
+html.device-phone .all-site-card{grid-template-columns:88px minmax(0,1fr) auto}
