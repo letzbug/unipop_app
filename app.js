@@ -28,7 +28,7 @@ window.addEventListener("resize",refreshDeviceClass,{passive:true});
 window.addEventListener("orientationchange",refreshDeviceClass,{passive:true});
 refreshDeviceClass();
 
-const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/ee1deb187cb56360699bb18606d7685de65d9e6c/data/trainings.json";
+const DATA_URL="https://raw.githubusercontent.com/letzbug/franks_magic/main/data/trainings.json";
 const SITES_URL="https://raw.githubusercontent.com/letzbug/unipop_go_sites/main/sites.json";
 
 const SUPABASE_URL="https://tbjlwhbwcxdvagjoonwb.supabase.co";
@@ -110,21 +110,52 @@ function isRoomConfirmed(name=""){
   const n=normalizeText(name);
   return !!n && !n.includes("aconfirmer") && !n.includes("confirmer") && n!=="salle";
 }
+function roomCode(name=""){
+  const m=String(name).trim().match(/^([A-Za-z0-9]+(?:[.\-][A-Za-z0-9]+)+)/);
+  return m?normalizeText(m[1]):"";
+}
+function courseRoomName(c,legacy={}){
+  // Die offizielle Saalangabe aus trainings.json hat Priorität.
+  return c.adresseCours?.salle||c.salle||c.salleNom||c.room||legacy.room||"";
+}
 function findRoomForCourse(site,c,legacy={}){
   if(!site)return null;
-  const wanted=legacy.room||c.salle||c.salleNom||c.room||"";
+  const wanted=courseRoomName(c,legacy);
   if(!isRoomConfirmed(wanted))return null;
   const w=normalizeText(wanted);
-  return (site.rooms||[]).find(r=>[r.name,...(r.aliases||[])].map(normalizeText).some(n=>n&&(n===w||n.includes(w)||w.includes(n))))||null;
+  const wc=roomCode(wanted);
+
+  return (site.rooms||[]).find(r=>{
+    const names=[r.name,...(r.aliases||[])].filter(Boolean);
+    return names.some(name=>{
+      const n=normalizeText(name);
+      const nc=roomCode(name);
+      return n===w || n.includes(w) || w.includes(n) || (wc && nc && wc===nc);
+    });
+  })||null;
 }
 function locationData(c){
   const key=locationKey(c);
   const byCourse=locations.courses?.[normalizeText(c.code||c.reference||c.id||c.coursCode||c.coursId||"")];
   const legacy=byCourse?{...locations._default,...byCourse}:{...locations._default,...(locations.places?.[key]||{})};
   const site=findSiteForCourse(c);
-  if(!site)return legacy;
+  const wantedRoom=courseRoomName(c,legacy);
+
+  if(!site){
+    return {...legacy,room:isRoomConfirmed(wantedRoom)?wantedRoom:(legacy.room||"Salle à confirmer")};
+  }
+
   const room=findRoomForCourse(site,c,legacy);
-  return {...legacy,site,room,phone:site.phone||"",access:room?.directions||site.accessInfo||"",photos:[],equipment:room?.equipment||[],room:room?.name||(isRoomConfirmed(legacy.room)?legacy.room:"Salle à confirmer")};
+  return {
+    ...legacy,
+    site,
+    room,
+    phone:site.phone||"",
+    access:room?.directions||site.accessInfo||"",
+    photos:[],
+    equipment:room?.equipment||[],
+    room:room?.name||(isRoomConfirmed(wantedRoom)?wantedRoom:"Salle à confirmer")
+  };
 }
 
 async function loadAll(){
