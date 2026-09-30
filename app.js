@@ -41,7 +41,7 @@ let authProfile=null;
 let authSession=null;
 let authBootstrapped=false;
 
-let trainings=[], locations={}, sitesData={schemaVersion:3,guides:[],locations:[]}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null, selectedSite=null;
+let trainings=[], locations={}, sitesData={schemaVersion:3,guides:[],locations:[]}, currentTrainer=null, trainerCourses=[], selectedOccurrence=null, selectedSite=null, selectedSitePersonalView=false;
 let backStack=[], selectedDate=new Date(), calendarCursor=new Date();
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -840,6 +840,22 @@ function trainerPlaceCourses(){
   // If every course is historical, fall back to all trainer courses so the Lieux tab is never misleadingly empty.
   return relevant.length?relevant:trainerCourses;
 }
+function trainerRoomsForSite(site,courses=trainerPlaceCourses()){
+  if(!site)return [];
+  const seen=new Set();
+  const rooms=[];
+  courses.forEach(c=>{
+    const courseSite=findSiteForCourse(c);
+    if(!courseSite || String(courseSite.id)!==String(site.id))return;
+    const room=findRoomForCourse(site,c);
+    if(!room)return;
+    const key=String(room.id||normalizeText(room.name||""));
+    if(!key || seen.has(key))return;
+    seen.add(key);
+    rooms.push(room);
+  });
+  return rooms;
+}
 function renderPlaces(){
   if(!currentTrainer){
     $("#placesList").innerHTML=`<div class="empty-card">Sélectionnez d'abord un formateur.</div>`;
@@ -860,7 +876,10 @@ function renderPlaces(){
     }
   });
 
-  const siteCards=[...matchedSites.values()].map(site=>`<section class="place-card dynamic-place" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml((site.rooms||[]).length?`${site.rooms.length} salle${site.rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`);
+  const siteCards=[...matchedSites.values()].map(site=>{
+    const rooms=trainerRoomsForSite(site,courses);
+    return `<section class="place-card dynamic-place" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml(rooms.length?`${rooms.length} salle${rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`;
+  });
 
   const fallbackCards=[...unmatchedCourses.values()].map(c=>{
     const a=c.adresseCours||{},loc=locationData(c);
@@ -868,19 +887,20 @@ function renderPlaces(){
   });
 
   $("#placesList").innerHTML=[...siteCards,...fallbackCards].join("")||`<div class="empty-card">Aucun lieu trouvé pour les cours de ce formateur.</div>`;
-  $$("#placesList .dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
+  $$("#placesList .dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId,true));
 }
 function renderAllSites(){
   const allSites=(sitesData.locations||[]).filter(site=>site&&site.active!==false);
   const host=$("#allSitesList");
   if(!host)return;
   host.innerHTML=allSites.length?allSites.map(site=>`<section class="place-card dynamic-place all-site-card" data-site-id="${escapeHtml(site.id)}">${site.heroThumb||site.hero?`<img class="place-list-thumb" src="${escapeHtml(siteAssetUrl(site.heroThumb||site.hero))}" alt="">`:""}<div><h3>${escapeHtml(site.name||"Lieu")}</h3><p>${escapeHtml(siteAddressOneLine(site))}</p><p><strong>${escapeHtml((site.rooms||[]).length?`${site.rooms.length} salle${site.rooms.length>1?"s":""}`:"Salle à confirmer")}</strong></p><p>${escapeHtml(site.accessInfo||site.description||"Informations détaillées disponibles.")}</p></div><span class="place-chevron">›</span></section>`).join(""):`<div class="empty-card">Aucun autre site disponible pour le moment.</div>`;
-  $$("#allSitesList .dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId));
+  $$("#allSitesList .dynamic-place").forEach(el=>el.onclick=()=>openSite(el.dataset.siteId,false));
 }
 const allSitesButton=$("#allSitesButton");
 if(allSitesButton)allSitesButton.addEventListener("click",()=>{renderAllSites();showScreen("allSitesScreen")});
-function openSite(id){
+function openSite(id,personalView=false){
   selectedSite=(sitesData.locations||[]).find(x=>String(x.id)===String(id));
+  selectedSitePersonalView=!!personalView;
   if(!selectedSite)return;
   renderSiteDetail();showScreen("placeDetailScreen");
 }
@@ -913,7 +933,7 @@ function renderSiteDetail(){
   $("#placeGallery").innerHTML=gallery.map(g=>`<img src="${escapeHtml(siteAssetUrl(g.path))}" alt="${escapeHtml(g.name||"Photo")}">`).join("");
   $("#placeGallerySection").classList.toggle("hidden",gallery.length===0);
 
-  const rooms=s.rooms||[];
+  const rooms=selectedSitePersonalView?trainerRoomsForSite(s):(s.rooms||[]);
   $("#placeRooms").innerHTML=rooms.map(r=>{
     const roomGallery=(r.gallery||[]).filter(g=>g.path);
     return `<article class="place-room-card">
