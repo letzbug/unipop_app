@@ -145,16 +145,16 @@ function locationData(c){
     return {...legacy,room:isRoomConfirmed(wantedRoom)?wantedRoom:(legacy.room||"Salle à confirmer")};
   }
 
-  const room=findRoomForCourse(site,c,legacy);
+  const roomObj=findRoomForCourse(site,c,legacy);
   return {
     ...legacy,
     site,
-    room,
+    roomObj,
     phone:site.phone||"",
-    access:room?.directions||site.accessInfo||"",
+    access:roomObj?.directions||site.accessInfo||"",
     photos:[],
-    equipment:room?.equipment||[],
-    room:room?.name||(isRoomConfirmed(wantedRoom)?wantedRoom:"Salle à confirmer")
+    equipment:roomObj?.equipment||[],
+    room:roomObj?.name||(isRoomConfirmed(wantedRoom)?wantedRoom:"Salle à confirmer")
   };
 }
 
@@ -683,7 +683,7 @@ document.addEventListener("click",e=>{
 });
 
 function renderDetail(){
-  const{course:c,date,time}=selectedOccurrence,loc=locationData(c),site=loc.site,room=loc.room,a=c.adresseCours||{};
+  const{course:c,date,time}=selectedOccurrence,loc=locationData(c),site=loc.site,room=loc.roomObj,a=c.adresseCours||{};
   const row=scheduleRows(c).find(x=>x.heure===time),dur=row?.duree||c.duree||"",end=time?addMinutes(time,minutesFromDuration(dur)):"";
   const roomName=room?.name||(isRoomConfirmed(loc.room)?loc.room:"Salle à confirmer");
   $("#detailIntro").innerHTML=`<div class="when">${escapeHtml(time||"")}${end?` – ${escapeHtml(end)}`:""}</div><div class="date">${DAYS[date.getDay()]} ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}</div><h1>${escapeHtml(c.intitule||"Cours")}</h1><p>⌖ ${escapeHtml(venueLabel(c))} – ${escapeHtml(roomName)}</p>`;
